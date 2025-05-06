@@ -1,67 +1,80 @@
 #include <Servo.h>
 
-Servo myservo1;  // create servo object to control a servo
-Servo myservo2;  // create servo object to control a servo
-bool turnMode=false;
-String inString="";
+// Instancier la classe Servo
+Servo joint1Servo;  
+Servo joint2Servo;  
+
+bool turnMode = false;
+
+// Déclarer le buffer du port serie
+String serialMessage = "";
+
 void setup() {
+  // Configurer le port serie
   Serial.begin(9600);
 
-  myservo1.attach(5);  // attaches the servo on pin 9 to the servo object
-  myservo2.attach(6);  // attaches the servo on pin 9 to the servo object
-
+  // Attacher les instance de servomoteurs à leur port de commande (signal PWM)
+  joint1Servo.attach(5); 
+  joint2Servo.attach(6); 
 }
 
 
 void loop() {
+  commanderBras(joint1Servo, joint2Servo);
+}
 
+void commanderBras(Servo baseServo, Servo armServo) {
+  // Récupérer le signal entrant brut (caractères sous format binaire) du port serie dans un buffer 
+  if (Serial.available()) int serialCharacter = Serial.read();
+  
+  // Ajoute le caractère au buffer (chaîne)
+  if (isDigit(serialCharacter)) serialMessage += (char)serialCharacter;
 
-    if (Serial.available() > 0) { //si qqchose est envoyé dans le Serial
-     int inChar = Serial.read();
+  // Traitement du signal
+  if (serialCharacter == ' ') { // Si le caractère courant est un espace
+    // Convertir le premier mot du message (commande du premier servomoteur) en entier
+    int baseServoPos = serialMessage.toInt();
+    
+    Serial.println("Commandes de position angulaire :");
+    Serial.print("baseServo :");
+    Serial.println(baseServoPos);
 
-    if (isDigit(inChar)) {
-      // convert the incoming byte to a char and add it to the string:
-      inString += (char)inChar;
-     }
-    // if you get a newline, print the string, then the string's value:
-    if (inChar == ' ') {
-      Serial.print("Value:");
-      int pos1 =inString.toInt();
-      Serial.println(pos1);
-      Serial.print("String: ");
-      Serial.println(inString);
-      // clear the string for new input:
-      myservo1.write(pos1);              // tell servo to go to position in variable 'pos'
+    // Envoyer la commande au servomoteur
+    myservo1.write(baseServo);
 
-      inString = "";
-      }
-          // if you get a newline, print the string, then the string's value:
-    if (inChar == '\n') {
-      Serial.print("Value:");
-      int pos2 =inString.toInt();
-      Serial.println(pos2);
-      Serial.print("String: ");
-      Serial.println(inString);
-      // clear the string for new input:
-      myservo2.write(pos2);              // tell servo to go to position in variable 'pos'
+    // Vider le buffer
+    serialMessage = "";
+  } else if (serialCharacter == '\n') { // Si le caractère courant est un retour à la ligne
+    // Convertir le second mot du message (commande du second servomoteur) en entier
+    int armServoPos = serialMessage.toInt();
+    
+    Serial.println("Commandes de position angulaire :");
+    Serial.print("armServo :");
+    Serial.println(armServoPos);
 
-      inString = "";
-      }
-    if (inChar == 't') {
-      Serial.println("Turn mode !");
-      turnMode=!turnMode;
-      myservo1.write(90);
-      myservo2.write(90);
-      inString = "";
-      }
-      delay(10);   // waits 15ms for the servo to reach the position
-    }
-          if (turnMode) {
-      myservo1.write(90);
-      myservo2.write(10);
-      delay(100);
-      myservo2.write(90);
-      delay(100);
-      return;  // Ne pas lire le port série pendant le mode "turn"
-    }
+    // Envoyer la commande au servomoteur
+    myservo1.write(armServo);
+
+    // Vider le buffer
+    serialMessage = "";
+  }
+
+  if (serialCharacter == 't') {
+    Serial.println("Turn mode !");
+    turnMode=!turnMode;
+    myservo1.write(90);
+    myservo2.write(90);
+    serialMessage = "";
+  }
+    
+  delay(10);   // waits 15ms for the servo to reach the position
+    
+  if (turnMode) {
+    myservo1.write(90);
+    myservo2.write(10);
+    delay(100);
+    myservo2.write(90);
+    delay(100);
+    return;  // Ne pas lire le port série pendant le mode "turn"
+  }
 }
