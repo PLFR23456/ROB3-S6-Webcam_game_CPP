@@ -1,13 +1,12 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 
-
 // Déclaration des fonctions
 void on_activate_entry(GtkWidget *pEntry, gpointer data);
 void on_copier_button(GtkWidget *pButton, gpointer data);
  
  
-int main(int argc,char **argv)
+int gtk(int argc,char **argv)
 {
 
     GtkWidget* pWindow;
