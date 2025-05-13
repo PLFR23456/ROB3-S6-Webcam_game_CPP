@@ -1,13 +1,15 @@
 #include <boost/asio.hpp>
 #include <iostream>
+#include "camera.h"
 
 int main() {
+    camera();
     try {
         boost::asio::io_context io;
         boost::asio::serial_port serial(io);
 
         // Ouvre le port série
-        serial.open("/dev/cu.usbmodem142301"); 
+        serial.open("/dev/ttyACM0"); 
     
         // Configure le port
         serial.set_option(boost::asio::serial_port_base::baud_rate(9600));

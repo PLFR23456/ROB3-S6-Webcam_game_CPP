@@ -16,7 +16,7 @@ int camera() {
     // cv::VideoCapture est une classe qui permet de capturer la vidéo
     // Le '0' signifie qu'on utilise la première caméra trouvée (généralement la webcam intégrée)
     // 'cap' est le nom qu'on donne à notre objet qui va gérer la caméra
-    cv::VideoCapture cap(2);
+    cv::VideoCapture cap(0);
     cv::namedWindow("Webcam");
     cv::setMouseCallback("Webcam", onMouse, nullptr);
 
