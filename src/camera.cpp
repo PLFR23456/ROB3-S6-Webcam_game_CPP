@@ -12,7 +12,7 @@ void onMouse(int event, int x, int y, int flags, void* userdata){
     }
 
 
-int main() {
+int camera() {
     // cv::VideoCapture est une classe qui permet de capturer la vidéo
     // Le '0' signifie qu'on utilise la première caméra trouvée (généralement la webcam intégrée)
     // 'cap' est le nom qu'on donne à notre objet qui va gérer la caméra
