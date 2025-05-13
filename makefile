@@ -4,8 +4,8 @@ EXEC = program
 
 # Compilateur et ses arguments
 CXX = g++
-CXXFLAGS = -Wall `pkg-config --cflags opencv4 gtk+-2.0`
-LDLIBS = `pkg-config --libs opencv4 gtk+-2.0`
+CXXFLAGS = -Wall -std=c++17 `pkg-config --cflags opencv4 gtk+-2.0` 
+LDLIBS = `pkg-config --libs opencv4 gtk+-2.0` -lboost_system
 
 # Répertoires type
 SRC_DIR = src
