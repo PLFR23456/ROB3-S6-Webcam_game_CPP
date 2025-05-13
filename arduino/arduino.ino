@@ -34,19 +34,19 @@ void loop() {
     conversionMessageSerieVersCommandeServo(commandePosition);
     
     // Affiche les valeurs
-    if (compteurAffichage == periodeAffichage) {
-      // Afficher les commandes
-      Serial.println("Commandes de position angulaire :");
-      Serial.print("baseServo : ");
-      Serial.println(commandePosition[0]);
-      Serial.println("Commandes de position angulaire :");
-      Serial.print("armServo : ");
-      Serial.println(commandePosition[1]);
+    // if (compteurAffichage == periodeAffichage) {
+    //   // Afficher les commandes
+    //   Serial.println("Commandes de position angulaire :");
+    //   Serial.print("baseServo : ");
+    //   Serial.println(commandePosition[0]);
+    //   Serial.println("Commandes de position angulaire :");
+    //   Serial.print("armServo : ");
+    //   Serial.println(commandePosition[1]);
 
-      compteurAffichage = 0;
-    }
+    //   compteurAffichage = 0;
+    // }
 
-    //commanderBras(joint1Servo, joint2Servo, commandePosition[0], commandePosition[1]);
+    commanderBras(joint1Servo, joint2Servo, commandePosition[0], commandePosition[1]);
     
   } else {
     Serial.println("Arrêt des moteurs");
@@ -55,29 +55,37 @@ void loop() {
   }
 }
 
+
 void conversionMessageSerieVersCommandeServo(int servoPos[2]) {
-  if (Serial.available()) { // Si un signal est détecté sur le port serie
-    int serialCharacter = Serial.read(); // Récupérer le signal entrant brut (caractères sous format binaire) du port serie dans un buffer
+  while (Serial.available()) {
+    char c = Serial.read();
 
-    // Ajoute le caractère au buffer (chaîne)
-    if (isDigit(serialCharacter)) serialMessage += (char)serialCharacter; 
+    // Accumule les caractères sauf retour à la ligne
+    if (c != '\n') {
+      serialMessage += c;
+    } else {
+      // Une ligne complète a été reçue, traitement
+      serialMessage.trim(); // Supprime les espaces en début/fin
 
-    // Traitement du signal
-    if (serialCharacter == ' ') { // Si le caractère courant est un espace
-      // Convertir le premier mot du message (commande du premier servomoteur) en entier
-      servoPos[0] = serialMessage.toInt();
+      // Cas spécial : STOP!
+      if (serialMessage == "STOP!") {
+        programRunning = false;
+      } else {
+        // Séparer les deux valeurs avec l’espace
+        int spaceIndex = serialMessage.indexOf(' ');
+        if (spaceIndex > 0) {
+          String val1 = serialMessage.substring(0, spaceIndex);
+          String val2 = serialMessage.substring(spaceIndex + 1);
 
-      // Vider le buffer
-      serialMessage = "";
-    } else if (serialCharacter == '\n') { // Si le caractère courant est un retour à la ligne
-      // Convertir le second mot du message (commande du second servomoteur) en entier
-      servoPos[1] = serialMessage.toInt();
+          // Conversion et stockage
+          servoPos[0] = val1.toInt();
+          servoPos[1] = val2.toInt();
+        }
+      }
 
-      // Vider le buffer
+      // Réinitialiser pour la prochaine ligne
       serialMessage = "";
     }
-
-    if ((serialCharacter == '!') && (serialMessage = "STOP")) programRunning = false;
   }
 }
 
