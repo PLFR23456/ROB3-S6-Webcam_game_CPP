@@ -1,5 +1,6 @@
 #include <boost/asio.hpp>
 #include <iostream>
+#include <string>
 #include "camera.h"
 
 int main() {
@@ -18,13 +19,22 @@ int main() {
         serial.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
         serial.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
     
-        // Chaîne à envoyer
-        std::string message = "90 90\n";
-        std::cout << "Envoi de : " << message;
-        auto bytes = boost::asio::write(serial, boost::asio::buffer(message)); 
-        std::cout << "Octets envoyés : " << bytes << std::endl;
-    
-        std::cout << "Message envoyé.\n";
+        std::string message;
+        while (true) {
+            std::cout << "Entrez un message à envoyer (ou 'exit' pour quitter) : ";
+            std::getline(std::cin, message);
+
+            if (message == "exit") {
+                std::cout << "Fermeture du programme." << std::endl;
+                break;
+            }
+
+            message += "\n"; // Ajoute un saut de ligne pour respecter le format attendu
+            std::cout << "Envoi de : " << message;
+            auto bytes = boost::asio::write(serial, boost::asio::buffer(message)); 
+            std::cout << "Octets envoyés : " << bytes << std::endl;
+        }
+
         serial.close();
     } catch (std::exception& e) {
         std::cerr << "Erreur : " << e.what() << std::endl;
