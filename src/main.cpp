@@ -5,12 +5,12 @@
 #include <iostream>
 
 // Définition des variables globales
-Position consigne = {0, 0};
+Position consigne = {90, 90};
 std::mutex consigne_mutex;
 std::atomic<bool> stop_signal{false};
 
 int main() {
-    Position mesure = {0, 0};
+    Position mesure = {320, 240};
 
     std::thread thread_consigne(camera);
 

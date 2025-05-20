@@ -5,8 +5,8 @@
 #include <thread> // Pour la gestion des threads
 
 struct MasqueCouleur {
-    cv::Scalar mini{160, 150, 150};  // 
-    cv::Scalar maxi{180, 255, 255};  // 
+    cv::Scalar mini{140, 140, 140};  // 
+    cv::Scalar maxi{190, 255, 255};  // 
     int minArea{50};                 // Surface minimale pour filtrer le bruit
 } redColor;
 
@@ -18,7 +18,6 @@ int camera() {
     
     cv::VideoCapture cap(2);
     cv::namedWindow("Webcam");
-    cv::namedWindow("Mask");
     //cv::setMouseCallback("Webcam", onMouse, nullptr); recuperer mouvement souris
     std::cout << "Appuyez sur 'q' pour quitter" << std::endl;
 
@@ -34,6 +33,7 @@ int camera() {
     
     int cam_width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
     int cam_height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+    std::cout << "Taille de la caméra: " << cam_width << "x" << cam_height << std::endl;
     cv::Point2f cam_center(cam_width/2.0f, cam_height/2.0f);
     
 
@@ -113,7 +113,11 @@ int camera() {
             consigne.y = color_center.y;
             }
 
-        
+        else{
+            std::lock_guard<std::mutex> lock(consigne_mutex);
+            consigne.x = 320;
+            consigne.y = 240;
+        }
 
 
         // Afficher les images
