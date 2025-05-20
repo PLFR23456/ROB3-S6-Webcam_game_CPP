@@ -1,20 +1,8 @@
-#include <opencv2/opencv.hpp>   //  OpenCV pour la vision par ordinateur
-#include <iostream>            //  pour afficher des messages dans la console
-#include <mutex>              //  pour la synchronisation entre threads
-#include <thread>
+#include "camera.hpp"
 
-Position consigne= {0, 0};
-std::mutex consigne_mutex; 
-/*
-int mouse_x = 0;
-int mouse_y = 0;
-void onMouse(int event, int x, int y, int flags, void* userdata){
-        if (event == cv::EVENT_MOUSEMOVE){
-            mouse_x = x;
-            mouse_y = y;
-        }
-    }
-*/              //Controle de la souris
+#include <opencv2/opencv.hpp> // Pour la vision par ordinateur
+#include <iostream> // Pour afficher des messages dans la console
+#include <thread> // Pour la gestion des threads
 
 struct MasqueCouleur {
     cv::Scalar mini{160, 150, 150};  // 
@@ -139,6 +127,7 @@ int camera() {
         // Si 'q' est pressé,on sort de la boucle
         char key = cv::waitKey(30);
         if (key == 'q') {
+            stop_signal = true; // Envoie le signal d'arrêt
             break;
         }
         else if (key == 'n'){

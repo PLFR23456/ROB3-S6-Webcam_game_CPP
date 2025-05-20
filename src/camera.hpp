@@ -1,8 +1,11 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <opencv2/opencv.hpp>
-#include <iostream>
+#include <atomic>
+#include <mutex>
+#include "commande.hpp"
+
+extern std::atomic<bool> stop_signal;
 
 // Déclaration des variables globales pour la position de la souris
 extern int mouse_x;
