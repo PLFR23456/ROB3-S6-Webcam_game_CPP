@@ -16,7 +16,7 @@ int screensources = 0; //0 = camera ; 1 = masque
 
 int camera() {
     
-    cv::VideoCapture cap(2);
+    cv::VideoCapture cap(0);
     cv::namedWindow("Webcam");
     //cv::setMouseCallback("Webcam", onMouse, nullptr); recuperer mouvement souris
     std::cout << "Appuyez sur 'q' pour quitter" << std::endl;

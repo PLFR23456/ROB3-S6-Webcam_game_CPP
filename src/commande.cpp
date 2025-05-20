@@ -5,7 +5,7 @@
 #include <thread>   // Pour std::this_thread::sleep_for
 
 int compteurAffichage = 0;
-#define PERIODE_AFFICHAGE 10 // Afficher toutes les 10 itérations
+#define PERIODE_AFFICHAGE 50 // Afficher toutes les 10 itérations
 
 void calculerCommande(Position* mesure, Position* consigne, Position* commande) {
     // Calcul de l'erreur
@@ -35,8 +35,9 @@ void envoyerCommande(Position* commande, boost::asio::serial_port& serial) {
     if(ec) std::cerr << "Erreur d'envoi : " << ec.message() << "\n";
     else {
         if (compteurAffichage == PERIODE_AFFICHAGE) {
-            std::cout << "Commande envoyée : " << messageCommande << "\n";
-            std::cout << "Consigne : " << consigne.x << ", " << consigne.y ;
+            std::lock_guard<std::mutex> lock(consigne_mutex);
+            std::cout << "Consigne : " << consigne.x << ", " << consigne.y << " ";
+            std::cout << "Commande envoyée : " << messageCommande;
             compteurAffichage = 0; // Réinitialiser le compteur
         }
         compteurAffichage++;
@@ -54,8 +55,14 @@ void asservirServo(Position* mesure) {
         // Ouvrir le port série
         // "/dev/ttyACM0" pour le bo pierre louis
         // "/dev/cu.usbmodem143301" pour le moche estebean
-        serial.open("/dev/ttyACM0"); // Remplacer le chemin par celui du port série approprié
-    
+        serial.open("/dev/cu.usbmodem143301"); // Remplacer le chemin par celui du port série approprié
+        if (!serial.is_open()) {
+            std::cerr << "Erreur : le port série n'a pas pu être ouvert." << std::endl;
+            return;
+        } else {
+            std::cout << "Port série ouvert avec succès." << std::endl;
+        }
+
         // Configurer le port série
         serial.set_option(boost::asio::serial_port_base::baud_rate(115200));
         serial.set_option(boost::asio::serial_port_base::character_size(8));

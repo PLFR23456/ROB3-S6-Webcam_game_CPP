@@ -12,11 +12,11 @@ std::atomic<bool> stop_signal{false};
 int main() {
     Position mesure = {320, 240};
 
-    std::thread thread_consigne(camera);
+    std::thread thread_asservissement(asservirServo, &mesure); // thread secondaire, pas d’UI
 
-    asservirServo(&mesure); // Se termine quand stop_signal == true
+    camera(); // appel de la fonction avec UI OpenCV, dans le thread principal
 
-    thread_consigne.join(); // Attend que la caméra se termine aussi
+    thread_asservissement.join();
 
     std::cout << "Fermeture propre du programme." << std::endl;
     return 0;

@@ -34,17 +34,17 @@ void loop() {
     conversionMessageSerieVersCommandeServo(commandePosition);
     
     // Affiche les valeurs
-    // if (compteurAffichage == periodeAffichage) {
-    //   // Afficher les commandes
-    //   Serial.println("Commandes de position angulaire :");
-    //   Serial.print("baseServo : ");
-    //   Serial.println(commandePosition[0]);
-    //   Serial.println("Commandes de position angulaire :");
-    //   Serial.print("armServo : ");
-    //   Serial.println(commandePosition[1]);
+    if (compteurAffichage == periodeAffichage) {
+      // Afficher les commandes
+      // Serial.println("Commandes de position angulaire :");
+      // Serial.print("baseServo : ");
+      // Serial.println(commandePosition[0]);
+      // Serial.println("Commandes de position angulaire :");
+      // Serial.print("armServo : ");
+      // Serial.println(commandePosition[1]);
 
-    //   compteurAffichage = 0;
-    // }
+      compteurAffichage = 0;
+    }
 
     commanderBras(joint1Servo, joint2Servo, commandePosition[0], commandePosition[1]);
     
