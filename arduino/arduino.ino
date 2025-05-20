@@ -17,7 +17,7 @@ int compteurAffichage;
 
 void setup() {
   // Configurer le port serie
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   // Attacher les instance de servomoteurs à leur port de commande (signal PWM)
   joint1Servo.attach(5); 
@@ -91,12 +91,12 @@ void conversionMessageSerieVersCommandeServo(int servoPos[2]) {
 
 void commanderBras(Servo baseServo, Servo armServo, int baseServoPos, int armServoPos) {
   // Afficher les commandes
-  Serial.println("Commandes de position angulaire :");
-  Serial.print("baseServo : ");
-  Serial.println(baseServoPos);
-  Serial.println("Commandes de position angulaire :");
-  Serial.print("armServo : ");
-  Serial.println(armServoPos);
+  // Serial.println("Commandes de position angulaire :");
+  // Serial.print("baseServo : ");
+  // Serial.println(baseServoPos);
+  // Serial.println("Commandes de position angulaire :");
+  // Serial.print("armServo : ");
+  // Serial.println(armServoPos);
 
   // Envoyer les commandes aux servomoteurs
   baseServo.write(baseServoPos);
