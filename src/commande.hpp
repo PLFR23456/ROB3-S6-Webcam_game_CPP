@@ -5,7 +5,7 @@
 #include <boost/asio.hpp>
 #include <mutex>
 
-#define gainK 0.001
+#define gainK 0.03
 
 struct Position {
     float x;
