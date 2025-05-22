@@ -17,11 +17,11 @@ unsigned long previousTime = 0;
 const unsigned long loopPeriod = 100; // Durée entre chaque itération en ms (=> 10 Hz)
 
 // Cadencement de l'affichage (toute les printingPeriod tour de boucles)
-unsigned long printingCounter = 0;
+unsigned long lastPrint;
 const unsigned long printingPeriod = 1000; // Affichage toutes les 1s
 
 // Détection des timeout 
-unsigned long lastCommandCounter = 0;
+unsigned long lastCommand;
 const unsigned long lastCommandTimeout = 2000; // 2 secondes
 
 
@@ -36,6 +36,9 @@ void setup() {
 
   // Attendre l'ouverture du port
   while (!Serial); 
+
+  lastPrint = millis();
+  lastCommand = millis();
 
   // Signaler que tout est prêt
   Serial.println("READY");
@@ -55,9 +58,9 @@ void loop() {
   }
 
   if (SPEAK) { // Si on est autorisé à parler
-    if (currentTime - printingCounter >= printingPeriod) {
-      printingCounter = currentTime;
-      if (millis() - lastCommandCounter >= lastCommandTimeout) {
+    if (currentTime - lastPrint >= printingPeriod) {
+      lastPrint = currentTime;
+      if (millis() - lastCommand >= lastCommandTimeout) {
         Serial.println("Aucune commande reçue");
       } else {
         Serial.print("SPEAK: ");
@@ -77,8 +80,8 @@ void serialMessageToCommand(int servoPosCommand[2]) {
   while (Serial.available()) {
     char c = Serial.read();
 
-    if (c != '\n') serialMessage += c;
-    else {
+    if (c != '\n') serialMessage += c; 
+    else { // Si le message est finit
       serialMessage.trim(); // Supprimer les espaces
 
       if (serialMessage == "STOP!") {
@@ -97,10 +100,10 @@ void serialMessageToCommand(int servoPosCommand[2]) {
           String val2 = serialMessage.substring(spaceIndex + 1); // On récupère la valeur de la seconde commande
 
           if (val1.length() > 0 && val2.length() > 0) {
-            lastCommandCounter = millis(); // On a bien reçu une commande
+            lastCommand = millis(); // On a bien reçu une commande
 
-            servoPosCommand[0] = val1.toInt();
-            servoPosCommand[1] = val2.toInt();
+            servoPosCommand[0] = constrain(val1.toInt(), 0, 180);
+            servoPosCommand[1] = constrain(val2.toInt(), 0, 180);
 
             // Acquittement (on accuse la bonne réception de la commande)
             Serial.print("ACK: ");
@@ -114,6 +117,9 @@ void serialMessageToCommand(int servoPosCommand[2]) {
           Serial.println("ERR: Commande invalide");
         }
       }
+      
+      // Réinitialisation après traitement
+      String serialMessage = "";
     }
   }
 }
