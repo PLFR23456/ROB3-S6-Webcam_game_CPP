@@ -1,101 +1,112 @@
 #include <Servo.h>
 
+// ------------------ VARIABLES GLOBALES ------------------ //
 const bool SPEAK = false;
-
-// Instancier la classe Servo
-Servo joint1Servo;  
-Servo joint2Servo;  
-
-bool turnMode = false;
 bool programRunning = true;
 
-// Déclarer le buffer du port serie
-String serialMessage = "";
+// Instancier la classe Servo
+Servo base;  
+Servo arm;  
 
-int commandePosition[2] = {};
+// Déclarer le tableau des commandes de position angulaire
+int positionCommand[2] = {};
 
+// Cadencement de la boucle principale
+unsigned long currentTime;
+unsigned long previousTime = 0;
+const unsigned long loopPeriod = 100; // Durée entre chaque itération en ms (=> 10 Hz)
+
+// Cadencement de l'affichage (toute les printingPeriod tour de boucles)
+unsigned long printingCounter = 0;
+const unsigned long printingPeriod = 1000; // Affichage toutes les 1s
+
+// Détection des timeout 
+unsigned long lastCommandCounter = 0;
+const unsigned long lastCommandTimeout = 2000; // 2 secondes
+
+
+// ------------------ SETUP ------------------ //
 void setup() {
+  // Attacher les instance de servomoteurs à leur port de commande (signal PWM)
+  base.attach(6); 
+  arm.attach(5);
+
   // Configurer le port serie
   Serial.begin(115200);
 
-  while (!Serial); // attendre l'ouverture du port
+  // Attendre l'ouverture du port
+  while (!Serial); 
 
+  // Signaler que tout est prêt
   Serial.println("READY");
-
-  // Attacher les instance de servomoteurs à leur port de commande (signal PWM)
-  joint1Servo.attach(6); 
-  joint2Servo.attach(5);
 }
 
-unsigned long previousTime = 0;
-unsigned long interval = 100; // Durée entre chaque itération en ms (=> 10 Hz)
-
-unsigned long lastDisplayTime = 0;
-unsigned long displayInterval = 1000; // Affichage toutes les 1s
-
-unsigned long lastCommandTime = 0;
-const unsigned long timeout = 2000; // 2 secondes
-
-
+// ------------------ LOOP ------------------ //
 void loop() {
-  unsigned long currentTime = millis();
+  currentTime = millis();
   
-  if (currentTime - previousTime >= interval) {
+  if (currentTime - previousTime >= loopPeriod) {
     previousTime = currentTime;
 
     if (programRunning) {
-      conversionMessageSerieVersCommandeServo(commandePosition);
-      commanderBras(joint1Servo, joint2Servo, commandePosition[0], commandePosition[1]);
+      serialMessageToCommand(positionCommand);
+      sendCommand(base, arm, positionCommand[0], positionCommand[1]);
     } 
   }
 
-  if (SPEAK) {
-    if (currentTime - lastDisplayTime >= displayInterval) {
-      lastDisplayTime = currentTime;
-      if (millis() - lastCommandTime >= timeout) {
+  if (SPEAK) { // Si on est autorisé à parler
+    if (currentTime - printingCounter >= printingPeriod) {
+      printingCounter = currentTime;
+      if (millis() - lastCommandCounter >= lastCommandTimeout) {
         Serial.println("Aucune commande reçue");
       } else {
-        Serial.print("baseServo : ");
-        Serial.print(commandePosition[0]);
-        Serial.print(" | armServo : ");
-        Serial.println(commandePosition[1]);  // Terminer par println()
+        Serial.print("SPEAK: ");
+        Serial.print(positionCommand[0]);
+        Serial.print(" ");
+        Serial.println(positionCommand[1]);
       }
     }
   }
 
 }
 
-void conversionMessageSerieVersCommandeServo(int servoPos[2]) {
+// ------------------ FONCTIONS ------------------ //
+void serialMessageToCommand(int servoPosCommand[2]) {
+  // Buffer pour la lecture du port série
+  String serialMessage = "";
   while (Serial.available()) {
     char c = Serial.read();
 
-    if (c != '\n') {
-      serialMessage += c;
-    } else {
+    if (c != '\n') serialMessage += c;
+    else {
       serialMessage.trim(); // Supprimer les espaces
 
       if (serialMessage == "STOP!") {
         programRunning = false;
+
+        // Acquittement (on accuse la bonne réception de la demande d'arrêt)
         Serial.println("ACK: STOP");
-        Serial.println("Arrêt des moteurs");
-        joint1Servo.detach();
-        joint2Servo.detach();
+
+        // On déconnecte les moteurs
+        base.detach();
+        arm.detach();
       } else {
-        int spaceIndex = serialMessage.indexOf(' ');
-        if (spaceIndex > 0 && spaceIndex < serialMessage.length() - 1) {
-          String val1 = serialMessage.substring(0, spaceIndex);
-          String val2 = serialMessage.substring(spaceIndex + 1);
+        int spaceIndex = serialMessage.indexOf(' '); // On applique la méthode sur la string ppur trouver l'indice de l'espace
+        if (spaceIndex > 0 && spaceIndex < serialMessage.length() - 1) { // Il ne doit y avoir qu'un seul espace et il doit être au centre des deux valeurs (ni au début ni à la fin du message)
+          String val1 = serialMessage.substring(0, spaceIndex); // On récupère la valeur de la première commande
+          String val2 = serialMessage.substring(spaceIndex + 1); // On récupère la valeur de la seconde commande
 
           if (val1.length() > 0 && val2.length() > 0) {
-            servoPos[0] = val1.toInt();
-            servoPos[1] = val2.toInt();
+            lastCommandCounter = millis(); // On a bien reçu une commande
 
-            lastCommandTime = millis();
+            servoPosCommand[0] = val1.toInt();
+            servoPosCommand[1] = val2.toInt();
 
+            // Acquittement (on accuse la bonne réception de la commande)
             Serial.print("ACK: ");
-            Serial.print(servoPos[0]);
+            Serial.print(servoPosCommand[0]);
             Serial.print(" ");
-            Serial.println(servoPos[1]);
+            Serial.println(servoPosCommand[1]);
           } else {
             Serial.println("ERR: Valeurs manquantes");
           }
@@ -103,16 +114,14 @@ void conversionMessageSerieVersCommandeServo(int servoPos[2]) {
           Serial.println("ERR: Commande invalide");
         }
       }
-
-      serialMessage = "";
     }
   }
 }
 
-void commanderBras(Servo baseServo, Servo armServo, int baseServoPos, int armServoPos) {
+void sendCommand(Servo baseServo, Servo armServo, int baseServoPosCommand, int armServoPosCommand) {
   // Envoyer les commandes aux servomoteurs
-  baseServo.write(baseServoPos);
-  armServo.write(armServoPos);
+  baseServo.write(baseServoPosCommand);
+  armServo.write(armServoPosCommand);
 }
 
     
