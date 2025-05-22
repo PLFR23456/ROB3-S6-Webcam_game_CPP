@@ -4,7 +4,7 @@
 #include <thread>
 #include <iostream>
 
-#define LISTEN 0 // 1 = écoute du port série, 0 = pas d'écoute
+const bool LISTEN = false; // 1 = écoute du port série, 0 = pas d'écoute
 
 // Définition des variables globales
 Position consigne = {90, 90};

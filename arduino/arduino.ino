@@ -9,7 +9,7 @@ Servo base;
 Servo arm;  
 
 // Déclarer le tableau des commandes de position angulaire
-int positionCommand[2] = {};
+int positionCommand[2] = {}; // Base in 0, arm in 1
 
 // Cadencement de la boucle principale
 unsigned long currentTime;

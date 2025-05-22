@@ -5,36 +5,28 @@
 #include <thread>   // Pour std::this_thread::sleep_for
 #include <math.h>    // Pour std::pow
 
-int compteurAffichage = 0;
-#define PERIODE_AFFICHAGE 10 // Afficher toutes les 10 itérations
-
 void calculerCommande(Position* mesure, Position* consigne, Position* commande) {
     // Calcul de l'erreur
     float erreur_x = consigne->x - mesure->x;
     float erreur_y = consigne->y - mesure->y;
 
     // Calcul de la commande
-    commande->x = commande->x +(std::pow(-1.0, signex) )*(gainK * erreur_x)*(640.0/480.0); // Coefficient de proportionnalité (Correcteur proptionnel)
-    commande->y = commande->y +(std::pow(-1.0, signey) )*gainK * erreur_y; // Coefficient de proportionnalité (Correcteur proptionnel)
-    
-    
-    if(ordrexy == 1) {
-        int tampon = commande->x;
-        commande->x = consigne->y;
-        commande->y = tampon;
-    }
+    commande->x = commande->x + XSIGN * pixelToAngle * gainK * erreur_x; // Coefficient de proportionnalité (Correcteur proportionnel)
+    commande->y = commande->y + YSIGN * pixelToAngle * gainK * erreur_y; // Coefficient de proportionnalité (Correcteur proportionnel)
 
+    // Bornes
     if (commande->x > 180) commande->x = 180; // Limiter la commande à 180
-    if(commande->x < 0) commande->x = 0; // Limiter la commande à 0
-    if (commande->y < 0) commande->y = 0; // Limiter la commande à 0
     if (commande->y > 180) commande->y = 180; // Limiter la commande à 180
+    if (commande->x < 0) commande->x = 0; // Limiter la commande à 0
+    if (commande->y < 0) commande->y = 0; // Limiter la commande à 0
 }
 
 std::string formaterCommande(Position* commande) {
+    int baseCommand = (isXBase) ? (int)commande->x : (int)commande->y;
+    int armCommand = (isXBase) ? (int)commande->y : (int)commande->x;
+
     // Envoi de la commande au port série
-    std::string messageCommande = std::to_string((int)commande->y) + " " + std::to_string((int)commande->x) + "\n";
-    if(ordrexy == 1) {std::string messageCommande = std::to_string((int)commande->y) + " " + std::to_string((int)commande->x) + "\n";}
-    else{std::string messageCommande = std::to_string((int)commande->x) + " " + std::to_string((int)commande->y) + "\n";}
+    std::string messageCommande = std::to_string(baseCommand) + " " + std::to_string(armCommand) + "\n";
     return messageCommande;
 }
 
@@ -44,7 +36,7 @@ void envoyerCommande(Position* commande, boost::asio::serial_port& serial) {
 
     {
         std::lock_guard<std::mutex> lock(consigne_mutex);
-        //std::cout << "CMD envoyée : " << messageCommande;
+        std::cout << "CMD envoyée : \t" << messageCommande;
     }
 
     boost::asio::write(serial, boost::asio::buffer(messageCommande), ec); 
@@ -68,7 +60,7 @@ void envoyerCommande(Position* commande, boost::asio::serial_port& serial) {
         int val1, val2;
         std::istringstream iss(ligne.substr(4));
         if (iss >> val1 >> val2) {
-            std::cout << "ACK reçu : base=" << val1 << ", bras=" << val2 << std::endl;
+            std::cout << "ACK reçu : \t" << val1 << " " << val2 << std::endl;
         } else {
             std::cerr << "Format ACK invalide : " << ligne << std::endl;
         }
@@ -92,7 +84,7 @@ void asservirServo(Position* mesure, boost::asio::serial_port& serial) {
         calculerCommande(mesure, &consigne_locale, &commande);
         envoyerCommande(&commande, serial);
     
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
     serial.close();
 }
