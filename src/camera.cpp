@@ -23,7 +23,6 @@ void onMouseSimple(int event, int x, int y, int, void*) {
         cv::Mat hsv;
         cv::cvtColor(frame_for_click, hsv, cv::COLOR_BGR2HSV);
         cv::Vec3b pix = hsv.at<cv::Vec3b>(y, x);
-        int tol = 20;
         Mask1.mini = cv::Scalar(
             std::max(0, pix[0] - tol),
             std::max(0, pix[1] - tol*2),
@@ -172,7 +171,7 @@ int camera() {
         // waitKey(30) attend 30 millisecondes et vérifie si une touche est pressée
         //sert aussi de tempo pour la boucle !!!
         // Si 'q' est pressé,on sort de la boucle
-        char key = cv::waitKey(30);
+        char key = cv::waitKey(3);
         if (key == 'q') {
             stop_signal = true; // Envoie le signal d'arrêt
             break;

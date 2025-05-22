@@ -3,6 +3,7 @@
 
 #include <iostream> // Pour afficher des messages dans la console
 #include <thread>   // Pour std::this_thread::sleep_for
+#include <math.h>    // Pour std::pow
 
 int compteurAffichage = 0;
 #define PERIODE_AFFICHAGE 10 // Afficher toutes les 10 itérations
@@ -13,8 +14,16 @@ void calculerCommande(Position* mesure, Position* consigne, Position* commande) 
     float erreur_y = consigne->y - mesure->y;
 
     // Calcul de la commande
-    commande->x = commande->x - gainK * erreur_x; // Coefficient de proportionnalité (Correcteur proptionnel)
-    commande->y = commande->y + gainK * erreur_y; // Coefficient de proportionnalité (Correcteur proptionnel)
+    commande->x = commande->x +(std::pow(-1.0, signex) )*(gainK * erreur_x)*(640.0/480.0); // Coefficient de proportionnalité (Correcteur proptionnel)
+    commande->y = commande->y +(std::pow(-1.0, signey) )*gainK * erreur_y; // Coefficient de proportionnalité (Correcteur proptionnel)
+    
+    
+    if(ordrexy == 1) {
+        int tampon = commande->x;
+        commande->x = consigne->y;
+        commande->y = tampon;
+    }
+
     if (commande->x > 180) commande->x = 180; // Limiter la commande à 180
     if(commande->x < 0) commande->x = 0; // Limiter la commande à 0
     if (commande->y < 0) commande->y = 0; // Limiter la commande à 0
@@ -23,7 +32,9 @@ void calculerCommande(Position* mesure, Position* consigne, Position* commande) 
 
 std::string formaterCommande(Position* commande) {
     // Envoi de la commande au port série
-    std::string messageCommande = std::to_string((int)commande->x) + " " + std::to_string((int)commande->y) + "\n";
+    std::string messageCommande = std::to_string((int)commande->y) + " " + std::to_string((int)commande->x) + "\n";
+    if(ordrexy == 1) {std::string messageCommande = std::to_string((int)commande->y) + " " + std::to_string((int)commande->x) + "\n";}
+    else{std::string messageCommande = std::to_string((int)commande->x) + " " + std::to_string((int)commande->y) + "\n";}
     return messageCommande;
 }
 
@@ -33,7 +44,7 @@ void envoyerCommande(Position* commande, boost::asio::serial_port& serial) {
 
     {
         std::lock_guard<std::mutex> lock(consigne_mutex);
-        std::cout << "CMD envoyée : " << messageCommande;
+        //std::cout << "CMD envoyée : " << messageCommande;
     }
 
     boost::asio::write(serial, boost::asio::buffer(messageCommande), ec); 
@@ -81,7 +92,7 @@ void asservirServo(Position* mesure, boost::asio::serial_port& serial) {
         calculerCommande(mesure, &consigne_locale, &commande);
         envoyerCommande(&commande, serial);
     
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     serial.close();
 }

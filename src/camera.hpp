@@ -7,9 +7,8 @@
 
 extern std::atomic<bool> stop_signal;
 
-// Déclaration des variables globales pour la position de la souris
-extern int mouse_x;
-extern int mouse_y;
+//VARIABLES MODIFIABLES
+#define tol 20
 
 // Déclaration de la fonction de callback pour la souris
 void onMouse(int event, int x, int y, int flags, void* userdata);

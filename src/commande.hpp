@@ -5,8 +5,16 @@
 #include <boost/asio.hpp>
 #include <mutex>
 
-#define gainK 0.03
+#define signex 1 // 1 = positif, -1 = négatif
+#define signey 0 // 1 = positif, -1 = négatif
+#define ordrexy 1 // 0 = x;y, 1 = y;x 
 
+// changer ordrexy si la caméra bouge à droite à la place de remonter
+// changer signex si la camera va a gauche au lieu de droite
+// changer signey si la camera remonte au lieu de descendre
+
+
+#define gainK 0.005
 struct Position {
     float x;
     float y;
