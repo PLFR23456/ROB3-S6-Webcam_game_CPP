@@ -1,6 +1,6 @@
 #include <Servo.h>
 
-#define SPEAK 0
+const bool SPEAK = false;
 
 // Instancier la classe Servo
 Servo joint1Servo;  
@@ -14,22 +14,17 @@ String serialMessage = "";
 
 int commandePosition[2] = {};
 
-int periodeAffichage;
-int compteurAffichage;
-
 void setup() {
   // Configurer le port serie
   Serial.begin(115200);
 
+  while (!Serial); // attendre l'ouverture du port
+
+  Serial.println("READY");
+
   // Attacher les instance de servomoteurs à leur port de commande (signal PWM)
   joint1Servo.attach(6); 
   joint2Servo.attach(5);
-
-  periodeAffichage = 10000;
-  compteurAffichage = 0;
-
-  unsigned long lastDisplayTime = 0;
-  unsigned long displayInterval = 1000; // Affichage toutes les 1s
 }
 
 unsigned long previousTime = 0;
@@ -51,11 +46,7 @@ void loop() {
     if (programRunning) {
       conversionMessageSerieVersCommandeServo(commandePosition);
       commanderBras(joint1Servo, joint2Servo, commandePosition[0], commandePosition[1]);
-    } else {
-      Serial.println("Arrêt des moteurs");
-      joint1Servo.detach();
-      joint2Servo.detach();
-    }
+    } 
   }
 
   if (SPEAK) {
@@ -78,32 +69,41 @@ void conversionMessageSerieVersCommandeServo(int servoPos[2]) {
   while (Serial.available()) {
     char c = Serial.read();
 
-    // Accumule les caractères sauf retour à la ligne
     if (c != '\n') {
       serialMessage += c;
     } else {
-      // Une ligne complète a été reçue, traitement
-      serialMessage.trim(); // Supprime les espaces en début/fin
+      serialMessage.trim(); // Supprimer les espaces
 
-      // Cas spécial : STOP!
       if (serialMessage == "STOP!") {
         programRunning = false;
+        Serial.println("ACK: STOP");
+        Serial.println("Arrêt des moteurs");
+        joint1Servo.detach();
+        joint2Servo.detach();
       } else {
-        // Séparer les deux valeurs avec l’espace
         int spaceIndex = serialMessage.indexOf(' ');
-        if (spaceIndex > 0) {
+        if (spaceIndex > 0 && spaceIndex < serialMessage.length() - 1) {
           String val1 = serialMessage.substring(0, spaceIndex);
           String val2 = serialMessage.substring(spaceIndex + 1);
 
-          // Conversion et stockage
-          servoPos[0] = val1.toInt();
-          servoPos[1] = val2.toInt();
+          if (val1.length() > 0 && val2.length() > 0) {
+            servoPos[0] = val1.toInt();
+            servoPos[1] = val2.toInt();
 
-          lastCommandTime = millis();
+            lastCommandTime = millis();
+
+            Serial.print("ACK: ");
+            Serial.print(servoPos[0]);
+            Serial.print(" ");
+            Serial.println(servoPos[1]);
+          } else {
+            Serial.println("ERR: Valeurs manquantes");
+          }
+        } else {
+          Serial.println("ERR: Commande invalide");
         }
       }
 
-      // Réinitialiser pour la prochaine ligne
       serialMessage = "";
     }
   }

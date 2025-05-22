@@ -5,7 +5,7 @@
 #include <thread>   // Pour std::this_thread::sleep_for
 
 int compteurAffichage = 0;
-#define PERIODE_AFFICHAGE 50 // Afficher toutes les 10 itérations
+#define PERIODE_AFFICHAGE 10 // Afficher toutes les 10 itérations
 
 void calculerCommande(Position* mesure, Position* consigne, Position* commande) {
     // Calcul de l'erreur
@@ -30,62 +30,59 @@ std::string formaterCommande(Position* commande) {
 void envoyerCommande(Position* commande, boost::asio::serial_port& serial) {
     boost::system::error_code ec;
     std::string messageCommande = formaterCommande(commande);
+
+    {
+        std::lock_guard<std::mutex> lock(consigne_mutex);
+        std::cout << "CMD envoyée : " << messageCommande;
+    }
+
     boost::asio::write(serial, boost::asio::buffer(messageCommande), ec); 
-    // Détection d'erreur
-    if(ec) std::cerr << "Erreur d'envoi : " << ec.message() << "\n";
-    else {
-        if (compteurAffichage == PERIODE_AFFICHAGE) {
-            std::lock_guard<std::mutex> lock(consigne_mutex);
-            std::cout << "Consigne : " << consigne.x << ", " << consigne.y << " ";
-            std::cout << "Commande envoyée : " << messageCommande;
-            compteurAffichage = 0; // Réinitialiser le compteur
+
+    if(ec) {
+        std::cerr << "Erreur d'envoi : " << ec.message() << "\n";
+        return;
+    }
+
+    // Lecture de la réponse de l'Arduino
+    char c;
+    std::string ligne;
+    while (true) {
+        boost::asio::read(serial, boost::asio::buffer(&c, 1));
+        if (c == '\n') break;
+        ligne += c;
+    }
+
+    // Analyse de la réponse (parser)
+    if (ligne.rfind("ACK:", 0) == 0) {
+        int val1, val2;
+        std::istringstream iss(ligne.substr(4));
+        if (iss >> val1 >> val2) {
+            std::cout << "ACK reçu : base=" << val1 << ", bras=" << val2 << std::endl;
+        } else {
+            std::cerr << "Format ACK invalide : " << ligne << std::endl;
         }
-        compteurAffichage++;
+    } else if (ligne.rfind("ERR:", 0) == 0) {
+        std::cerr << "Erreur Arduino : " << ligne.substr(5) << std::endl;
+    } else {
+        std::cerr << "Réponse inconnue : " << ligne << std::endl;
     }
 }
 
 
-
-void asservirServo(Position* mesure) {
-    try {
-        // Initialiser le port série
-        boost::asio::io_context io;
-        boost::asio::serial_port serial(io);
+void asservirServo(Position* mesure, boost::asio::serial_port& serial) {
+    Position commande = consigne;
+    Position consigne_locale;
+    // Boucle d'asservissement
+    while (!stop_signal) {
+        {
+            std::lock_guard<std::mutex> lock(consigne_mutex);
+            consigne_locale = consigne;
+        }
+        calculerCommande(mesure, &consigne_locale, &commande);
+        envoyerCommande(&commande, serial);
     
-        // Ouvrir le port série
-        // "/dev/ttyACM0" pour le bo pierre louis
-        // "/dev/cu.usbmodem143301" pour le moche estebean
-        serial.open("/dev/cu.usbmodem143301"); // Remplacer le chemin par celui du port série approprié
-        if (!serial.is_open()) {
-            std::cerr << "Erreur : le port série n'a pas pu être ouvert." << std::endl;
-            return;
-        } else {
-            std::cout << "Port série ouvert avec succès." << std::endl;
-        }
-
-        // Configurer le port série
-        serial.set_option(boost::asio::serial_port_base::baud_rate(115200));
-        serial.set_option(boost::asio::serial_port_base::character_size(8));
-        serial.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
-        serial.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
-        serial.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
-
-        Position commande = consigne;
-        Position consigne_locale;
-        // Boucle d'asservissement
-        while (!stop_signal) {
-            {
-                std::lock_guard<std::mutex> lock(consigne_mutex);
-                consigne_locale = consigne;
-            }
-            calculerCommande(mesure, &consigne_locale, &commande);
-            envoyerCommande(&commande, serial);
-        
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        }
-        serial.close();
-    } catch (std::exception& e) {
-        std::cerr << "Erreur : " << e.what() << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
+    serial.close();
 }
 

@@ -20,6 +20,6 @@ extern std::mutex consigne_mutex; // Déclaration uniquement
 void calculerCommande(Position* mesure, Position* consigne, Position* commande);
 std::string formaterCommande(Position* commande);
 void envoyerCommande(Position* commande, boost::asio::serial_port& serial);
-void asservirServo(Position* mesure);
+void asservirServo(Position* mesure, boost::asio::serial_port& serial);
 
 #endif // COMMANDE_H
