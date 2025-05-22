@@ -1,5 +1,7 @@
 #include <Servo.h>
 
+#define SPEAK 0
+
 // Instancier la classe Servo
 Servo joint1Servo;  
 Servo joint2Servo;  
@@ -20,41 +22,57 @@ void setup() {
   Serial.begin(115200);
 
   // Attacher les instance de servomoteurs à leur port de commande (signal PWM)
-  joint1Servo.attach(5); 
-  joint2Servo.attach(6);
+  joint1Servo.attach(6); 
+  joint2Servo.attach(5);
 
   periodeAffichage = 10000;
   compteurAffichage = 0;
+
+  unsigned long lastDisplayTime = 0;
+  unsigned long displayInterval = 1000; // Affichage toutes les 1s
 }
+
+unsigned long previousTime = 0;
+unsigned long interval = 100; // Durée entre chaque itération en ms (=> 10 Hz)
+
+unsigned long lastDisplayTime = 0;
+unsigned long displayInterval = 1000; // Affichage toutes les 1s
+
+unsigned long lastCommandTime = 0;
+const unsigned long timeout = 2000; // 2 secondes
+
 
 void loop() {
-  compteurAffichage++;
+  unsigned long currentTime = millis();
+  
+  if (currentTime - previousTime >= interval) {
+    previousTime = currentTime;
 
-  if (programRunning) {
-    conversionMessageSerieVersCommandeServo(commandePosition);
-    
-    // Affiche les valeurs
-    if (compteurAffichage == periodeAffichage) {
-      // Afficher les commandes
-      // Serial.println("Commandes de position angulaire :");
-      // Serial.print("baseServo : ");
-      // Serial.println(commandePosition[0]);
-      // Serial.println("Commandes de position angulaire :");
-      // Serial.print("armServo : ");
-      // Serial.println(commandePosition[1]);
-
-      compteurAffichage = 0;
+    if (programRunning) {
+      conversionMessageSerieVersCommandeServo(commandePosition);
+      commanderBras(joint1Servo, joint2Servo, commandePosition[0], commandePosition[1]);
+    } else {
+      Serial.println("Arrêt des moteurs");
+      joint1Servo.detach();
+      joint2Servo.detach();
     }
-
-    commanderBras(joint1Servo, joint2Servo, commandePosition[0], commandePosition[1]);
-    
-  } else {
-    Serial.println("Arrêt des moteurs");
-    joint1Servo.detach();
-    joint2Servo.detach();
   }
-}
 
+  if (SPEAK) {
+    if (currentTime - lastDisplayTime >= displayInterval) {
+      lastDisplayTime = currentTime;
+      if (millis() - lastCommandTime >= timeout) {
+        Serial.println("Aucune commande reçue");
+      } else {
+        Serial.print("baseServo : ");
+        Serial.print(commandePosition[0]);
+        Serial.print(" | armServo : ");
+        Serial.println(commandePosition[1]);  // Terminer par println()
+      }
+    }
+  }
+
+}
 
 void conversionMessageSerieVersCommandeServo(int servoPos[2]) {
   while (Serial.available()) {
@@ -80,6 +98,8 @@ void conversionMessageSerieVersCommandeServo(int servoPos[2]) {
           // Conversion et stockage
           servoPos[0] = val1.toInt();
           servoPos[1] = val2.toInt();
+
+          lastCommandTime = millis();
         }
       }
 
@@ -90,14 +110,6 @@ void conversionMessageSerieVersCommandeServo(int servoPos[2]) {
 }
 
 void commanderBras(Servo baseServo, Servo armServo, int baseServoPos, int armServoPos) {
-  // Afficher les commandes
-  // Serial.println("Commandes de position angulaire :");
-  // Serial.print("baseServo : ");
-  // Serial.println(baseServoPos);
-  // Serial.println("Commandes de position angulaire :");
-  // Serial.print("armServo : ");
-  // Serial.println(armServoPos);
-
   // Envoyer les commandes aux servomoteurs
   baseServo.write(baseServoPos);
   armServo.write(armServoPos);
