@@ -3,22 +3,58 @@
 
 #include <iostream> // Pour afficher des messages dans la console
 #include <thread>   // Pour std::this_thread::sleep_for
-#include <math.h>    // Pour std::pow
+
+#define XSIGN (-1) // 1 = droite, (-1) = gauche
+#define YSIGN (1) // 1 = bas, (-1) = haut
+
+const bool isXBase = true; // true = X est la base, false = Y est la base
+
+// ----------------- Correcteur ----------------- //
+// Coefficients du correcteur PID
+double gainK = 0.005;
+double correctorTimeConstant = 0.01;
+double correctorTimeConstantC = 0.01;
+double correctorTimeConstantD = 0.01;
+
+// Erreurs
+double previousXError = 0.0;
+double previousYError = 0.0;
+double currentXError = 0.0;
+double currentYError = 0.0;
+
+// Somme des erreurs pour l'intégrale
+double summedXError = 0.0;
+double summedYError = 0.0;
+
+// Variables de temps
+auto currentTime = std::chrono::high_resolution_clock::now();
+auto previousTime = std::chrono::high_resolution_clock::now();
+double deltaTime = 0.0;
+
+// Commande
+double XCommand = 0.0;
+double YCommand = 0.0;
+
+// ----------------- Camera ----------------- //
+const double cropWeight = 640.0/480.0; // Permet de corriger la fenetre de la camera
 
 void calculerCommande(Position* mesure, Position* consigne, Position* commande) {
     // Calcul de l'erreur
-    float erreur_x = consigne->x - mesure->x;
-    float erreur_y = consigne->y - mesure->y;
+    float currentXError = consigne->x - mesure->x;
+    float previousYError = consigne->y - mesure->y;
 
-    // Calcul de la commande
-    commande->x = commande->x + XSIGN * pixelToAngle * gainK * erreur_x; // Coefficient de proportionnalité (Correcteur proportionnel)
-    commande->y = commande->y + YSIGN * pixelToAngle * gainK * erreur_y; // Coefficient de proportionnalité (Correcteur proportionnel)
+    XCommand = commande->x + XSIGN * gainK * currentXError;
+    YCommand = commande->y + YSIGN * gainK * previousYError * cropWeight;
 
     // Bornes
-    if (commande->x > 180) commande->x = 180; // Limiter la commande à 180
-    if (commande->y > 180) commande->y = 180; // Limiter la commande à 180
-    if (commande->x < 0) commande->x = 0; // Limiter la commande à 0
-    if (commande->y < 0) commande->y = 0; // Limiter la commande à 0
+    if (XCommand > 180) XCommand = 180; // Limiter la commande à 180
+    if (YCommand > 180) YCommand = 180; // Limiter la commande à 180
+    if (XCommand < 0) XCommand = 0; // Limiter la commande à 0
+    if (YCommand < 0) YCommand = 0; // Limiter la commande à 0
+
+    // Actualisation de la commande
+    commande->x = XCommand;
+    commande->y = YCommand;
 }
 
 std::string formaterCommande(Position* commande) {
