@@ -5,10 +5,11 @@
 #include <thread> // Pour la gestion des threads
 #include <mutex>
 
+// Surface minimale pour filtrer le bruit
 struct MasqueCouleur {
-    cv::Scalar mini{140, 140, 140};  // 
-    cv::Scalar maxi{190, 255, 255};  // 
-    int minArea{50};                 // Surface minimale pour filtrer le bruit
+    cv::Scalar mini{140, 140, 140};  
+    cv::Scalar maxi{190, 255, 255};  
+    int minArea{50};                 
 } Mask1;
 
 int sources = 2 ;
@@ -19,7 +20,7 @@ cv::Scalar last_color; // À déclarer en global
 
 // Lorsqu'il y a un clic de la souris sur la fenetre
 void onMouseSimple(int event, int x, int y, int, void*) {
-    if (event == cv::EVENT_LBUTTONDOWN && !frame_for_click.empty()) {
+    if (event == cv::EVENT_LBUTTONDOWN && !frame_for_click.empty()) { 
         cv::Mat hsv;
         cv::cvtColor(frame_for_click, hsv, cv::COLOR_BGR2HSV);
         cv::Vec3b pix = hsv.at<cv::Vec3b>(y, x);
@@ -39,13 +40,12 @@ void onMouseSimple(int event, int x, int y, int, void*) {
 }
 
 int camera() {
-    
     // Init - connexion à la caméra
     cv::VideoCapture cap(2);
     cv::namedWindow("Webcam");
     std::cout << "Appuyez sur 'q' pour quitter" << std::endl;
     // Erreur detection
-    if (!cap.isOpened()) { // isOpened() renvoie 'true' si la caméra fonctionne, 'false' sinon
+    if (!cap.isOpened()) { 
         std::cerr << "Erreur: Impossible d'ouvrir la webcam!" << std::endl;
         return -1;
     }
@@ -111,7 +111,7 @@ int camera() {
                         if(x < xmin) xmin = x; //dimensions du rectangle
                         if(x > xmax) xmax = x;
                         if(y < ymin) ymin = y;
-                        if(y > ymax) ymax = y; //
+                        if(y > ymax) ymax = y;
                     }
                 }
             }
