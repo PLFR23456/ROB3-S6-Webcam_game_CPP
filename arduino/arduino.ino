@@ -14,7 +14,7 @@ int positionCommand[2] = {}; // Base in 0, arm in 1
 // Cadencement de la boucle principale
 unsigned long currentTime;
 unsigned long previousTime = 0;
-const unsigned long loopPeriod = 100; // Durée entre chaque itération en ms (=> 10 Hz)
+const unsigned long loopPeriod = 10; // Durée entre chaque itération en ms (=> 10 Hz)
 
 // Cadencement de l'affichage (toute les printingPeriod tour de boucles)
 unsigned long lastPrint;

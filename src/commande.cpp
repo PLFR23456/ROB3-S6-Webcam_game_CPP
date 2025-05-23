@@ -11,7 +11,7 @@ const bool isXBase = true; // true = X est la base, false = Y est la base
 
 // ----------------- Correcteur ----------------- //
 // Coefficients du correcteur PID
-double gainK = 0.005;
+double gainK = 0.1;
 double correctorTimeConstant = 0.01;
 double correctorTimeConstantC = 0.01;
 double correctorTimeConstantD = 0.01;
@@ -29,7 +29,7 @@ double summedYError = 0.0;
 // Variables de temps
 auto currentTime = std::chrono::high_resolution_clock::now();
 auto previousTime = std::chrono::high_resolution_clock::now();
-double deltaTime = 0.0;
+double elapsedTime = 0.0;
 
 // Commande
 double XCommand = 0.0;
@@ -39,12 +39,21 @@ double YCommand = 0.0;
 const double cropWeight = 640.0/480.0; // Permet de corriger la fenetre de la camera
 
 void calculerCommande(Position* mesure, Position* consigne, Position* commande) {
+    // Calcul du temps écoulé
+    currentTime = std::chrono::high_resolution_clock::now();
+    elapsedTime = std::chrono::duration<double>(currentTime - previousTime).count();
+    previousTime = currentTime;
+
     // Calcul de l'erreur
     float currentXError = consigne->x - mesure->x;
-    float previousYError = consigne->y - mesure->y;
+    float currentYError = consigne->y - mesure->y;
 
-    XCommand = commande->x + XSIGN * gainK * currentXError;
-    YCommand = commande->y + YSIGN * gainK * previousYError * cropWeight;
+    // Accumulation des erreurs
+    summedXError += currentXError * elapsedTime;
+    summedYError += currentYError * elapsedTime;
+
+    XCommand = XSIGN * gainK * (correctorTimeConstant * currentXError + summedXError);
+    YCommand = YSIGN * gainK * (correctorTimeConstant * currentYError + summedYError) * cropWeight;
 
     // Bornes
     if (XCommand > 180) XCommand = 180; // Limiter la commande à 180
@@ -52,7 +61,7 @@ void calculerCommande(Position* mesure, Position* consigne, Position* commande) 
     if (XCommand < 0) XCommand = 0; // Limiter la commande à 0
     if (YCommand < 0) YCommand = 0; // Limiter la commande à 0
 
-    // Actualisation de la commande
+    // Mise à jour de la commande
     commande->x = XCommand;
     commande->y = YCommand;
 }
@@ -109,7 +118,7 @@ void envoyerCommande(Position* commande, boost::asio::serial_port& serial) {
 
 
 void asservirServo(Position* mesure, boost::asio::serial_port& serial) {
-    Position commande = consigne;
+    Position commande;
     Position consigne_locale;
     // Boucle d'asservissement
     while (!stop_signal) {
@@ -120,7 +129,7 @@ void asservirServo(Position* mesure, boost::asio::serial_port& serial) {
         calculerCommande(mesure, &consigne_locale, &commande);
         envoyerCommande(&commande, serial);
     
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     serial.close();
 }

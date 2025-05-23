@@ -171,7 +171,7 @@ int camera() {
         // waitKey(30) attend 30 millisecondes et vérifie si une touche est pressée
         //sert aussi de tempo pour la boucle !!!
         // Si 'q' est pressé,on sort de la boucle
-        char key = cv::waitKey(100);
+        char key = cv::waitKey(5);
         if (key == 'q') {
             stop_signal = true; // Envoie le signal d'arrêt
             break;
