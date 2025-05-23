@@ -41,7 +41,7 @@ void onMouseSimple(int event, int x, int y, int, void*) {
 
 int camera() {
     // Init - connexion à la caméra
-    cv::VideoCapture cap(2);
+    cv::VideoCapture cap(0);
     cv::namedWindow("Webcam");
     std::cout << "Appuyez sur 'q' pour quitter" << std::endl;
     // Erreur detection
@@ -176,7 +176,7 @@ int camera() {
         // waitKey(30) attend 30 millisecondes et vérifie si une touche est pressée
         //sert aussi de tempo pour la boucle !!!
         // Si 'q' est pressé,on sort de la boucle
-        char key = cv::waitKey(5);
+        char key = cv::waitKey(100);
         if (key == 'q') {
             stop_signal = true; // Envoie le signal d'arrêt
             break;
