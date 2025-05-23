@@ -1,17 +1,31 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <opencv2/opencv.hpp> // Acronyme de "Open Computer Vision"
 #include <atomic>
-#include <mutex>
 
+// Déclaration de la variable de signal d'arrêt (atomic = pas besoin de mutex, pas toujours possible de l'utiliser)
 extern std::atomic<bool> stop_signal;
 
-//VARIABLES MODIFIABLES
-extern int tol;
-// Déclaration de la fonction de callback pour la souris
-void onMouse(int event, int x, int y, int flags, void* userdata);
+// Structure tampon partagée entre le thread de traitement et le thread principal 
+struct ProcessedFrame {
+    cv::Mat frame;
+    cv::Mat mask;
+    std::mutex mutex;
+    bool ready = false;
+};
+
+// ----------------- SIGNATURES DES FONCTIONS ----------------- //
+// Callback pour les trackbars (nécessaire même si vide)
+void onGainKChange(int value, void*);
+void onCorrectorTimeConstantChange(int value, void*);
+void onCorrectorTimeConstantCChange(int value, void*);
+void onCorrectorTimeConstantDChange(int value, void*);
+void onTolChange(int value, void*);
+void onMouseSimple(int event, int x, int y, int, void*);
 
 // Déclaration de la fonction principale camera
+void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data);
 int camera();
 
 #endif // CAMERA_H

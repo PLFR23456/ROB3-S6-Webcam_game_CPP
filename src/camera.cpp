@@ -1,7 +1,6 @@
 #include "commande.hpp"
 #include "camera.hpp"
 
-#include <opencv2/opencv.hpp> // Acronyme de "Open Computer Vision"
 #include <iostream> // Pour afficher des messages dans la console
 #include <thread> // Pour la gestion des threads
 #include <mutex> // Pour protéger les variables partagées
@@ -17,24 +16,25 @@ int sources = 2 ;
 int screensources = 0; //0 = camera ; 1 = masque
 
 // Variable modifiable par le trackbar
-double gainK = 0.1; // TODO Mutex !!!!!!
-double correctorTimeConstant = 0.01; // TODO Mutex !!!!!!
-double correctorTimeConstantC = 0.01; // TODO Mutex !!!!!!
-double correctorTimeConstantD = 0.01; // TODO Mutex !!!!!!
+// TODO : Ajouter une protection mutex pour ces variables (peut-être créer un tampon ?) 
+double gainK = 0.1;
+double correctorTimeConstant = 0.01; 
+double correctorTimeConstantC = 0.01; 
+double correctorTimeConstantD = 0.01;
+// TODO FIN
 int tol = 20; // Définition globale
 
 cv::Mat frame_for_click; // Pour stocker la frame pour le clic
 cv::Scalar last_color; // À déclarer en global
 
-struct ProcessedFrame {
-    cv::Mat frame;
-    cv::Mat mask;
-    std::mutex mutex;
-    bool ready = false;
-};
 ProcessedFrame processed_data;
 
-// Lorsqu'il y a un clic de la souris sur la fenetre
+void onGainKChange(int value, void*) { gainK = value / 100.0;} // Le trackbar va de 0 à 200, donc gainK de 0.0 à 2.0
+void onCorrectorTimeConstantChange(int value, void*) {correctorTimeConstant = value / 1000.0;} // Le trackbar va de 0 à 2000, donc correctorTimeConstant de 0.0 à 2.0
+void onCorrectorTimeConstantCChange(int value, void*) {correctorTimeConstantC = value / 1000.0;} // Le trackbar va de 0 à 2000, donc correctorTimeConstantC de 0.0 à 2.0
+void onCorrectorTimeConstantDChange(int value, void*) {correctorTimeConstantD = value / 1000.0;} // Le trackbar va de 0 à 2000, donc correctorTimeConstantD de 0.0 à 2.0
+void onTolChange(int value, void*) {tol = value;}
+
 void onMouseSimple(int event, int x, int y, int, void*) {
     if (event == cv::EVENT_LBUTTONDOWN && !frame_for_click.empty()) { 
         cv::Mat hsv;
@@ -54,8 +54,6 @@ void onMouseSimple(int event, int x, int y, int, void*) {
         std::cout << "Nouvelle couleur HSV : " << (int)pix[0] << "," << (int)pix[1] << "," << (int)pix[2] << std::endl;
     }
 }
-
-// Ajoute une variable globale pour le gain K
 
 void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
     cv::Mat frame, hsv, mask;
@@ -121,18 +119,30 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             cv::line(frame, cam_center, color_center, cv::Scalar(255,0,0), 2);  // Ligne bleue entre les deux
 
             // Afficher les coordonnées et l'écart à l'écran
-            std::string coord_text = "Position: (" + std::to_string(int(color_center.x)) + 
-                               ", " + std::to_string(int(color_center.y)) + ")";
-            std::string offset_text = "Offset: dx=" + std::to_string(int(dx)) + 
-                                ", dy=" + std::to_string(int(dy));
-            cv::putText(frame, "Lum: " + std::to_string(mean_v), cv::Point(15,80),
-                   cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0,0,255), 2);
-            cv::putText(frame, coord_text, cv::Point(15,15), 
-                   cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0,0,255), 2);
-            cv::putText(frame, offset_text, cv::Point(15,50), 
-                   cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0,0,255), 2);
-            cv::putText(frame, "Luminosité: " + std::to_string(mean_v), cv::Point(15, 80),
-                        cv::FONT_HERSHEY_SIMPLEX, 0.7, cv::Scalar(0, 0, 255), 2);
+            std::string coord_text = "Position: (" + std::to_string(int(color_center.x)) + ", " + std::to_string(int(color_center.y)) + ")";
+            std::string offset_text = "Offset: dx=" + std::to_string(int(dx)) + ", dy=" + std::to_string(int(dy));
+            
+            int baseLine = 0;
+            cv::Scalar textColor = (count > Mask1.minArea) ? cv::Scalar(0,255,0) : cv::Scalar(0,0,255);
+            cv::Scalar bgColor(0, 0, 0); // fond noir
+
+            std::vector<std::string> lines = {
+                "Position : (" + std::to_string(int(color_center.x)) + ", " + std::to_string(int(color_center.y)) + ")",
+                "Offset : dx = " + std::to_string(int(dx)) + ", dy = " + std::to_string(int(dy)),
+                "Brightness : " + std::to_string(mean_v)
+            };
+
+            int x = 15, y = 20;
+            for (const auto& line : lines) {
+                int fontFace = cv::FONT_HERSHEY_SIMPLEX;
+                double fontScale = 0.6;
+                int thickness = 1;
+
+                cv::Size textSize = cv::getTextSize(line, fontFace, fontScale, thickness, &baseLine);
+                cv::rectangle(frame, cv::Point(x - 5, y - textSize.height - 2), cv::Point(x + textSize.width + 5, y + baseLine + 2), bgColor, cv::FILLED);
+                cv::putText(frame, line, cv::Point(x, y), fontFace, fontScale, textColor, thickness);
+                y += textSize.height + baseLine + 10;
+            }
 
             // met a jour la variable global
             std::lock_guard<std::mutex> lock(consigne_mutex); // se ferme tout seul à la fin du "}"
@@ -155,13 +165,6 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10)); // pour ne pas surcharger
     }
 }
-
-// Callback pour les trackbars (nécessaire même si vide)
-void onGainKChange(int value, void*) { gainK = value / 100.0;} // Le trackbar va de 0 à 200, donc gainK de 0.0 à 2.0
-void onCorrectorTimeConstantChange(int value, void*) {correctorTimeConstant = value / 1000.0;} // Le trackbar va de 0 à 2000, donc correctorTimeConstant de 0.0 à 2.0
-void onCorrectorTimeConstantCChange(int value, void*) {correctorTimeConstantC = value / 1000.0;} // Le trackbar va de 0 à 2000, donc correctorTimeConstantC de 0.0 à 2.0
-void onCorrectorTimeConstantDChange(int value, void*) {correctorTimeConstantD = value / 1000.0;} // Le trackbar va de 0 à 2000, donc correctorTimeConstantD de 0.0 à 2.0
-void onTolChange(int value, void*) {tol = value;}
 
 int camera() {
     cv::VideoCapture cap(0);
