@@ -1,3 +1,4 @@
+#include "commande.hpp"
 #include "camera.hpp"
 
 #include <opencv2/opencv.hpp> // Pour la vision par ordinateur
@@ -14,6 +15,8 @@ struct MasqueCouleur {
 
 int sources = 2 ;
 int screensources = 0; //0 = camera ; 1 = masque
+double gainK = 0.1;
+int tol = 20; // Définition globale
 
 cv::Mat frame_for_click; // Pour stocker la frame pour le clic
 cv::Scalar last_color; // À déclarer en global
@@ -39,11 +42,31 @@ void onMouseSimple(int event, int x, int y, int, void*) {
     }
 }
 
+// Ajoute une variable globale pour le gain K
+
+
+// Callback pour le trackbar (nécessaire même si vide)
+void onGainKChange(int value, void*) {
+    gainK = value / 100.0; // Le trackbar va de 0 à 200, donc gainK de 0.0 à 2.0
+}
+
+void onTolChange(int value, void*) {
+    tol = value;
+}
+
 int camera() {
     // Init - connexion à la caméra
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap(2);
     cv::namedWindow("Webcam");
     std::cout << "Appuyez sur 'q' pour quitter" << std::endl;
+
+    // Ajoute le trackbar pour le gain K
+    int gainK_slider = static_cast<int>(gainK * 100);
+    cv::createTrackbar("Gain K", "Webcam", &gainK_slider, 200, onGainKChange);
+
+    int tol_slider = tol;
+    cv::createTrackbar("Tolerance", "Webcam", &tol_slider, 100, onTolChange);
+
     // Erreur detection
     if (!cap.isOpened()) { 
         std::cerr << "Erreur: Impossible d'ouvrir la webcam!" << std::endl;
@@ -186,11 +209,4 @@ int camera() {
         }
         else if (key == 'p') pause = !pause; // Pause ou reprise
     }
-
-    // libère la camera et ferme fenetres
-    cap.release();
-    cv::destroyAllWindows();
-    
-
-    return 0;
 }

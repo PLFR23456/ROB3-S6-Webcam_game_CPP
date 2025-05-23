@@ -13,7 +13,6 @@ const bool isXBase = true; // true = X est la base, false = Y est la base
 
 // ----------------- Correcteur ----------------- //
 // Coefficients du correcteur PID
-double gainK = 0.1;
 double correctorTimeConstant = 0.01;
 double correctorTimeConstantC = 0.01;
 double correctorTimeConstantD = 0.01;

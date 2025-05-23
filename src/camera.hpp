@@ -3,13 +3,12 @@
 
 #include <atomic>
 #include <mutex>
-#include "commande.hpp"
 
 extern std::atomic<bool> stop_signal;
 
 //VARIABLES MODIFIABLES
-#define tol 20
-
+extern int tol;
+extern double gainK; // Gain K pour le PID
 // Déclaration de la fonction de callback pour la souris
 void onMouse(int event, int x, int y, int flags, void* userdata);
 
