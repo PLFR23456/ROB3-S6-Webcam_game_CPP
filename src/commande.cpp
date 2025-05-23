@@ -3,7 +3,9 @@
 
 #include <iostream> // Pour afficher des messages dans la console
 #include <thread>   // Pour std::this_thread::sleep_for
+#include <math.h> 
 
+// ----------------- Configuration ----------------- //
 #define XSIGN (-1) // 1 = droite, (-1) = gauche
 #define YSIGN (1) // 1 = bas, (-1) = haut
 
@@ -38,6 +40,7 @@ double YCommand = 0.0;
 // ----------------- Camera ----------------- //
 const double cropWeight = 640.0/480.0; // Permet de corriger la fenetre de la camera
 
+// ----------------- Fonctions ----------------- //
 void calculerCommande(Position* mesure, Position* consigne, Position* commande) {
     // Calcul du temps écoulé
     currentTime = std::chrono::high_resolution_clock::now();

@@ -75,6 +75,11 @@ int camera() {
             // création du masque -- function faite exprès pour
             cv::inRange(hsv, Mask1.mini, Mask1.maxi, mask);
 
+            // Lissage du masque : ouverture morphologique (érosion puis dilatation)
+            cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));
+            cv::erode(mask, mask, kernel);
+            cv::dilate(mask, mask, kernel);
+
             /**/
             // Calcul de la luminosité moyenne de l'image (canal V en HSV)
             cv::Scalar mean_hsv = cv::mean(hsv);
