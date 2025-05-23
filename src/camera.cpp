@@ -41,7 +41,7 @@ void onMouseSimple(int event, int x, int y, int, void*) {
 int camera() {
     
     // Init - connexion à la caméra
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap(2);
     cv::namedWindow("Webcam");
     std::cout << "Appuyez sur 'q' pour quitter" << std::endl;
     // Erreur detection
