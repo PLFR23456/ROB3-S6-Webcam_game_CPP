@@ -19,6 +19,8 @@ extern double dXError;
 extern double dYError;
 extern double summedXError;
 extern double summedYError;
+extern double gainK; 
+extern bool running;
 
 
 // Fonctions de contrôle

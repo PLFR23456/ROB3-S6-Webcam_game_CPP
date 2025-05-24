@@ -1,5 +1,6 @@
 #include "commande.hpp"
 #include "camera.hpp"
+#include "display.hpp"
 
 #include <iostream> // Pour afficher des messages dans la console
 #include <thread> // Pour la gestion des threads

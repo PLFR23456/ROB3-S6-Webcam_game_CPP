@@ -6,6 +6,9 @@
 
 // Déclaration de la variable de signal d'arrêt (atomic = pas besoin de mutex, pas toujours possible de l'utiliser)
 extern std::atomic<bool> stop_signal;
+extern int tol;
+extern cv::Mat lastFrame;
+
 
 // Structure tampon partagée entre le thread de traitement et le thread principal 
 struct ProcessedFrame {

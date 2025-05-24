@@ -1,5 +1,7 @@
 #include "commande.hpp"
 #include "camera.hpp"
+#include "display.hpp"
+
 
 #include <iostream> // Pour afficher des messages dans la console
 #include <thread>   // Pour std::this_thread::sleep_for
@@ -13,7 +15,7 @@ const bool isXBase = true; // true = X est la base, false = Y est la base
 
 // ----------------- Correcteur ----------------- //
 // Coefficients du correcteur PID
-extern double gainK; 
+
 extern double correctorTimeConstant;
 extern double correctorTimeConstantC;
 extern double correctorTimeConstantD;
