@@ -15,6 +15,8 @@ extern Position consigne; // Déclaration uniquement
 extern std::mutex consigne_mutex; // Déclaration uniquement
 extern double currentXError;
 extern double currentYError;
+extern double dXError;
+extern double dYError;
 extern double summedXError;
 extern double summedYError;
 

@@ -23,7 +23,8 @@ double previousXError = 0.0;
 double previousYError = 0.0;
 double currentXError = 0.0;
 double currentYError = 0.0;
-
+double dXError = 0.0;
+double dYError = 0.0;
 // Somme des erreurs pour l'intégrale
 double summedXError = 0.0;
 double summedYError = 0.0;
@@ -38,7 +39,7 @@ double XCommand = 0.0;
 double YCommand = 0.0;
 
 // ----------------- Camera ----------------- //
-const double cropWeight = 640.0/480.0; // Permet de corriger la fenetre de la camera
+const double cropWeight = 1.2*640.0/480.0; // Permet de corriger la fenetre de la camera
 
 // ----------------- Fonctions ----------------- //
 void calculerCommande(Position* mesure, Position* consigne, Position* commande) {
@@ -48,22 +49,28 @@ void calculerCommande(Position* mesure, Position* consigne, Position* commande) 
     previousTime = currentTime;
 
     // Calcul de l'erreur
-    float currentXError = consigne->x - mesure->x;
-    float currentYError = consigne->y - mesure->y;
+    currentXError = consigne->x - mesure->x;
+    currentYError = consigne->y - mesure->y;
 
     // Accumulation des erreurs
     summedXError += currentXError * elapsedTime;
     summedYError += currentYError * elapsedTime;
 
-    XCommand = XSIGN * gainK * (correctorTimeConstant * currentXError + summedXError);
-    YCommand = YSIGN * gainK * (correctorTimeConstant * currentYError + summedYError) * cropWeight;
+    dXError = (currentXError - previousXError) / elapsedTime;
+    dYError = (currentYError - previousYError) / elapsedTime;
+
+
+    XCommand = XSIGN * gainK * (correctorTimeConstant * currentXError + summedXError + correctorTimeConstantD * dXError);
+    YCommand = YSIGN * gainK * (correctorTimeConstant * currentYError + summedYError + correctorTimeConstantD * dYError) * cropWeight;
     // Bornes
-    if (XCommand > 180) {XCommand = 180; summedXError -= currentXError * elapsedTime;}
-    if (YCommand > 180) {YCommand = 180; summedYError -= currentYError * elapsedTime;}
-    if (XCommand < 0) {XCommand = 0; summedXError -= currentXError * elapsedTime;}
-    if (YCommand < 0) {YCommand = 0; summedYError -= currentYError * elapsedTime;}
+    if (XCommand > 180) {XCommand = 180; summedXError -= currentXError * elapsedTime;dXError=0;}
+    if (YCommand > 180) {YCommand = 180; summedYError -= currentYError * elapsedTime;dYError=0;}
+    if (XCommand < 0) {XCommand = 0; summedXError -= currentXError * elapsedTime;dXError=0;}
+    if (YCommand < 0) {YCommand = 0; summedYError -= currentYError * elapsedTime;dYError=0;}
 
     // Mise à jour de la commande
+    previousXError = currentXError;
+    previousYError = currentYError;
     commande->x = XCommand;
     commande->y = YCommand;
 }

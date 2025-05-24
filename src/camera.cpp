@@ -44,12 +44,12 @@ void onMouseSimple(int event, int x, int y, int, void*) {
         Mask1.mini = cv::Scalar(
             std::max(0, pix[0] - tol),
             std::max(0, pix[1] - tol*2),
-            std::max(0, pix[2] - tol*2)
+            std::max(0, pix[2] - tol*4)
         );
         Mask1.maxi = cv::Scalar(
             std::min(180, pix[0] + tol),
             std::min(255, pix[1] + tol*2),
-            std::min(255, pix[2] + tol*2)
+            std::min(255, pix[2] + tol*5)
         );
         last_color = cv::Scalar(pix[0], pix[1], pix[2]); // Sauvegarde la couleur HSV sélectionnée        
         std::cout << "Nouvelle couleur HSV : " << (int)pix[0] << "," << (int)pix[1] << "," << (int)pix[2] << std::endl;
@@ -72,6 +72,8 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
 
         // Lissage du masque
         cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));
+        cv::erode(mask, mask, kernel);
+        cv::erode(mask, mask, kernel);
         cv::erode(mask, mask, kernel);
         cv::dilate(mask, mask, kernel);
 
@@ -124,6 +126,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             std::string offset_text = "Offset: dx=" + std::to_string(int(dx)) + ", dy=" + std::to_string(int(dy));
             std::string summederrortext = "Summed Error: (x=" + std::to_string(summedXError) + ", y=" + std::to_string(summedYError) + ")";
             std::string currenterrortext = "Current Error: (x=" + std::to_string(currentXError) + ", y=" + std::to_string(currentYError) + ")";
+            std::string derrortext = "D Error: (x=" + std::to_string(dXError) + ", y=" + std::to_string(dYError) + ")";
             int baseLine = 0;
             cv::Scalar textColor = (count > Mask1.minArea) ? cv::Scalar(0,255,0) : cv::Scalar(0,0,255);
             cv::Scalar bgColor(0, 0, 0); // fond noir
@@ -133,7 +136,8 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                 "Offset : dx = " + std::to_string(int(dx)) + ", dy = " + std::to_string(int(dy)),
                 "Brightness : " + std::to_string(mean_v),
                 "Summed Error : (x = " + std::to_string(summedXError) + ", y = " + std::to_string(summedYError) + ")",
-                "Current Error : (x = " + std::to_string(currentXError) + ", y = " + std::to_string(currentYError) + ")"
+                "Current Error : (x = " + std::to_string(currentXError) + ", y = " + std::to_string(currentYError) + ")",
+                "D Error : (x = " + std::to_string(dXError) + ", y = " + std::to_string(dYError) + ")"
             };
 
             int x = 15, y = 20;
