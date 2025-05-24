@@ -13,6 +13,11 @@ typedef struct Position Position;
 
 extern Position consigne; // Déclaration uniquement
 extern std::mutex consigne_mutex; // Déclaration uniquement
+extern double currentXError;
+extern double currentYError;
+extern double summedXError;
+extern double summedYError;
+
 
 // Fonctions de contrôle
 void calculerCommande(Position* mesure, Position* consigne, Position* commande);

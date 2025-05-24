@@ -57,12 +57,11 @@ void calculerCommande(Position* mesure, Position* consigne, Position* commande) 
 
     XCommand = XSIGN * gainK * (correctorTimeConstant * currentXError + summedXError);
     YCommand = YSIGN * gainK * (correctorTimeConstant * currentYError + summedYError) * cropWeight;
-
     // Bornes
-    if (XCommand > 180) XCommand = 180; // Limiter la commande à 180
-    if (YCommand > 180) YCommand = 180; // Limiter la commande à 180
-    if (XCommand < 0) XCommand = 0; // Limiter la commande à 0
-    if (YCommand < 0) YCommand = 0; // Limiter la commande à 0
+    if (XCommand > 180) {XCommand = 180; summedXError -= currentXError * elapsedTime;}
+    if (YCommand > 180) {YCommand = 180; summedYError -= currentYError * elapsedTime;}
+    if (XCommand < 0) {XCommand = 0; summedXError -= currentXError * elapsedTime;}
+    if (YCommand < 0) {YCommand = 0; summedYError -= currentYError * elapsedTime;}
 
     // Mise à jour de la commande
     commande->x = XCommand;
