@@ -23,6 +23,7 @@ double correctorTimeConstantC = 0.01;
 double correctorTimeConstantD = 0.01;
 // TODO FIN
 int tol = 20; // Définition globale
+const int grad_size = 120;
 
 cv::Mat frame_for_click; // Pour stocker la frame pour le clic
 cv::Scalar last_color; // À déclarer en global
@@ -121,7 +122,8 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             // Afficher les coordonnées et l'écart à l'écran
             std::string coord_text = "Position: (" + std::to_string(int(color_center.x)) + ", " + std::to_string(int(color_center.y)) + ")";
             std::string offset_text = "Offset: dx=" + std::to_string(int(dx)) + ", dy=" + std::to_string(int(dy));
-            
+            std::string summederrortext = "Summed Error: (x=" + std::to_string(summedXError) + ", y=" + std::to_string(summedYError) + ")";
+            std::string currenterrortext = "Current Error: (x=" + std::to_string(currentXError) + ", y=" + std::to_string(currentYError) + ")";
             int baseLine = 0;
             cv::Scalar textColor = (count > Mask1.minArea) ? cv::Scalar(0,255,0) : cv::Scalar(0,0,255);
             cv::Scalar bgColor(0, 0, 0); // fond noir
@@ -129,7 +131,9 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             std::vector<std::string> lines = {
                 "Position : (" + std::to_string(int(color_center.x)) + ", " + std::to_string(int(color_center.y)) + ")",
                 "Offset : dx = " + std::to_string(int(dx)) + ", dy = " + std::to_string(int(dy)),
-                "Brightness : " + std::to_string(mean_v)
+                "Brightness : " + std::to_string(mean_v),
+                "Summed Error : (x = " + std::to_string(summedXError) + ", y = " + std::to_string(summedYError) + ")",
+                "Current Error : (x = " + std::to_string(currentXError) + ", y = " + std::to_string(currentYError) + ")"
             };
 
             int x = 15, y = 20;
@@ -155,6 +159,27 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             consigne.x = 320;
             consigne.y = 240;
         }
+        cv::Mat hsv_grad(grad_size, grad_size, CV_8UC3);
+        for (int y = 0; y < grad_size; ++y) {
+            for (int x = 0; x < grad_size; ++x) {
+                // Interpolation linéaire entre mini et maxi
+                int h = Mask1.mini[0] + x * (Mask1.maxi[0] - Mask1.mini[0]) / (grad_size - 1);
+                int s = Mask1.mini[1] + y * (Mask1.maxi[1] - Mask1.mini[1]) / (grad_size - 1);
+                int v = (Mask1.mini[2] + Mask1.maxi[2]) / 2; // Valeur centrale du V
+                hsv_grad.at<cv::Vec3b>(y, x) = cv::Vec3b(h, s, v);
+            }
+        }
+
+        // Conversion HSV -> BGR pour affichage
+        cv::Mat bgr_grad;
+        cv::cvtColor(hsv_grad, bgr_grad, cv::COLOR_HSV2BGR);
+
+        // Position en bas à droite
+        int x_offset = frame.cols - grad_size - 10;
+        int y_offset = frame.rows - grad_size - 10;
+
+        // Affichage du carré sur la frame
+        bgr_grad.copyTo(frame(cv::Rect(x_offset, y_offset, grad_size, grad_size)));
 
         {
             std::lock_guard<std::mutex> lock(data.mutex);
@@ -167,7 +192,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
 }
 
 int camera() {
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap(2);
     if (!cap.isOpened()) {
         std::cerr << "Erreur: Impossible d'ouvrir la webcam!" << std::endl;
         return -1;

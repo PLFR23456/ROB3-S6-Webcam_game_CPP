@@ -46,7 +46,7 @@ int main() {
     boost::asio::serial_port serial(io);
 
     // Ouvrir le port série
-    serial.open("/dev/tty.usbmodem144201"); // Remplacer le chemin par celui du port série approprié (ls /dev/tty* pour trouver le bon port) TESTER CU
+    serial.open("/dev/ttyACM0"); // Remplacer le chemin par celui du port série approprié (ls /dev/tty* pour trouver le bon port) TESTER CU
         if (!serial.is_open()) {
             std::cerr << "Erreur : le port série n'a pas pu être ouvert :" << std::endl;
             return 1;
