@@ -17,6 +17,7 @@ struct ProcessedFrame {
     std::mutex mutex;
     bool ready = false;
 };
+extern ProcessedFrame processed_data;
 
 // ----------------- SIGNATURES DES FONCTIONS ----------------- //
 // Callback pour les trackbars (nécessaire même si vide)

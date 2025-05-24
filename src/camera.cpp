@@ -179,6 +179,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         cv::Mat bgr_grad;
         cv::cvtColor(hsv_grad, bgr_grad, cv::COLOR_HSV2BGR);
 
+
         // Position en bas à droite
         int x_offset = frame.cols - grad_size - 10;
         int y_offset = frame.rows - grad_size - 10;
@@ -187,13 +188,20 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         bgr_grad.copyTo(frame(cv::Rect(x_offset, y_offset, grad_size, grad_size)));
 
         {
-            std::lock_guard<std::mutex> lock(data.mutex);
-            frame.copyTo(data.frame);
-            mask.copyTo(data.mask);
-            data.ready = true;
+        std::lock_guard<std::mutex> lock(data.mutex);
+        frame.copyTo(data.frame); // copie la frame courante dans la structure partagée
+        mask.copyTo(data.mask);   // copie le masque courant dans la structure partagée
+        data.ready = true;        // indique qu'une nouvelle frame est prête
         }
+            std::cout << "Type: " << frame.type() << std::endl;
+            std::cout << "Channels: " << frame.channels() << std::endl;
+            std::cout << "Depth: " << frame.depth() << std::endl;
+
         std::this_thread::sleep_for(std::chrono::milliseconds(10)); // pour ne pas surcharger
     }
+    while (!stop_signal) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+}
 }
 
 int camera() {
@@ -203,48 +211,15 @@ int camera() {
         return -1;
     }
 
-    // Initialisation de la fenêtre et des trackbars
-    cv::namedWindow("Webcam");
     // Création des trackbars
-    int gainK_slider = static_cast<int>(gainK * 100);
-    cv::createTrackbar("Gain K", "Webcam", &gainK_slider, 200, onGainKChange);
-    int correctorTimeConstant_slider = static_cast<int>(correctorTimeConstant * 1000);
-    cv::createTrackbar("Corrector Time Constant", "Webcam", &correctorTimeConstant_slider, 2000, onCorrectorTimeConstantChange);
-    int correctorTimeConstantC_slider = static_cast<int>(correctorTimeConstantC * 1000);
-    cv::createTrackbar("Corrector Time Constant C", "Webcam", &correctorTimeConstantC_slider, 2000, onCorrectorTimeConstantCChange);
-    int correctorTimeConstantD_slider = static_cast<int>(correctorTimeConstantD * 1000);
-    cv::createTrackbar("Corrector Time Constant D", "Webcam", &correctorTimeConstantD_slider, 2000, onCorrectorTimeConstantDChange);
-    int tol_slider = tol;
-    cv::createTrackbar("Tolerance", "Webcam", &tol_slider, 100, onTolChange);
     
     // Création du callback pour la souris
-    cv::setMouseCallback("Webcam", onMouseSimple, nullptr);
 
     std::thread worker(traiterCamera, std::ref(cap), std::ref(processed_data));
 
     while (!stop_signal) {
-        cv::Mat to_show;
-        {
-            std::lock_guard<std::mutex> lock(processed_data.mutex);
-            if (processed_data.ready) {
-                if (screensources == 0)
-                    to_show = processed_data.frame.clone();
-                else
-                    to_show = processed_data.mask.clone();
-            }
-        }
-
-        if (!to_show.empty())
-            cv::imshow("Webcam", to_show);
-
-        char key = cv::waitKey(10);
-        if (key == 'q') {
-            stop_signal = true;
-            break;
-        } else if (key == 'n') {
-            screensources = (screensources + 1) % sources;
-        }
-    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+}
 
     worker.join();
     return 0;

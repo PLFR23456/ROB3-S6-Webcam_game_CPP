@@ -4,14 +4,19 @@
 #include <SFML/Window.hpp>
 #include <string>
 #include <sstream>
+#include <opencv2/opencv.hpp>
+#include <iostream> // Pour afficher des messages dans la console
+#include <thread> // Pour la gestion des threads
+#include <mutex> // Pour protéger les variables partagées
+
+
 // Simule les variables globales (à relier à ton code réel)
 bool running = false;
 extern double gainK;
 extern int tol;
 
 int display() {
-    sf::RenderWindow window(sf::VideoMode(500, 300), "Color Tracking - Interface");
-
+    sf::RenderWindow window(sf::VideoMode(900, 520), "Color Tracking - Interface");
     // Sliders
     sf::RectangleShape gainSlider(sf::Vector2f(200, 5));
     gainSlider.setPosition(150, 60);
@@ -54,6 +59,7 @@ int display() {
     stopText.setPosition(230, 205);
     sf::Text quitText("Quitter", font, 16);
     quitText.setPosition(370, 205);
+    // Flux vidéo
 
     while (window.isOpen()) {
         sf::Event event;
@@ -65,7 +71,7 @@ int display() {
                 auto mouse = sf::Mouse::getPosition(window);
                 if (startButton.getGlobalBounds().contains(mouse.x, mouse.y)) running = true;
                 if (stopButton.getGlobalBounds().contains(mouse.x, mouse.y)) running = false;
-                if (quitButton.getGlobalBounds().contains(mouse.x, mouse.y)) window.close();
+                if (quitButton.getGlobalBounds().contains(mouse.x, mouse.y)){ window.close();stop_signal = true;}
             }
             if (event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseMoved) {
                 auto mouse = sf::Mouse::getPosition(window);
@@ -80,11 +86,28 @@ int display() {
             }
         }
 
+        window.clear(sf::Color(30, 30, 30));
+        if (running) {
+            std::lock_guard<std::mutex> lock(processed_data.mutex);
+            if (processed_data.ready && !processed_data.frame.empty()) {
+                cv::Mat srcrgb = processed_data.frame;
+                cv::Mat src;
+                cv::cvtColor(srcrgb, src, cv::COLOR_BGR2RGB);
+
+                sf::Image image;
+                image.create(src.cols, src.rows, src.ptr());
+                sf::Texture texture;
+                texture.loadFromImage(image);
+                sf::Sprite sprite(texture);// Bloc vidéo à (20,20)
+                sprite.setPosition(20, 20);
+                window.draw(sprite);
+            }
+        }
+
         // Position des knobs
         gainKnob.setPosition(150 + gainK/2.0f*200 - 8, 56);
         tolKnob.setPosition(150 + tol*2 - 8, 116);
 
-        window.clear(sf::Color(30, 30, 30));
         window.draw(gainSlider);
         window.draw(gainKnob);
         window.draw(tolSlider);
@@ -110,7 +133,7 @@ int display() {
         sf::Text tolVal(oss.str(), font, 14);
         tolVal.setPosition(370, 110);
         window.draw(tolVal);
-
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         window.display();
     }
     return 0;
