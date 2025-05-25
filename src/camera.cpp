@@ -66,7 +66,6 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
     while (!stop_signal) {
         cap >> frame;
         if (frame.empty()) continue;
-
         frame.copyTo(frame_for_click);
         cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
         cv::inRange(hsv, Mask1.mini, Mask1.maxi, mask);

@@ -92,7 +92,10 @@ int display() {
             if (processed_data.ready && !processed_data.frame.empty()) {
                 cv::Mat srcrgb = processed_data.frame;
                 cv::Mat src;
-                cv::cvtColor(srcrgb, src, cv::COLOR_BGR2RGB);
+                cv::cvtColor(srcrgb, src, cv::COLOR_BGR2RGBA); //BGR2RGBA
+                //affichage de la frame avec opencv
+                // Affichage de la frame avec SFML
+                // Convertir la frame OpenCV en image SFML
 
                 sf::Image image;
                 image.create(src.cols, src.rows, src.ptr());
