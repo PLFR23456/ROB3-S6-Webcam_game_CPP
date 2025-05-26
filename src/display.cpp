@@ -20,6 +20,7 @@
 bool running = false;
 bool jeu = false;
 int status = 0;
+int gifnumber = 0;
 extern int tol;
 extern MasqueCouleur Mask1;
 extern Position consigne;
@@ -91,7 +92,7 @@ int display() {
     playText.setString("Lancer");
     playText.setFont(font);
     playText.setCharacterSize(16);
-    playText.setPosition({230.f, basey + offsetybutton+5.5f});
+    playText.setPosition({230.f, basey + offsetybutton+5.5f+60.0f});
 
     sf::Texture logoTexture;
     if (!logoTexture.loadFromFile("./extras/logo2.png")) {
@@ -121,7 +122,13 @@ int display() {
                 if (stopButton.getGlobalBounds().contains(mouse)) running = false;
                 if (quitButton.getGlobalBounds().contains(mouse)) { window.close(); stop_signal = true; }
                 if (playButton.getGlobalBounds().contains(mouse)) {jeu = !jeu; 
-                    jeu ? playText.setString("Jouer") : playText.setString("Pause") ; }
+                    jeu ? playText.setString("Jouer") : playText.setString("Pause") ; 
+                //tirer un numero de 1 à 6
+                gifnumber = rand() % 6 + 1; // tirage aléatoire entre 1 et 6
+                std::cout << "Gif number: " << gifnumber << std::endl;
+                }
+                
+                
                 // if (mouse.y > basey + 295 && mouse.y < basey + 315 && mouse.x > 150 && mouse.x < 350) {
                 //     correctorTimeConstantD = (mouse.x - 150) / 2000.0f * 5.0f;
                 // }
@@ -173,16 +180,44 @@ int display() {
                 sf::Sprite sprite(texture);
                 sprite.setPosition({20.f, 20.f});
                 window.draw(sprite);
+                if(jeu){
                                 // Puis superposer le labyrinthe avec transparence
                 float scaleX = static_cast<float>(src.cols) / labTexture.getSize().x;
                 float scaleY = static_cast<float>(src.rows) / labTexture.getSize().y;
                 labSprite.setScale({scaleX, scaleY});
                 labSprite.setColor(sf::Color(255, 255, 255, 255)); // 128 pour semi-transparent
-                window.draw(labSprite);
+                window.draw(labSprite);}
             }
-        } else {
-            window.draw(logoSprite);
         }
+        else {
+            window.draw(logoSprite);
+        } 
+        
+        if(running && status==4){
+            sf::Text endText(font);
+            endText.setString("GAME OVER!!");
+            endText.setFont(font);
+            endText.setCharacterSize(24);
+            endText.setFillColor(sf::Color::Red);
+            endText.setPosition({50.f, basey + 100.f});
+            window.draw(endText);
+            //afficher le gif correspondant au numero
+            std::string gifPath = "./extras/screamgif/00" + std::to_string(gifnumber) + ".gif";
+            sf::Texture gifTexture;
+            if (!gifTexture.loadFromFile(gifPath)) {
+                std::cerr << "Erreur chargement " << gifPath << std::endl;
+            } else {
+                sf::Sprite gifSprite(gifTexture);
+                gifSprite.setPosition({20.f, 20.f});
+                float scaleX = static_cast<float>(640) / gifTexture.getSize().x;
+                float scaleY = static_cast<float>(480) / gifTexture.getSize().y;
+                gifSprite.setScale({scaleX, scaleY});
+                window.draw(gifSprite);
+            }
+        }
+        
+        
+
 
         // correctorKnobD.setPosition({static_cast<float>(150 + (correctorTimeConstantD / 5) * 2000 - 8), static_cast<float>(basey + 296)});
 
@@ -195,6 +230,8 @@ int display() {
         stopText.setPosition({230.f, basey + offsetybutton+5.5f});
         quitText.setPosition({370.f, basey + offsetybutton+5.5f});
         playText.setPosition({230.f, basey + offsetybutton+5.5f +60.0f});
+        window.draw(playButton);
+        window.draw(playText);
 
         // window.draw(correctorKnobD);
         // window.draw(correctorTextD);
@@ -210,8 +247,7 @@ int display() {
         // window.draw(correctorTimeConstantD);
 
 
-        window.draw(playText);
-        window.draw(playButton);
+
     }
         else{
         startButton.setPosition({50, basey});
@@ -223,12 +259,15 @@ int display() {
     } // on affiche les boutons + bas
 
         
-        window.draw(startButton);
+        if(!jeu){window.draw(startButton);
+        window.draw(startText);}
+
         window.draw(stopButton);
         window.draw(quitButton);
-        window.draw(startText);
         window.draw(stopText);
         window.draw(quitText);
+                
+
 
         std::this_thread::sleep_for(std::chrono::milliseconds(2));
         window.display();

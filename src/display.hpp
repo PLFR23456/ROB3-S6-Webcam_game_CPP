@@ -1,6 +1,9 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 extern bool running;
+//running si on est pas sur l'écran logo
+extern bool jeu;
+//si la partie est lancée
 extern int status;
 //doc
 // 0= not playing

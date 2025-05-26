@@ -93,13 +93,17 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             int ccy = static_cast<int>(color_center.y);
             
             // S'assurer que les coordonnées sont dans les limites
-            if(ccx >= 0 && ccx < lab.image.cols && ccy >= 0 && ccy < lab.image.rows) {
+            if(ccx >= 0 && ccx < lab.image.cols && ccy >= 0 && ccy < lab.image.rows && jeu==true) {
                 // Si le pixel est noir (mur), c'est une collision
                 if(lab.image.at<uchar>(ccy, ccx) < 128) {
                     std::cout << "PERDU ! Collision avec un mur" << std::endl;
+                    status = 4; // Mettre à jour le statut pour indiquer une collision
                     // Option : retour au début
                     // consigne.x = lab.startPos.x;
                     // consigne.y = lab.startPos.y;
+                }
+                else {
+                    status = 2; // Pas de collision
                 }
             }
 
