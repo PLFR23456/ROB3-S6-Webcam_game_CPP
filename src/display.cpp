@@ -182,18 +182,33 @@ int display() {
             if (event->is<sf::Event::MouseButtonPressed>() || event->is<sf::Event::MouseMoved>()) {
                 if (mouse.y > basey + 55 && mouse.y < basey + 75 && mouse.x > 150 && mouse.x < 350) {
                     gainK = (mouse.x - 150) / 200.0f * 2.0f;
+                    if (event->is<sf::Event::MouseButtonPressed>()) {
+                        break;
+                    }
                 }
                 if (mouse.y > basey + 115 && mouse.y < basey + 135 && mouse.x > 150 && mouse.x < 350) {
                     tol = (mouse.x - 150) / 2;
+                    if (event->is<sf::Event::MouseButtonPressed>()) {
+                        break;
+                    }
                 }
-                if (mouse.y > basey+175 && mouse.y < basey+195 && mouse.x > 150 && mouse.x < 350 && event->is<sf::Event::MouseButtonPressed>()) {
+                if (mouse.y > basey+175 && mouse.y < basey+195 && mouse.x > 150 && mouse.x < 350) {
                     correctorTimeConstant = float(mouse.x - 150) / 2000.0f * 5.0f; // 0.0 à 2.0
+                    if (event->is<sf::Event::MouseButtonPressed>()) {
+                        break;
+                    }
                 }
-                if (mouse.y > basey+235 && mouse.y < basey+255 && mouse.x > 150 && mouse.x < 350 && event->is<sf::Event::MouseButtonPressed>()) {
+                if (mouse.y > basey+235 && mouse.y < basey+255 && mouse.x > 150 && mouse.x < 350) {
                     correctorTimeConstantC = float(mouse.x - 150) / 2000.0f * 5.0f; // 0.0 à 2.0
+                    if (event->is<sf::Event::MouseButtonPressed>()) {
+                        break;
+                    }
                 }
-                if (mouse.y > basey+295 && mouse.y < basey+325 && mouse.x > 150 && mouse.x < 350 && event->is<sf::Event::MouseButtonPressed>()) {
+                if (mouse.y > basey+295 && mouse.y < basey+325 && mouse.x > 150 && mouse.x < 350) {
                     correctorTimeConstantD = float(mouse.x - 150) / 2000.0f * 5.0f; // 0.0 à 2.0
+                    if (event->is<sf::Event::MouseButtonPressed>()) {
+                        break;
+                    }
                 }
             }
         }
