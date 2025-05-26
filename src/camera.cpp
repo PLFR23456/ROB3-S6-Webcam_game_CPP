@@ -44,6 +44,17 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
     int cam_height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
     cv::Point2f cam_center(cam_width/2.0f, cam_height/2.0f);
 
+    // Charger le labyrinthe
+    Labyrinthe lab;
+    lab.image = cv::imread("labyrinthe1.png", cv::IMREAD_GRAYSCALE);
+    if(lab.image.empty()) {
+        std::cerr << "Erreur: Impossible de charger le labyrinthe!" << std::endl;
+        return;
+    }
+    
+    // Redimensionner le labyrinthe à la taille de la caméra
+    cv::resize(lab.image, lab.image, cv::Size(cam_width, cam_height));
+    
     while (!stop_signal) {
         cap >> frame;
         if (frame.empty()) continue;
@@ -85,9 +96,42 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
 
         // Si on a trouvé assez de pixels de la couleur
         if(count > Mask1.minArea && running==true) {
-            // Calculer le point central
             cv::Point2f color_center(sumX/float(count), sumY/float(count));
-        
+            
+            // Vérifier la collision avec les murs
+            int ccx = static_cast<int>(color_center.x);
+            int ccy = static_cast<int>(color_center.y);
+            
+            // S'assurer que les coordonnées sont dans les limites
+            if(ccx >= 0 && ccx < lab.image.cols && ccy >= 0 && ccy < lab.image.rows) {
+                // Si le pixel est noir (mur), c'est une collision
+                if(lab.image.at<uchar>(ccy, ccx) < 128) {
+                    std::cout << "PERDU ! Collision avec un mur" << std::endl;
+                    // Option : retour au début
+                    // consigne.x = lab.startPos.x;
+                    // consigne.y = lab.startPos.y;
+                }
+            }
+            
+            // Superposition du labyrinthe
+              cv::Mat labyrinthe_overlay;
+            cv::cvtColor(lab.image, labyrinthe_overlay, cv::COLOR_GRAY2BGR);
+            
+            // Créer un masque pour les murs (pixels noirs)
+            cv::Mat walls_mask;
+            cv::threshold(lab.image, walls_mask, 128, 255, cv::THRESH_BINARY_INV);
+            
+            // Appliquer le masque sur l'image
+            cv::Mat walls;
+            cv::cvtColor(walls_mask, walls, cv::COLOR_GRAY2BGR);
+            cv::bitwise_and(walls, cv::Scalar(0, 0, 255), walls); // Murs en rouge
+       
+            cv::addWeighted(frame, 1.0, walls, 0.5, 0, frame);
+
+            // Dessiner le point de départ (vert) et d'arrivée (rouge)
+            cv::circle(frame, lab.startPos, 10, cv::Scalar(0,255,0), -1);
+            cv::circle(frame, lab.endPos, 10, cv::Scalar(0,0,255), -1);
+            
             // Calculer l'écart avec le centre de la caméra
             float dx = color_center.x - cam_center.x;
             float dy = color_center.y - cam_center.y;

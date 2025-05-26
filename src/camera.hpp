@@ -26,6 +26,13 @@ struct MasqueCouleur {
 };
 extern MasqueCouleur Mask1;
 
+struct Labyrinthe {
+    cv::Mat image;        // Image du labyrinthe
+    cv::Point startPos;   // Position de départ
+    cv::Point endPos;     // Position d'arrivée
+    int level;            // Niveau actuel
+};
+
 // ----------------- SIGNATURES DES FONCTIONS ----------------- //
 // Callback pour les trackbars (nécessaire même si vide)
 void onGainKChange(int value, void*);
