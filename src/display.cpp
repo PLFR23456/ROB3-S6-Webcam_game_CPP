@@ -18,17 +18,18 @@
 #include <mutex>
 
 bool running = false;
-extern double gainK;
 extern int tol;
 extern MasqueCouleur Mask1;
 cv::Mat srcrgb, src;
+
+extern double gainK;
 extern double correctorTimeConstant;
 extern double correctorTimeConstantC; 
 extern double correctorTimeConstantD;
 
 int display() {
      sf::RenderWindow window(sf::VideoMode({720u, 1000u}), "Color Tracking - Interface");
-     int basey = 480 + 20 + 20;
+     float basey = 480.0 + 20.0 + 20.0;
 
     sf::RectangleShape gainSlider(sf::Vector2f(200, 5));
     gainSlider.setPosition({150, basey + 60});
@@ -209,7 +210,7 @@ int display() {
                 cv::Mat srcrgb = processed_data.frame;
                 cv::Mat src;
                 cv::cvtColor(srcrgb, src, cv::COLOR_BGR2RGBA);
-                sf::Image image({src.cols, src.rows},reinterpret_cast<const std::uint8_t*>(src.ptr()));
+                sf::Image image({static_cast<unsigned int>(src.cols), static_cast<unsigned int>(src.rows)},reinterpret_cast<const std::uint8_t*>(src.ptr()));
                 sf::Texture texture;
                 texture.loadFromImage(image);
                 sf::Sprite sprite(texture);
@@ -220,11 +221,11 @@ int display() {
             window.draw(logoSprite);
         }
 
-        gainKnob.setPosition({150 + gainK / 2.0f * 200 - 8, basey + 56});
-        tolKnob.setPosition({150 + tol * 2 - 8, basey + 116});
-        correctorKnobA.setPosition({150 + (correctorTimeConstant / 5.0f) * 2000 - 8, basey + 176});
-        correctorKnobC.setPosition({150 + (correctorTimeConstantC / 5.0f) * 2000 - 8, basey + 236});
-        correctorKnobD.setPosition({150 + (correctorTimeConstantD / 5.0f) * 2000 - 8, basey + 296});
+        gainKnob.setPosition({static_cast<float>(150 + gainK / 2.0f * 200 - 8), static_cast<float>(basey + 56)});
+        tolKnob.setPosition({static_cast<float>(150 + tol * 2 - 8), static_cast<float>(basey + 116)});
+        correctorKnobA.setPosition({static_cast<float>(150 + (correctorTimeConstant / 5) * 2000 - 8), static_cast<float>(basey + 176)});
+        correctorKnobC.setPosition({static_cast<float>(150 + (correctorTimeConstantC / 5) * 2000 - 8),static_cast<float>(basey + 236)});
+        correctorKnobD.setPosition({static_cast<float>(150 + (correctorTimeConstantD / 5) * 2000 - 8), static_cast<float>(basey + 296)});
 
         window.draw(gainSlider);
         window.draw(gainKnob);
