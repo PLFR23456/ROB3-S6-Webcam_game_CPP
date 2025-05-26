@@ -94,17 +94,26 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             
             // S'assurer que les coordonnées sont dans les limites
             if(ccx >= 0 && ccx < lab.image.cols && ccy >= 0 && ccy < lab.image.rows && jeu==true) {
+                if(jeu2==false) {
+                    if(ccx<startbox.x+30 & ccx>=startbox.x & ccy<startbox.y+30 & ccy>=startbox.y) {
+                        std::cout << "STARTBOX ! " << std::endl;
+                        status = 1; // Mettre à jour le statut pour indiquer que le jeu a commencé
+                    }
+                    else{
+                    status=0;
+                }}
                 // Si le pixel est noir (mur), c'est une collision
                 if(lab.image.at<uchar>(ccy, ccx) < 128) {
                     std::cout << "PERDU ! Collision avec un mur" << std::endl;
-                    status = 4; // Mettre à jour le statut pour indiquer une collision
+                    if(running && jeu2){status = 4;} // Mettre à jour le statut pour indiquer une collision
+                    else {
+                    status = 2; // Pas de collision
+                }
                     // Option : retour au début
                     // consigne.x = lab.startPos.x;
                     // consigne.y = lab.startPos.y;
                 }
-                else {
-                    status = 2; // Pas de collision
-                }
+                
             }
 
             // Dessiner le point de départ (vert) et d'arrivée (rouge)

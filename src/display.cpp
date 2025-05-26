@@ -16,27 +16,32 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
-
+int score = 0;
 bool running = false;
 bool jeu = false;
+bool jeu2 = false; // si on a passe la startbox
 int status = 0;
 int gifnumber = 0;
 int playingsound = 0;
+int bouclestart = 0;
 extern int tol;
 extern MasqueCouleur Mask1;
 extern Position consigne;
+extern Position startbox;
+extern Position endbox;
 cv::Mat srcrgb, src;
 
 extern double gainK;
 extern double correctorTimeConstant;
 extern double correctorTimeConstantC; 
 extern double correctorTimeConstantD;
+Position startbox= {35, 35}; // Position de la startbox
 
 int display() {
     sf::RenderWindow window(sf::VideoMode({720u, 1000u}), "Color Tracking - Interface");
     float basey = 480.0 + 20.0 + 20.0;
     float offsetybutton = 30;
-
+    
     // sf::RectangleShape correctorSliderD(sf::Vector2f(200, 5));
     // correctorSliderD.setPosition({150, basey + 300});
     // correctorSliderD.setFillColor(sf::Color::White);
@@ -193,36 +198,70 @@ int display() {
                 labSprite.setColor(sf::Color(255, 255, 255, 255)); // 128 pour semi-transparent
                 window.draw(labSprite);}
             }
+            if(status==0){
+                if(bouclestart>0){bouclestart=0; jeu2=false;}
+            }
+            if(status==1){
+                bouclestart++;
+                if(bouclestart>100){status=2; bouclestart=0; std::cout << "Lancement du jeu" << std::endl;jeu2=true;}
+            }
+            if(status<=1){
+                //dessiner un carré vert dans le coin superieur gauche
+                sf::RectangleShape startBox(sf::Vector2f(30.f, 30.f));
+                startBox.setFillColor(sf::Color::Green);
+                startBox.setPosition({20+ startbox.x,20+ startbox.y});
+                window.draw(startBox);
+                sf::Text startText(font);
+                startText.setString("S");
+                startText.setFont(font);
+                startText.setCharacterSize(24);
+                startText.setFillColor(sf::Color::White);
+                startText.setPosition({50.f, 50.f});
+                window.draw(startText);
+            }
+            if(status==1){
+                sf::Text startText(font);
+                startText.setString("En attente de 3 secondes...");
+                startText.setFont(font);
+                startText.setCharacterSize(24);
+                startText.setFillColor(sf::Color::White);
+                startText.setPosition({50.f, basey + 100.f});
+                window.draw(startText);
+            }
+            if(jeu && status==4){
+                sf::Text endText(font);
+                endText.setString("GAME OVER!!");
+                endText.setFont(font);
+                endText.setCharacterSize(24);
+                endText.setFillColor(sf::Color::Red);
+                endText.setPosition({50.f, basey + 100.f});
+                window.draw(endText);
+                //afficher le gif correspondant au numero
+                std::string gifPath = "./extras/screamgif/00" + std::to_string(gifnumber) + ".gif";
+                sf::Texture gifTexture;
+                if (!gifTexture.loadFromFile(gifPath)) {
+                    std::cerr << "Erreur chargement " << gifPath << std::endl;
+                } else {
+                    sf::Sprite gifSprite(gifTexture);
+                    gifSprite.setPosition({20.f, 20.f});
+                    float scaleX = static_cast<float>(640) / gifTexture.getSize().x;
+                    float scaleY = static_cast<float>(480) / gifTexture.getSize().y;
+                    gifSprite.setScale({scaleX, scaleY});
+                    window.draw(gifSprite);
+                    playingsound = true;
+                    jeu = false;
+                    jeu2 = false;
+                    status=0;
+                    playText.setString("Jouer");
+                    
+                }
+            }
         }
         else {
             window.draw(logoSprite);
         } 
         
-        if(running && status==4){
-            sf::Text endText(font);
-            endText.setString("GAME OVER!!");
-            endText.setFont(font);
-            endText.setCharacterSize(24);
-            endText.setFillColor(sf::Color::Red);
-            endText.setPosition({50.f, basey + 100.f});
-            window.draw(endText);
-            //afficher le gif correspondant au numero
-            std::string gifPath = "./extras/screamgif/00" + std::to_string(gifnumber) + ".gif";
-            sf::Texture gifTexture;
-            if (!gifTexture.loadFromFile(gifPath)) {
-                std::cerr << "Erreur chargement " << gifPath << std::endl;
-            } else {
-                sf::Sprite gifSprite(gifTexture);
-                gifSprite.setPosition({20.f, 20.f});
-                float scaleX = static_cast<float>(640) / gifTexture.getSize().x;
-                float scaleY = static_cast<float>(480) / gifTexture.getSize().y;
-                gifSprite.setScale({scaleX, scaleY});
-                window.draw(gifSprite);
-                playingsound = true;
-                jeu = false;
-                
-            }
-        }
+        
         
         
 
@@ -267,13 +306,17 @@ int display() {
     } // on affiche les boutons + bas
 
         
-        if(!jeu){window.draw(startButton);
-        window.draw(startText);}
+        if(running){startButton.setFillColor(sf::Color(64, 64, 64));
+            stopButton.setFillColor(sf::Color(200, 100, 100));}
+        else{startButton.setFillColor(sf::Color(100, 200, 100));
+            stopButton.setFillColor(sf::Color(64, 64, 64));}
 
         window.draw(stopButton);
         window.draw(quitButton);
         window.draw(stopText);
         window.draw(quitText);
+        window.draw(startButton);
+        window.draw(startText);
                 
 
 
