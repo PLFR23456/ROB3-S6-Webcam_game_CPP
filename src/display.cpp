@@ -19,6 +19,7 @@
 
 bool running = false;
 bool jeu = false;
+int status = 0;
 extern int tol;
 extern MasqueCouleur Mask1;
 cv::Mat srcrgb, src;
@@ -138,11 +139,11 @@ int display() {
     playText.setPosition({230.f, basey + 415.f});
 
     sf::Texture logoTexture;
-    if (!logoTexture.loadFromFile("./extras/logo.png")) {
+    if (!logoTexture.loadFromFile("./extras/logo2.png")) {
         std::cerr << "Erreur chargement logo.png" << std::endl;
     }
     sf::Sprite logoSprite(logoTexture);
-    logoSprite.setScale({480.f / 1024.f, 480.f / 1024.f});
+    logoSprite.setScale({480.f / logoTexture.getSize().x , 480.f / logoTexture.getSize().y});
     logoSprite.setPosition({20.f, 20.f});
 
     sf::Texture labTexture;
@@ -264,20 +265,22 @@ int display() {
         correctorKnobC.setPosition({static_cast<float>(150 + (correctorTimeConstantC / 5) * 2000 - 8),static_cast<float>(basey + 236)});
         correctorKnobD.setPosition({static_cast<float>(150 + (correctorTimeConstantD / 5) * 2000 - 8), static_cast<float>(basey + 296)});
 
+        if(running){
+        startButton.setPosition({50, basey + 350});
+        stopButton.setPosition({200, basey + 350});
+        quitButton.setPosition({350, basey + 350});
+        playButton.setPosition({50, basey + 410});
+        startText.setPosition({75.f, basey + 355.f});
+        stopText.setPosition({230.f, basey + 355.f});
+        quitText.setPosition({370.f, basey + 355.f});
+        playText.setPosition({230.f, basey + 415.f});
+
         window.draw(gainSlider);
         window.draw(gainKnob);
         window.draw(tolSlider);
         window.draw(tolKnob);
-        window.draw(startButton);
-        window.draw(stopButton);
-        window.draw(quitButton);
         window.draw(gainText);
         window.draw(tolText);
-        window.draw(startText);
-        window.draw(stopText);
-        window.draw(quitText);
-        window.draw(playButton);
-        window.draw(playText);
         window.draw(correctorSliderA);
         window.draw(correctorKnobA);
         window.draw(correctorTextA);
@@ -287,7 +290,7 @@ int display() {
         window.draw(correctorSliderD);
         window.draw(correctorKnobD);
         window.draw(correctorTextD);
-
+    
         std::ostringstream oss;
         oss << "Gain K: " << gainK;
         sf::Text gainVal(font);
@@ -330,6 +333,30 @@ int display() {
         correctorTimeConstantD.setCharacterSize(14);
         correctorTimeConstantD.setPosition({370, basey + 290});
         window.draw(correctorTimeConstantD);
+
+
+        window.draw(playText);
+        window.draw(playButton);
+    }
+        else{
+        startButton.setPosition({50, basey});
+        stopButton.setPosition({200, basey});
+        quitButton.setPosition({350, basey});
+        startText.setPosition({75.f, basey + 5.f});
+        stopText.setPosition({230.f, basey + 5.f});
+        quitText.setPosition({370.f, basey + 5.f});
+    } // on affiche les boutons + bas
+
+        
+        window.draw(startButton);
+        window.draw(stopButton);
+        window.draw(quitButton);
+        window.draw(startText);
+        window.draw(stopText);
+        window.draw(quitText);
+        
+
+        
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         window.display();
