@@ -21,6 +21,7 @@ bool running = false;
 bool jeu = false;
 bool jeu2 = false; // si on a passe la startbox
 int status = 0;
+int soundnumber=0;
 int gifnumber = 0;
 int playingsound = 0;
 int bouclestart = 0;
@@ -36,6 +37,7 @@ extern double correctorTimeConstant;
 extern double correctorTimeConstantC; 
 extern double correctorTimeConstantD;
 Position startbox= {35, 35}; // Position de la startbox
+Position endbox = {60, 40}; // Position de la endbox
 
 int display() {
     sf::RenderWindow window(sf::VideoMode({720u, 1000u}), "Color Tracking - Interface");
@@ -198,10 +200,10 @@ int display() {
                 labSprite.setColor(sf::Color(255, 255, 255, 255)); // 128 pour semi-transparent
                 window.draw(labSprite);}
             }
-            if(status==0){
+            if(status==0&&jeu){
                 if(bouclestart>0){bouclestart=0; jeu2=false;}
             }
-            if(status==1){
+            if(status==1&&jeu){
                 bouclestart++;
                 if(bouclestart>100){status=2; bouclestart=0; std::cout << "Lancement du jeu" << std::endl;jeu2=true;}
             }
@@ -218,6 +220,53 @@ int display() {
                 startText.setFillColor(sf::Color::White);
                 startText.setPosition({50.f, 50.f});
                 window.draw(startText);
+            }
+            if(jeu){
+                //dessiner un carré rouge dans le coin inferieur droit
+                sf::RectangleShape endBox(sf::Vector2f(30.f, 30.f));
+                //violet
+                endBox.setFillColor(sf::Color::Magenta);
+                endBox.setPosition({20+ endbox.x,20+ endbox.y});
+                window.draw(endBox);
+                sf::Text endText(font);
+                endText.setString("E");
+                endText.setFont(font);
+                endText.setCharacterSize(24);
+                endText.setFillColor(sf::Color::White);
+                endText.setPosition({20+ endbox.x+6,20+ endbox.y+6});
+                window.draw(endText);
+            }
+            if(status==3){
+                //jouer le gif ./extras/win.gif avec les frames qui tournent 5 fois puis stop
+                sf::Text winText(font);
+                winText.setString("Vous avez gagné !");
+                winText.setFont(font);
+                winText.setCharacterSize(24);
+                winText.setFillColor(sf::Color::Green);
+                winText.setPosition({50.f, basey + 100.f});
+                window.draw(winText);
+                //faire tourner le gif 5 fois
+                for(int i=0; i<5; i++){
+                    std::string gifPath = "./extras/win.gif";
+                    sf::Texture gifTexture;
+                    if (!gifTexture.loadFromFile(gifPath)) {
+                        std::cerr << "Erreur chargement " << gifPath << std::endl;
+                    } else {
+                        sf::Sprite gifSprite(gifTexture);
+                        gifSprite.setPosition({20.f, 20.f});
+                        float scaleX = static_cast<float>(640) / gifTexture.getSize().x;
+                        float scaleY = static_cast<float>(480) / gifTexture.getSize().y;
+                        gifSprite.setScale({scaleX, scaleY});
+                        window.draw(gifSprite);
+                        playingsound = true;
+                        soundnumber = 3;
+                    }
+                }
+                score++;
+                jeu= false; // on quitte le jeu
+                jeu2 = false; // on quitte le jeu
+                status=0; // on remet le status à 0
+                playText.setString("Jouer");
             }
             if(status==1){
                 sf::Text startText(font);
@@ -249,6 +298,7 @@ int display() {
                     gifSprite.setScale({scaleX, scaleY});
                     window.draw(gifSprite);
                     playingsound = true;
+                    soundnumber = rand() % 2 + 1; // Tirage aléatoire entre 1 et 2 pour le son
                     jeu = false;
                     jeu2 = false;
                     status=0;
@@ -324,7 +374,7 @@ int display() {
         window.display();
         if (playingsound){//joue le son extras/sound/1.mp3
                 sf::SoundBuffer buffer;
-                if (!buffer.loadFromFile("./extras/sounds/1.mp3")) {
+                if (!buffer.loadFromFile("./extras/sounds/"+std::to_string(soundnumber)+".mp3")) {
                     std::cerr << "Erreur chargement son" << std::endl;
                 } else {
                     sound = std::make_unique<sf::Sound>(buffer);

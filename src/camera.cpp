@@ -102,6 +102,11 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                     else{
                     status=0;
                 }}
+                else{if(ccx<endbox.x+30 & ccx>=endbox.x & ccy<endbox.y+30 & ccy>=endbox.y) {
+                        std::cout << "ENDBOX ! " << std::endl;
+                        status = 3; // Mettre à jour le statut pour indiquer que le jeu est terminé
+                    }
+                }
                 // Si le pixel est noir (mur), c'est une collision
                 if(lab.image.at<uchar>(ccy, ccx) < 128) {
                     std::cout << "PERDU ! Collision avec un mur" << std::endl;

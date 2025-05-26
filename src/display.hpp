@@ -8,6 +8,7 @@ extern bool jeu2;
 // si on a passe la startbox
 extern int status;
 extern Position startbox;
+extern Position endbox;
 //doc
 // 0= not playing
 // 1= in the start box (waiting ~3 seconds)
