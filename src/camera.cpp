@@ -68,12 +68,6 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         cv::erode(mask, mask, kernel);
         cv::erode(mask, mask, kernel);
         cv::dilate(mask, mask, kernel);
-
-        /**/
-        // Calcul de la luminosité moyenne de l'image (canal V en HSV)
-        cv::Scalar mean_hsv = cv::mean(hsv);
-        int mean_v = static_cast<int>(mean_hsv[2]); // Valeur moyenne du canal V (luminosité)
-        // Affichage de la luminosité moyenne
         
         // Variables pour calculer le centre
         int sumX = 0, sumY = 0;
@@ -86,10 +80,6 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                     sumX += x;
                     sumY += y;
                     count++;
-                    if(x < xmin) xmin = x; //dimensions du rectangle
-                    if(x > xmax) xmax = x;
-                    if(y < ymin) ymin = y;
-                    if(y > ymax) ymax = y;
                 }
             }
         }
@@ -112,21 +102,6 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                     // consigne.y = lab.startPos.y;
                 }
             }
-            
-            // Superposition du labyrinthe
-              cv::Mat labyrinthe_overlay;
-            cv::cvtColor(lab.image, labyrinthe_overlay, cv::COLOR_GRAY2BGR);
-            
-            // Créer un masque pour les murs (pixels noirs)
-            cv::Mat walls_mask;
-            cv::threshold(lab.image, walls_mask, 128, 255, cv::THRESH_BINARY_INV);
-            
-            // Appliquer le masque sur l'image
-            cv::Mat walls;
-            cv::cvtColor(walls_mask, walls, cv::COLOR_GRAY2BGR);
-            cv::bitwise_and(walls, cv::Scalar(0, 0, 255), walls); // Murs en rouge
-       
-            cv::addWeighted(frame, 1.0, walls, 0.5, 0, frame);
 
             // Dessiner le point de départ (vert) et d'arrivée (rouge)
             cv::circle(frame, lab.startPos, 10, cv::Scalar(0,255,0), -1);
@@ -140,7 +115,6 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             std::vector<std::vector<cv::Point>> contours;
             std::vector<cv::Vec4i> hierarchy;
             cv::findContours(mask, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-            cv::drawContours(frame, contours, -1, cv::Scalar(0,0,255), 2); // Rouge
 
             cv::circle(frame, color_center, 5, cv::Scalar(0,255,0), -1);  // Point vert: centre de la couleur
             cv::circle(frame, cam_center, 5, cv::Scalar(0,0,255), -1);    // Point rouge: centre caméra
@@ -148,22 +122,12 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
 
             // Afficher les coordonnées et l'écart à l'écran
             std::string coord_text = "Position: (" + std::to_string(int(color_center.x)) + ", " + std::to_string(int(color_center.y)) + ")";
-            std::string offset_text = "Offset: dx=" + std::to_string(int(dx)) + ", dy=" + std::to_string(int(dy));
-            std::string summederrortext = "Summed Error: (x=" + std::to_string(summedXError) + ", y=" + std::to_string(summedYError) + ")";
-            std::string currenterrortext = "Current Error: (x=" + std::to_string(currentXError) + ", y=" + std::to_string(currentYError) + ")";
-            std::string derrortext = "D Error: (x=" + std::to_string(dXError) + ", y=" + std::to_string(dYError) + ")";
             int baseLine = 0;
             cv::Scalar textColor = (count > Mask1.minArea) ? cv::Scalar(0,255,0) : cv::Scalar(0,0,255);
             cv::Scalar bgColor(0, 0, 0); // fond noir
 
             std::vector<std::string> lines = {
-                "Position : (" + std::to_string(int(color_center.x)) + ", " + std::to_string(int(color_center.y)) + ")",
-                "Offset : dx = " + std::to_string(int(dx)) + ", dy = " + std::to_string(int(dy)),
-                "Brightness : " + std::to_string(mean_v),
-                "Summed Error : (x = " + std::to_string(summedXError) + ", y = " + std::to_string(summedYError) + ")",
-                "Current Error : (x = " + std::to_string(currentXError) + ", y = " + std::to_string(currentYError) + ")",
-                "D Error : (x = " + std::to_string(dXError) + ", y = " + std::to_string(dYError) + ")"
-            };
+                "Position : (" + std::to_string(int(color_center.x)) + ", " + std::to_string(int(color_center.y)) + ")"};
 
             int x = 15, y = 20;
             for (const auto& line : lines) {
@@ -217,10 +181,6 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         mask.copyTo(data.mask);   // copie le masque courant dans la structure partagée
         data.ready = true;        // indique qu'une nouvelle frame est prête
         }
-            std::cout << "Type: " << frame.type() << std::endl;
-            std::cout << "Channels: " << frame.channels() << std::endl;
-            std::cout << "Depth: " << frame.depth() << std::endl;
-
         std::this_thread::sleep_for(std::chrono::milliseconds(10)); // pour ne pas surcharger
     }
     while (!stop_signal) {

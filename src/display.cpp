@@ -22,6 +22,7 @@ bool jeu = false;
 int status = 0;
 extern int tol;
 extern MasqueCouleur Mask1;
+extern Position consigne;
 cv::Mat srcrgb, src;
 
 extern double gainK;
@@ -32,36 +33,13 @@ extern double correctorTimeConstantD;
 int display() {
     sf::RenderWindow window(sf::VideoMode({720u, 1000u}), "Color Tracking - Interface");
     float basey = 480.0 + 20.0 + 20.0;
+    float offsetybutton = 30;
 
-    sf::RectangleShape tolSlider(sf::Vector2f(200, 5));
-    tolSlider.setPosition({150, basey + 120});
-    tolSlider.setFillColor(sf::Color::White);
-    sf::CircleShape tolKnob(8);
-    tolKnob.setFillColor(sf::Color::Blue);
-
-    sf::RectangleShape gainSlider(sf::Vector2f(200, 5));
-    gainSlider.setPosition({150, basey + 60});
-    gainSlider.setFillColor(sf::Color::White);
-    sf::CircleShape gainKnob(8);
-    gainKnob.setFillColor(sf::Color::Red);
-
-    sf::RectangleShape correctorSliderA(sf::Vector2f(200, 5));
-    correctorSliderA.setPosition({150, basey + 180});
-    correctorSliderA.setFillColor(sf::Color::White);
-    sf::CircleShape correctorKnobA(8);
-    correctorKnobA.setFillColor(sf::Color::Yellow);
-
-    sf::RectangleShape correctorSliderC(sf::Vector2f(200, 5));
-    correctorSliderC.setPosition({150, basey + 240});
-    correctorSliderC.setFillColor(sf::Color::White);
-    sf::CircleShape correctorKnobC(8);
-    correctorKnobC.setFillColor(sf::Color::Cyan);
-
-    sf::RectangleShape correctorSliderD(sf::Vector2f(200, 5));
-    correctorSliderD.setPosition({150, basey + 300});
-    correctorSliderD.setFillColor(sf::Color::White);
-    sf::CircleShape correctorKnobD(8);
-    correctorKnobD.setFillColor(sf::Color::Magenta);
+    // sf::RectangleShape correctorSliderD(sf::Vector2f(200, 5));
+    // correctorSliderD.setPosition({150, basey + 300});
+    // correctorSliderD.setFillColor(sf::Color::White);
+    // sf::CircleShape correctorKnobD(8);
+    // correctorKnobD.setFillColor(sf::Color::Magenta);
 
     sf::RectangleShape startButton(sf::Vector2f(100, 30));
     startButton.setPosition({50, basey + 350});
@@ -84,67 +62,44 @@ int display() {
 
 
     // Remplacer la section des textes par :
-    sf::Text gainText(font);
-    gainText.setString("Gain K");
-    gainText.setFont(font);
-    gainText.setCharacterSize(16);
-    gainText.setPosition({50.f, basey + 50.f});
-
-    sf::Text tolText(font);
-    tolText.setString("Tolerance");
-    tolText.setFont(font);
-    tolText.setCharacterSize(16);
-    tolText.setPosition({50.f, basey + 110.f});
-
-    sf::Text correctorTextA(font);
-    correctorTextA.setString("Corr Time A");
-    correctorTextA.setFont(font);
-    correctorTextA.setCharacterSize(16);
-    correctorTextA.setPosition({50.f, basey + 170.f});
-
-    sf::Text correctorTextC(font);
-    correctorTextC.setString("Corr Time C");
-    correctorTextC.setFont(font);
-    correctorTextC.setCharacterSize(16);
-    correctorTextC.setPosition({50.f, basey + 230.f});
-
-    sf::Text correctorTextD(font);
-    correctorTextD.setString("Corr Time D");
-    correctorTextD.setFont(font);
-    correctorTextD.setCharacterSize(16);
-    correctorTextD.setPosition({50.f, basey + 290.f});
+  
+    // sf::Text correctorTextD(font);
+    // correctorTextD.setString("Corr Time D");
+    // correctorTextD.setFont(font);
+    // correctorTextD.setCharacterSize(16);
+    // correctorTextD.setPosition({50.f, basey + 290.f});
 
     sf::Text startText(font);
     startText.setString("Start");
     startText.setFont(font);
     startText.setCharacterSize(16);
-    startText.setPosition({75.f, basey + 355.f});
+    startText.setPosition({75.f, basey + offsetybutton+5.5f});
 
     sf::Text stopText(font);
     stopText.setString("Stop");
     stopText.setFont(font);
     stopText.setCharacterSize(16);
-    stopText.setPosition({230.f, basey + 355.f});
+    stopText.setPosition({230.f, basey + offsetybutton+5.5f});
 
     sf::Text quitText(font);
     quitText.setString("Quitter");
     quitText.setFont(font);
     quitText.setCharacterSize(16);
-    quitText.setPosition({370.f, basey + 355.f});
+    quitText.setPosition({370.f, basey + offsetybutton+5.5f});
 
     sf::Text playText(font);
     playText.setString("Lancer");
     playText.setFont(font);
     playText.setCharacterSize(16);
-    playText.setPosition({230.f, basey + 415.f});
+    playText.setPosition({230.f, basey + offsetybutton+5.5f});
 
     sf::Texture logoTexture;
     if (!logoTexture.loadFromFile("./extras/logo2.png")) {
         std::cerr << "Erreur chargement logo.png" << std::endl;
     }
     sf::Sprite logoSprite(logoTexture);
-    logoSprite.setScale({480.f / logoTexture.getSize().x , 480.f / logoTexture.getSize().y});
-    logoSprite.setPosition({20.f, 20.f});
+    logoSprite.setScale({640.f / logoTexture.getSize().x , 480.f / logoTexture.getSize().y/2});
+    logoSprite.setPosition({20.f,240+ 20.f});
 
     sf::Texture labTexture;
     if (!labTexture.loadFromFile("./extras/labyrinth.png")) {
@@ -158,7 +113,6 @@ int display() {
             while (const std::optional event = window.pollEvent()) {
             sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
             sf::Vector2f mouse = window.mapPixelToCoords(pixelPos);
-
             if (event->is<sf::Event::Closed>())
                 window.close();
 
@@ -168,15 +122,9 @@ int display() {
                 if (quitButton.getGlobalBounds().contains(mouse)) { window.close(); stop_signal = true; }
                 if (playButton.getGlobalBounds().contains(mouse)) {jeu = !jeu; 
                     jeu ? playText.setString("Jouer") : playText.setString("Pause") ; }
-                if (mouse.y > basey + 175 && mouse.y < basey + 195 && mouse.x > 150 && mouse.x < 350) {
-                    correctorTimeConstant = (mouse.x - 150) / 2000.0f * 5.0f;
-                }
-                if (mouse.y > basey + 235 && mouse.y < basey + 255 && mouse.x > 150 && mouse.x < 350) {
-                    correctorTimeConstantC = (mouse.x - 150) / 2000.0f * 5.0f;
-                }
-                if (mouse.y > basey + 295 && mouse.y < basey + 315 && mouse.x > 150 && mouse.x < 350) {
-                    correctorTimeConstantD = (mouse.x - 150) / 2000.0f * 5.0f;
-                }
+                // if (mouse.y > basey + 295 && mouse.y < basey + 315 && mouse.x > 150 && mouse.x < 350) {
+                //     correctorTimeConstantD = (mouse.x - 150) / 2000.0f * 5.0f;
+                // }
 
                 if (running) {
                     std::lock_guard<std::mutex> lock(processed_data.mutex);
@@ -202,36 +150,13 @@ int display() {
             }
 
             if (event->is<sf::Event::MouseButtonPressed>() || event->is<sf::Event::MouseMoved>()) {
-                if (mouse.y > basey + 55 && mouse.y < basey + 75 && mouse.x > 150 && mouse.x < 350) {
-                    gainK = (mouse.x - 150) / 200.0f * 2.0f;
-                    if (event->is<sf::Event::MouseButtonPressed>()) {
-                        break;
-                    }
-                }
-                if (mouse.y > basey + 115 && mouse.y < basey + 135 && mouse.x > 150 && mouse.x < 350) {
-                    tol = (mouse.x - 150) / 2;
-                    if (event->is<sf::Event::MouseButtonPressed>()) {
-                        break;
-                    }
-                }
-                if (mouse.y > basey+175 && mouse.y < basey+195 && mouse.x > 150 && mouse.x < 350) {
-                    correctorTimeConstant = float(mouse.x - 150) / 2000.0f * 5.0f; // 0.0 à 2.0
-                    if (event->is<sf::Event::MouseButtonPressed>()) {
-                        break;
-                    }
-                }
-                if (mouse.y > basey+235 && mouse.y < basey+255 && mouse.x > 150 && mouse.x < 350) {
-                    correctorTimeConstantC = float(mouse.x - 150) / 2000.0f * 5.0f; // 0.0 à 2.0
-                    if (event->is<sf::Event::MouseButtonPressed>()) {
-                        break;
-                    }
-                }
-                if (mouse.y > basey+295 && mouse.y < basey+325 && mouse.x > 150 && mouse.x < 350) {
-                    correctorTimeConstantD = float(mouse.x - 150) / 2000.0f * 5.0f; // 0.0 à 2.0
-                    if (event->is<sf::Event::MouseButtonPressed>()) {
-                        break;
-                    }
-                }
+                
+                // if (mouse.y > basey+295 && mouse.y < basey+325 && mouse.x > 150 && mouse.x < 350) {
+                //     correctorTimeConstantD = float(mouse.x - 150) / 2000.0f * 5.0f; // 0.0 à 2.0
+                //     if (event->is<sf::Event::MouseButtonPressed>()) {
+                //         break;
+                //     }
+                // }
             }
         }
 
@@ -259,80 +184,30 @@ int display() {
             window.draw(logoSprite);
         }
 
-        tolKnob.setPosition({static_cast<float>(150 + tol * 2 - 8), static_cast<float>(basey + 116)});
-        gainKnob.setPosition({static_cast<float>(150 + gainK / 2.0f * 200 - 8), static_cast<float>(basey + 56)});
-        correctorKnobA.setPosition({static_cast<float>(150 + (correctorTimeConstant / 5) * 2000 - 8), static_cast<float>(basey + 176)});
-        correctorKnobC.setPosition({static_cast<float>(150 + (correctorTimeConstantC / 5) * 2000 - 8),static_cast<float>(basey + 236)});
-        correctorKnobD.setPosition({static_cast<float>(150 + (correctorTimeConstantD / 5) * 2000 - 8), static_cast<float>(basey + 296)});
+        // correctorKnobD.setPosition({static_cast<float>(150 + (correctorTimeConstantD / 5) * 2000 - 8), static_cast<float>(basey + 296)});
 
         if(running){
-        startButton.setPosition({50, basey + 350});
-        stopButton.setPosition({200, basey + 350});
-        quitButton.setPosition({350, basey + 350});
-        playButton.setPosition({50, basey + 410});
-        startText.setPosition({75.f, basey + 355.f});
-        stopText.setPosition({230.f, basey + 355.f});
-        quitText.setPosition({370.f, basey + 355.f});
-        playText.setPosition({230.f, basey + 415.f});
+        startButton.setPosition({50, basey + offsetybutton});
+        stopButton.setPosition({200, basey + offsetybutton});
+        quitButton.setPosition({350, basey + offsetybutton});
+        playButton.setPosition({50, basey + offsetybutton+60.f});
+        startText.setPosition({75.f, basey + offsetybutton+5.5f});
+        stopText.setPosition({230.f, basey + offsetybutton+5.5f});
+        quitText.setPosition({370.f, basey + offsetybutton+5.5f});
+        playText.setPosition({230.f, basey + offsetybutton+5.5f +60.0f});
 
-        window.draw(gainSlider);
-        window.draw(gainKnob);
-        window.draw(tolSlider);
-        window.draw(tolKnob);
-        window.draw(gainText);
-        window.draw(tolText);
-        window.draw(correctorSliderA);
-        window.draw(correctorKnobA);
-        window.draw(correctorTextA);
-        window.draw(correctorSliderC);
-        window.draw(correctorKnobC);
-        window.draw(correctorTextC);
-        window.draw(correctorSliderD);
-        window.draw(correctorKnobD);
-        window.draw(correctorTextD);
+        // window.draw(correctorKnobD);
+        // window.draw(correctorTextD);
     
-        std::ostringstream oss;
-        oss << "Gain K: " << gainK;
-        sf::Text gainVal(font);
-        gainVal.setString(oss.str());
-        gainVal.setCharacterSize(14);
-        gainVal.setPosition({370, basey + 50});
-        window.draw(gainVal);
-
-        oss.str(""); oss.clear();
-        oss << "Tol: " << tol;
-        sf::Text tolVal(font);
-        tolVal.setString(oss.str());
-        tolVal.setCharacterSize(14);
-        tolVal.setPosition({370, basey + 110});
-        window.draw(tolVal);
-
-        oss.str(""); oss.clear();
-        oss << "CorrectorTimeConstant: " << correctorTimeConstant;
-        sf::Text correctorTimeConstant(font);
-        correctorTimeConstant.setString(oss.str());
-        correctorTimeConstant.setFont(font);
-        correctorTimeConstant.setCharacterSize(14);
-        correctorTimeConstant.setPosition({370, basey + 170});
-        window.draw(correctorTimeConstant);
-
-        oss.str(""); oss.clear();
-        oss << "CorrectorTimeConstantC: " << correctorTimeConstantC;
-        sf::Text correctorTimeConstantC(font);
-        correctorTimeConstantC.setString(oss.str());
-        correctorTimeConstantC.setFont(font);
-        correctorTimeConstantC.setCharacterSize(14);
-        correctorTimeConstantC.setPosition({370, basey + 230});
-        window.draw(correctorTimeConstantC);
-
-        oss.str(""); oss.clear();
-        oss << "CorrectorTimeConstantD: " << correctorTimeConstantD;
-        sf::Text correctorTimeConstantD(font);
-        correctorTimeConstantD.setString(oss.str());
-        correctorTimeConstantD.setFont(font);
-        correctorTimeConstantD.setCharacterSize(14);
-        correctorTimeConstantD.setPosition({370, basey + 290});
-        window.draw(correctorTimeConstantD);
+        
+        // oss.str(""); oss.clear();
+        // oss << "CorrectorTimeConstantD: " << correctorTimeConstantD;
+        // sf::Text correctorTimeConstantD(font);
+        // correctorTimeConstantD.setString(oss.str());
+        // correctorTimeConstantD.setFont(font);
+        // correctorTimeConstantD.setCharacterSize(14);
+        // correctorTimeConstantD.setPosition({370, basey + 290});
+        // window.draw(correctorTimeConstantD);
 
 
         window.draw(playText);
@@ -354,11 +229,8 @@ int display() {
         window.draw(startText);
         window.draw(stopText);
         window.draw(quitText);
-        
 
-        
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
         window.display();
     }
     return 0;
