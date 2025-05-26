@@ -92,7 +92,7 @@ void envoyerCommande(Position* commande, boost::asio::serial_port& serial) {
 
     {
         std::lock_guard<std::mutex> lock(consigne_mutex);
-        std::cout << "CMD envoyée : \t" << messageCommande;
+        //std::cout << "CMD envoyée : \t" << messageCommande;
     }
 
     boost::asio::write(serial, boost::asio::buffer(messageCommande), ec); 

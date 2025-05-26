@@ -74,7 +74,7 @@ int main() {
         while (!stop_signal) {
             boost::asio::read(serial, boost::asio::buffer(&c, 1));
             if (c == '\n') {
-                std::cout << "Reçu : " << ligne << std::endl;
+                //std::cout << "Reçu : " << ligne << std::endl;
                 ligne.clear();
             } else {
                 ligne += c;
