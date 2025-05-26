@@ -18,6 +18,7 @@
 #include <mutex>
 
 bool running = false;
+bool jeu = false;
 extern int tol;
 extern MasqueCouleur Mask1;
 cv::Mat srcrgb, src;
@@ -73,6 +74,10 @@ int display() {
     quitButton.setPosition({350, basey + 350});
     quitButton.setFillColor(sf::Color(100, 100, 200));
 
+    sf::RectangleShape playButton(sf::Vector2f(400, 30));
+    playButton.setPosition({50, basey + 410});
+    playButton.setFillColor(sf::Color(218, 165, 32));
+
     sf::Font font;
     font.openFromFile("./extras/DejaVuSans.ttf");
 
@@ -126,6 +131,12 @@ int display() {
     quitText.setCharacterSize(16);
     quitText.setPosition({370.f, basey + 355.f});
 
+    sf::Text playText(font);
+    playText.setString("Lancer");
+    playText.setFont(font);
+    playText.setCharacterSize(16);
+    playText.setPosition({230.f, basey + 415.f});
+
     sf::Texture logoTexture;
     if (!logoTexture.loadFromFile("./extras/logo.png")) {
         std::cerr << "Erreur chargement logo.png" << std::endl;
@@ -133,6 +144,14 @@ int display() {
     sf::Sprite logoSprite(logoTexture);
     logoSprite.setScale({480.f / 1024.f, 480.f / 1024.f});
     logoSprite.setPosition({20.f, 20.f});
+
+    sf::Texture labTexture;
+    if (!labTexture.loadFromFile("./extras/labyrinth.png")) {
+        std::cerr << "Erreur chargement labyrinthe.png" << std::endl;
+        return -1;
+    }
+    sf::Sprite labSprite(labTexture);
+    labSprite.setPosition({20.f, 20.f});
 
     while (window.isOpen()) {               // Déclare la variable event avant la boucle
             while (const std::optional event = window.pollEvent()) {
@@ -146,6 +165,8 @@ int display() {
                 if (startButton.getGlobalBounds().contains(mouse)) running = true;
                 if (stopButton.getGlobalBounds().contains(mouse)) running = false;
                 if (quitButton.getGlobalBounds().contains(mouse)) { window.close(); stop_signal = true; }
+                if (playButton.getGlobalBounds().contains(mouse)) {jeu = !jeu; 
+                    jeu ? playText.setString("Jouer") : playText.setString("Pause") ; }
                 if (mouse.y > basey + 175 && mouse.y < basey + 195 && mouse.x > 150 && mouse.x < 350) {
                     correctorTimeConstant = (mouse.x - 150) / 2000.0f * 5.0f;
                 }
@@ -226,6 +247,12 @@ int display() {
                 sf::Sprite sprite(texture);
                 sprite.setPosition({20.f, 20.f});
                 window.draw(sprite);
+                                // Puis superposer le labyrinthe avec transparence
+                float scaleX = static_cast<float>(src.cols) / labTexture.getSize().x;
+                float scaleY = static_cast<float>(src.rows) / labTexture.getSize().y;
+                labSprite.setScale({scaleX, scaleY});
+                labSprite.setColor(sf::Color(255, 255, 255, 255)); // 128 pour semi-transparent
+                window.draw(labSprite);
             }
         } else {
             window.draw(logoSprite);
@@ -249,6 +276,8 @@ int display() {
         window.draw(startText);
         window.draw(stopText);
         window.draw(quitText);
+        window.draw(playButton);
+        window.draw(playText);
         window.draw(correctorSliderA);
         window.draw(correctorKnobA);
         window.draw(correctorTextA);

@@ -47,42 +47,42 @@ int main() {
     boost::asio::serial_port serial(io);
 
     // Ouvrir le port série
-    serial.open("/dev/tty.usbmodem143101"); // Remplacer le chemin par celui du port série approprié (ls /dev/tty* pour trouver le bon port) TESTER CU
-        if (!serial.is_open()) {
-            std::cerr << "Erreur : le port série n'a pas pu être ouvert :" << std::endl;
-            return 1;
-        } else {
-            std::cout << "Port série ouvert avec succès." << std::endl;
-        }
+    // serial.open("/dev/tty.usbmodem143101"); // Remplacer le chemin par celui du port série approprié (ls /dev/tty* pour trouver le bon port) TESTER CU
+    //     if (!serial.is_open()) {
+    //         std::cerr << "Erreur : le port série n'a pas pu être ouvert :" << std::endl;
+    //         return 1;
+    //     } else {
+    //         std::cout << "Port série ouvert avec succès." << std::endl;
+    //     }
     
     
-    // Configurer le port série
-    try {
-        serial.set_option(boost::asio::serial_port_base::baud_rate(115200));
-        serial.set_option(boost::asio::serial_port_base::character_size(8));
-        serial.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
-        serial.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
-        serial.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
-    } catch (std::exception& e) {
-        std::cerr << "Erreur : " << e.what() << std::endl;
-    }
+    // // Configurer le port série
+    // try {
+    //     serial.set_option(boost::asio::serial_port_base::baud_rate(115200));
+    //     serial.set_option(boost::asio::serial_port_base::character_size(8));
+    //     serial.set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
+    //     serial.set_option(boost::asio::serial_port_base::stop_bits(boost::asio::serial_port_base::stop_bits::one));
+    //     serial.set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
+    // } catch (std::exception& e) {
+    //     std::cerr << "Erreur : " << e.what() << std::endl;
+    // }
 
-    if (LISTEN) {
-        char c; // Buffer pour stocker les caractères reçus
-        std::string ligne; // Chaîne pour stocker la ligne complète
+    // if (LISTEN) {
+    //     char c; // Buffer pour stocker les caractères reçus
+    //     std::string ligne; // Chaîne pour stocker la ligne complète
 
-        while (!stop_signal) {
-            boost::asio::read(serial, boost::asio::buffer(&c, 1));
-            if (c == '\n') {
-                //std::cout << "Reçu : " << ligne << std::endl;
-                ligne.clear();
-            } else {
-                ligne += c;
-            }
-        }
-    }
+    //     while (!stop_signal) {
+    //         boost::asio::read(serial, boost::asio::buffer(&c, 1));
+    //         if (c == '\n') {
+    //             //std::cout << "Reçu : " << ligne << std::endl;
+    //             ligne.clear();
+    //         } else {
+    //             ligne += c;
+    //         }
+    //     }
+    // }
 
-    attendreReady(serial); // Attendre le message "READY" de l'Arduino
+    // attendreReady(serial); // Attendre le message "READY" de l'Arduino
 
     // ----------------------------------- PROGRAMME ----------------------------------- //
 
@@ -90,10 +90,10 @@ int main() {
 
     std::thread thread_camera(camera);
 
-    std::thread thread_asservissement(asservirServo, &mesure, std::ref(serial)); // thread secondaire, pas d’UI
+    //std::thread thread_asservissement(asservirServo, &mesure, std::ref(serial)); // thread secondaire, pas d’UI
     display(); // appel de la fonction avec UI OpenCV, dans le thread principal
 
-    thread_asservissement.join();
+    //thread_asservissement.join();
     thread_camera.join();
 
     std::cout << "Fermeture propre du programme." << std::endl;

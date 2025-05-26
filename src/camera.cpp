@@ -46,7 +46,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
 
     // Charger le labyrinthe
     Labyrinthe lab;
-    lab.image = cv::imread("labyrinthe1.png", cv::IMREAD_GRAYSCALE);
+    lab.image = cv::imread("./extras/labyrinth.png", cv::IMREAD_GRAYSCALE);
     if(lab.image.empty()) {
         std::cerr << "Erreur: Impossible de charger le labyrinthe!" << std::endl;
         return;
