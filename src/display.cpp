@@ -28,41 +28,36 @@ extern double correctorTimeConstantC;
 extern double correctorTimeConstantD;
 
 int display() {
-     sf::RenderWindow window(sf::VideoMode({720u, 1000u}), "Color Tracking - Interface");
-     float basey = 480.0 + 20.0 + 20.0;
-
-    sf::RectangleShape gainSlider(sf::Vector2f(200, 5));
-    gainSlider.setPosition({150, basey + 60});
-    gainSlider.setFillColor(sf::Color::White);
-
-    sf::CircleShape gainKnob(8);
-    gainKnob.setFillColor(sf::Color::Red);
+    sf::RenderWindow window(sf::VideoMode({720u, 1000u}), "Color Tracking - Interface");
+    float basey = 480.0 + 20.0 + 20.0;
 
     sf::RectangleShape tolSlider(sf::Vector2f(200, 5));
     tolSlider.setPosition({150, basey + 120});
     tolSlider.setFillColor(sf::Color::White);
-
     sf::CircleShape tolKnob(8);
     tolKnob.setFillColor(sf::Color::Blue);
+
+    sf::RectangleShape gainSlider(sf::Vector2f(200, 5));
+    gainSlider.setPosition({150, basey + 60});
+    gainSlider.setFillColor(sf::Color::White);
+    sf::CircleShape gainKnob(8);
+    gainKnob.setFillColor(sf::Color::Red);
 
     sf::RectangleShape correctorSliderA(sf::Vector2f(200, 5));
     correctorSliderA.setPosition({150, basey + 180});
     correctorSliderA.setFillColor(sf::Color::White);
-
     sf::CircleShape correctorKnobA(8);
     correctorKnobA.setFillColor(sf::Color::Yellow);
 
     sf::RectangleShape correctorSliderC(sf::Vector2f(200, 5));
     correctorSliderC.setPosition({150, basey + 240});
     correctorSliderC.setFillColor(sf::Color::White);
-
     sf::CircleShape correctorKnobC(8);
     correctorKnobC.setFillColor(sf::Color::Cyan);
 
     sf::RectangleShape correctorSliderD(sf::Vector2f(200, 5));
     correctorSliderD.setPosition({150, basey + 300});
     correctorSliderD.setFillColor(sf::Color::White);
-
     sf::CircleShape correctorKnobD(8);
     correctorKnobD.setFillColor(sf::Color::Magenta);
 
@@ -221,8 +216,8 @@ int display() {
             window.draw(logoSprite);
         }
 
-        gainKnob.setPosition({static_cast<float>(150 + gainK / 2.0f * 200 - 8), static_cast<float>(basey + 56)});
         tolKnob.setPosition({static_cast<float>(150 + tol * 2 - 8), static_cast<float>(basey + 116)});
+        gainKnob.setPosition({static_cast<float>(150 + gainK / 2.0f * 200 - 8), static_cast<float>(basey + 56)});
         correctorKnobA.setPosition({static_cast<float>(150 + (correctorTimeConstant / 5) * 2000 - 8), static_cast<float>(basey + 176)});
         correctorKnobC.setPosition({static_cast<float>(150 + (correctorTimeConstantC / 5) * 2000 - 8),static_cast<float>(basey + 236)});
         correctorKnobD.setPosition({static_cast<float>(150 + (correctorTimeConstantD / 5) * 2000 - 8), static_cast<float>(basey + 296)});
@@ -260,37 +255,37 @@ int display() {
         oss.str(""); oss.clear();
         oss << "Tol: " << tol;
         sf::Text tolVal(font);
-        gainVal.setString(oss.str());
-        gainVal.setCharacterSize(14);
+        tolVal.setString(oss.str());
+        tolVal.setCharacterSize(14);
         tolVal.setPosition({370, basey + 110});
         window.draw(tolVal);
 
         oss.str(""); oss.clear();
         oss << "CorrectorTimeConstant: " << correctorTimeConstant;
-        sf::Text tocorrectorTimeConstant(font);
-        gainVal.setString(oss.str());
-        gainVal.setFont(font);
-        gainVal.setCharacterSize(14);
-        tocorrectorTimeConstant.setPosition({370, basey + 170});
-        window.draw(tocorrectorTimeConstant);
+        sf::Text correctorTimeConstant(font);
+        correctorTimeConstant.setString(oss.str());
+        correctorTimeConstant.setFont(font);
+        correctorTimeConstant.setCharacterSize(14);
+        correctorTimeConstant.setPosition({370, basey + 170});
+        window.draw(correctorTimeConstant);
 
         oss.str(""); oss.clear();
         oss << "CorrectorTimeConstantC: " << correctorTimeConstantC;
-        sf::Text tocorrectorTimeConstantC(font);
-        gainVal.setString(oss.str());
-        gainVal.setFont(font);
-        gainVal.setCharacterSize(14);
-        tocorrectorTimeConstantC.setPosition({370, basey + 230});
-        window.draw(tocorrectorTimeConstantC);
+        sf::Text correctorTimeConstantC(font);
+        correctorTimeConstantC.setString(oss.str());
+        correctorTimeConstantC.setFont(font);
+        correctorTimeConstantC.setCharacterSize(14);
+        correctorTimeConstantC.setPosition({370, basey + 230});
+        window.draw(correctorTimeConstantC);
 
         oss.str(""); oss.clear();
         oss << "CorrectorTimeConstantD: " << correctorTimeConstantD;
-        sf::Text tocorrectorTimeConstantD(font);
-        gainVal.setString(oss.str());
-        gainVal.setFont(font);
-        gainVal.setCharacterSize(14);
-        tocorrectorTimeConstantD.setPosition({370, basey + 290});
-        window.draw(tocorrectorTimeConstantD);
+        sf::Text correctorTimeConstantD(font);
+        correctorTimeConstantD.setString(oss.str());
+        correctorTimeConstantD.setFont(font);
+        correctorTimeConstantD.setCharacterSize(14);
+        correctorTimeConstantD.setPosition({370, basey + 290});
+        window.draw(correctorTimeConstantD);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         window.display();
