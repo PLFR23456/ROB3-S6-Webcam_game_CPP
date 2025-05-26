@@ -88,13 +88,13 @@ int main() {
 
     Position mesure = {320, 240};
 
-    std::thread thread_display(display);
+    std::thread thread_camera(camera);
 
     //std::thread thread_asservissement(asservirServo, &mesure, std::ref(serial)); // thread secondaire, pas d’UI
-    camera(); // appel de la fonction avec UI OpenCV, dans le thread principal
+    display(); // appel de la fonction avec UI OpenCV, dans le thread principal
 
     //thread_asservissement.join();
-    thread_display.join();
+    thread_camera.join();
 
     std::cout << "Fermeture propre du programme." << std::endl;
     return 0;
