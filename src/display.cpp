@@ -21,6 +21,7 @@ bool running = false;
 bool jeu = false;
 int status = 0;
 int gifnumber = 0;
+int playingsound = 0;
 extern int tol;
 extern MasqueCouleur Mask1;
 extern Position consigne;
@@ -109,6 +110,10 @@ int display() {
     }
     sf::Sprite labSprite(labTexture);
     labSprite.setPosition({20.f, 20.f});
+
+    // Ajouter cette déclaration au début de la fonction display() avec les autres variables
+    sf::SoundBuffer buffer;
+    std::unique_ptr<sf::Sound> sound;
 
     while (window.isOpen()) {               // Déclare la variable event avant la boucle
             while (const std::optional event = window.pollEvent()) {
@@ -213,6 +218,9 @@ int display() {
                 float scaleY = static_cast<float>(480) / gifTexture.getSize().y;
                 gifSprite.setScale({scaleX, scaleY});
                 window.draw(gifSprite);
+                playingsound = true;
+                jeu = false;
+                
             }
         }
         
@@ -269,8 +277,19 @@ int display() {
                 
 
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         window.display();
-    }
+        if (playingsound){//joue le son extras/sound/1.mp3
+                sf::SoundBuffer buffer;
+                if (!buffer.loadFromFile("./extras/sounds/1.mp3")) {
+                    std::cerr << "Erreur chargement son" << std::endl;
+                } else {
+                    sound = std::make_unique<sf::Sound>(buffer);
+                sound->play();
+                while (sound->getStatus() == sf::SoundSource::Status::Playing) {    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    }
+                }
+                playingsound = false; // Réinitialiser le flag pour ne pas jouer le son à chaque frame}
+    }}
     return 0;
 }
