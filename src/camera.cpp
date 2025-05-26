@@ -7,11 +7,11 @@
 #include <mutex> // Pour protéger les variables partagées
 
 // Surface minimale pour filtrer le bruit
-struct MasqueCouleur {
-    cv::Scalar mini{140, 140, 140};  
-    cv::Scalar maxi{190, 255, 255};  
-    int minArea{50};                 
-} Mask1;
+MasqueCouleur Mask1 {
+    cv::Scalar(140, 140, 140),
+    cv::Scalar(190, 255, 255),
+    50
+};
 
 int sources = 2 ;
 int screensources = 0; //0 = camera ; 1 = masque
@@ -37,25 +37,6 @@ void onCorrectorTimeConstantCChange(int value, void*) {correctorTimeConstantC = 
 void onCorrectorTimeConstantDChange(int value, void*) {correctorTimeConstantD = value / 1000.0;} // Le trackbar va de 0 à 2000, donc correctorTimeConstantD de 0.0 à 2.0
 void onTolChange(int value, void*) {tol = value;}
 
-void onMouseSimple(int event, int x, int y, int, void*) {
-    if (event == cv::EVENT_LBUTTONDOWN && !frame_for_click.empty()) { 
-        cv::Mat hsv;
-        cv::cvtColor(frame_for_click, hsv, cv::COLOR_BGR2HSV);
-        cv::Vec3b pix = hsv.at<cv::Vec3b>(y, x);
-        Mask1.mini = cv::Scalar(
-            std::max(0, pix[0] - tol),
-            std::max(0, pix[1] - tol*2),
-            std::max(0, pix[2] - tol*4)
-        );
-        Mask1.maxi = cv::Scalar(
-            std::min(180, pix[0] + tol),
-            std::min(255, pix[1] + tol*2),
-            std::min(255, pix[2] + tol*5)
-        );
-        last_color = cv::Scalar(pix[0], pix[1], pix[2]); // Sauvegarde la couleur HSV sélectionnée        
-        std::cout << "Nouvelle couleur HSV : " << (int)pix[0] << "," << (int)pix[1] << "," << (int)pix[2] << std::endl;
-    }
-}
 
 void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
     cv::Mat frame, hsv, mask;
@@ -103,7 +84,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         }
 
         // Si on a trouvé assez de pixels de la couleur
-        if(count > Mask1.minArea) {
+        if(count > Mask1.minArea && running==true) {
             // Calculer le point central
             cv::Point2f color_center(sumX/float(count), sumY/float(count));
         
@@ -204,7 +185,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
 }
 
 int camera() {
-    cv::VideoCapture cap(2);
+    cv::VideoCapture cap(0);
     if (!cap.isOpened()) {
         std::cerr << "Erreur: Impossible d'ouvrir la webcam!" << std::endl;
         return -1;

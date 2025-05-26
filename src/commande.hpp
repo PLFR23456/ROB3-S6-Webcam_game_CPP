@@ -20,6 +20,9 @@ extern double dYError;
 extern double summedXError;
 extern double summedYError;
 extern double gainK; 
+extern double correctorTimeConstant;
+extern double correctorTimeConstantC; 
+extern double correctorTimeConstantD;
 extern bool running;
 
 

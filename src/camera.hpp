@@ -19,6 +19,13 @@ struct ProcessedFrame {
 };
 extern ProcessedFrame processed_data;
 
+struct MasqueCouleur {
+    cv::Scalar mini;  // Min HSV
+    cv::Scalar maxi;  // Max HSV
+    int minArea;      // Aire minimale
+};
+extern MasqueCouleur Mask1;
+
 // ----------------- SIGNATURES DES FONCTIONS ----------------- //
 // Callback pour les trackbars (nécessaire même si vide)
 void onGainKChange(int value, void*);
@@ -26,7 +33,6 @@ void onCorrectorTimeConstantChange(int value, void*);
 void onCorrectorTimeConstantCChange(int value, void*);
 void onCorrectorTimeConstantDChange(int value, void*);
 void onTolChange(int value, void*);
-void onMouseSimple(int event, int x, int y, int, void*);
 
 // Déclaration de la fonction principale camera
 void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data);
