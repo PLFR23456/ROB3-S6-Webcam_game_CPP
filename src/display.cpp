@@ -337,7 +337,7 @@ int display(GameSession& game) {
                 startText.setPosition({100.f, basey + 200.f});
                 window.draw(startText);
             }
-            if (game.getLabyrinthStatus() && game.getWallTouched()) {
+            if (game.getLabyrinthStatus()==true && game.getWallTouched()) {
                 sf::Text endText(font);
                 endText.setString("!!GAME OVER!!");
                 endText.setStyle(sf::Text::Bold);

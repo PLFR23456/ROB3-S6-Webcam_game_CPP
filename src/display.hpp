@@ -44,7 +44,7 @@ public:
     bool getWallTouched() { return isWallTouched; }
 
     // Setters
-    void setLabyrinthStatus(bool status) { isLabyrinthDisplayed = status; }
+    void setLabyrinthStatus(bool stat) { isLabyrinthDisplayed = stat; }
 
     void openPage() { isPageOpened = true; }
     void closePage() { isPageOpened = false; }

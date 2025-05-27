@@ -134,15 +134,18 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                     if(ccx<startbox.x+30 && ccx>=startbox.x && ccy<startbox.y+30 && ccy>=startbox.y) {
                         std::cout << "STARTBOX ! " << std::endl;
                         game.startGame();
+                        std::cout << "DANS LA START BOX" << std::endl;
                     }
                     else {
                         game.idleGame();
+                        std::cout << "HORS DE LA START BOX" << std::endl;
                     }
                 }
 
                 else{if(ccx<endbox.x+30 && ccx>=endbox.x && ccy<endbox.y+30 && ccy>=endbox.y) {
                         std::cout << "ENDBOX ! " << std::endl;
                         game.enterEndBox();
+
                     }
                 }
                 // Si le pixel est noir (mur), c'est une collision
