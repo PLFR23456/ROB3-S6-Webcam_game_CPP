@@ -197,29 +197,27 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             consigne.x = 320;
             consigne.y = 240;
         }
-        
-        cv::Mat hsv_grad(grad_size, grad_size, CV_8UC3);
-        for (int y = 0; y < grad_size; ++y) {
-            for (int x = 0; x < grad_size; ++x) {
-                // Interpolation linéaire entre mini et maxi
-                int h = Mask1.mini[0] + x * (Mask1.maxi[0] - Mask1.mini[0]) / (grad_size - 1);
-                int s = Mask1.mini[1] + y * (Mask1.maxi[1] - Mask1.mini[1]) / (grad_size - 1);
-                int v = (Mask1.mini[2] + Mask1.maxi[2]) / 2; // Valeur centrale du V
-                hsv_grad.at<cv::Vec3b>(y, x) = cv::Vec3b(h, s, v);
-            }
-        }
+        //--------------------GRADIENT---------------------//
+        // cv::Mat hsv_grad(grad_size, grad_size, CV_8UC3);
+        // for (int y = 0; y < grad_size; ++y) {
+        //     for (int x = 0; x < grad_size; ++x) {
+        //         // Interpolation linéaire entre mini et maxi
+        //         int h = Mask1.mini[0] + x * (Mask1.maxi[0] - Mask1.mini[0]) / (grad_size - 1);
+        //         int s = Mask1.mini[1] + y * (Mask1.maxi[1] - Mask1.mini[1]) / (grad_size - 1);
+        //         int v = (Mask1.mini[2] + Mask1.maxi[2]) / 2; // Valeur centrale du V
+        //         hsv_grad.at<cv::Vec3b>(y, x) = cv::Vec3b(h, s, v);
+        //     }
+        // }
+        // // Conversion HSV -> BGR pour affichage
+        // cv::Mat bgr_grad;
+        // cv::cvtColor(hsv_grad, bgr_grad, cv::COLOR_HSV2BGR);
+        // // Position en bas à droite
+        // int x_offset = frame.cols - grad_size - 10;
+        // int y_offset = frame.rows - grad_size - 10;
+        // // Affichage du carré sur la frame
+        // bgr_grad.copyTo(frame(cv::Rect(x_offset, y_offset, grad_size, grad_size)));
+        //--------------------FIN DE GRADIENT---------------------//
 
-        // Conversion HSV -> BGR pour affichage
-        cv::Mat bgr_grad;
-        cv::cvtColor(hsv_grad, bgr_grad, cv::COLOR_HSV2BGR);
-
-
-        // Position en bas à droite
-        int x_offset = frame.cols - grad_size - 10;
-        int y_offset = frame.rows - grad_size - 10;
-
-        // Affichage du carré sur la frame
-        bgr_grad.copyTo(frame(cv::Rect(x_offset, y_offset, grad_size, grad_size)));
 
         {
         std::lock_guard<std::mutex> lock(data.mutex);
