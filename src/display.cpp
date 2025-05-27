@@ -179,6 +179,24 @@ int display(GameSession& game) {
                     std::cout << "Gif number: " << gifnumber << std::endl;
                 }
 
+                if (gamemodeBox.getGlobalBounds().contains(mouse)) {
+                    // rajouter 1 à gamemode et le garder entre 1 et 6
+                    gamemode++;
+                    if (gamemode > 6) gamemode = 1;
+                    gamemodeText.setString("Mode de jeu : " + std::to_string(gamemode));
+                    // changer la couleur de la box en fonction du mode de jeu
+                    gamemodeBox.setFillColor(sf::Color(109, 7, 26 + (gamemode - 1) * 20)); // Couleur différente pour chaque mode
+                    isCameraShaking = (gamemode-1)%2;
+                    labnumber = (gamemode-1)/2 + 1; // 1, 2, 3, 4, 5, 6
+                    std::cout << "Mode de jeu changé : " << gamemode << std::endl;
+                    // Charger le labyrinthe correspondant
+                    if (!labTexture.loadFromFile("./extras/lab" + std::to_string(labnumber) + ".png")) {
+                        std::cerr << "Erreur chargement lab" << std::to_string(labnumber) + ".png" << std::endl;
+                    } else {
+                        labSprite.setTexture(labTexture);
+                        labSprite.setPosition({20.f, 20.f});
+                    }
+                }
                 // Réglage des bouton en jeu
                 if (game.getPageStatus()) { 
                     std::lock_guard<std::mutex> lock(processed_data.mutex);
@@ -264,7 +282,7 @@ int display(GameSession& game) {
                 window.draw(startText);
             }
 
-            if (game.getLabyrinthStatus() && !(game.getStatus() == GameStatus::INITIALIZING)) {
+            if (game.getLabyrinthStatus() && !(game.getStatus() == GameStatus::NOT_PLAYING)) {
                 bouclestart = 0;
             }
             
@@ -306,7 +324,8 @@ int display(GameSession& game) {
                     }
                 }
                 score++;
-                game.reset();
+                game.setLabyrinthStatus(false);
+                game.idleGame();
                 playText.setString("Jouer");
             }
             if (game.getStatus() == GameStatus::INITIALIZING) {
@@ -341,8 +360,9 @@ int display(GameSession& game) {
                     window.draw(gifSprite);
                     playingsound = true;
                     soundnumber = rand() % 2 + 1; // Tirage aléatoire entre 1 et 2 pour le son
-                    game.setLabyrinthStatus(true);
-                    isGameStarted = false;
+                    game.setLabyrinthStatus(false);
+                    game.idleGame();
+                    //// regrouper sur une seule commadne ?
                     status=0;
                     playText.setString("Jouer");
                     
@@ -367,6 +387,15 @@ int display(GameSession& game) {
             window.draw(playText);
             startButton.setFillColor(sf::Color(64, 64, 64));
             stopButton.setFillColor(sf::Color(200, 100, 100));
+            window.draw(colorBox);
+            window.draw(colorText);
+            window.draw(scoreBox);
+            window.draw(scoreText);
+            window.draw(scoreValueText);
+            window.draw(gamemodeBox);
+            window.draw(gamemodeText);
+            window.draw(CreditsBox);
+            window.draw(creditsText);
         } else {
             startButton.setPosition({50, basey});
             stopButton.setPosition({200, basey});
@@ -377,6 +406,18 @@ int display(GameSession& game) {
             startButton.setFillColor(sf::Color(100, 200, 100));
             stopButton.setFillColor(sf::Color(64, 64, 64));
         }
+        
+        
+
+        window.draw(stopButton);
+        window.draw(quitButton);
+        window.draw(stopText);
+        window.draw(quitText);
+        window.draw(startButton);
+        window.draw(startText);
+
+        window.display();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000/60));
         
         if (playingsound) {
             //joue le son extras/sound/1.mp3
@@ -392,16 +433,6 @@ int display(GameSession& game) {
             }
             playingsound = false; // Réinitialiser le flag pour ne pas jouer le son à chaque frame}
         }
-
-        window.draw(stopButton);
-        window.draw(quitButton);
-        window.draw(stopText);
-        window.draw(quitText);
-        window.draw(startButton);
-        window.draw(startText);
-
-        window.display();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000/60));
     }
     return 0;
 }
