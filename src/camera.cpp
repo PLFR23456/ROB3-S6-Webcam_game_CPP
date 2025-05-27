@@ -38,6 +38,34 @@ void onCorrectorTimeConstantDChange(int value, void*) {correctorTimeConstantD = 
 void onTolChange(int value, void*) {tol = value;}
 
 
+void MaskCreation(cv::Mat& frame, cv::Mat& mask, cv::Mat& hsv, int& max_area, int& max_idx, std::vector<std::vector<cv::Point>>& contours) {
+        cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
+        // Conversion HSV et seuillage adaptatif pour robustesse à la luminosité
+        cv::inRange(hsv, Mask1.mini, Mask1.maxi, mask);
+
+        // Amélioration du masque : ouverture-fermeture pour réduire bruit et combler trous
+        cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(7, 7));
+        cv::morphologyEx(mask, mask, cv::MORPH_OPEN, kernel, cv::Point(-1, -1), 2);
+        cv::morphologyEx(mask, mask, cv::MORPH_CLOSE, kernel, cv::Point(-1, -1), 2);
+
+        // Recherche du plus grand contour (l'objet le plus gros)
+        std::vector<cv::Vec4i> hierarchy;
+        cv::findContours(mask, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+
+        
+        for (size_t i = 0; i < contours.size(); ++i) {
+            int area = cv::contourArea(contours[i]);
+            if (area > max_area) {
+            max_area = area;
+            max_idx = i;
+            }
+        }
+
+}
+
+
+
+
 void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
     cv::Mat frame, hsv, mask;
     int cam_width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -59,35 +87,30 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         cap >> frame;
         if (frame.empty()) continue;
         frame.copyTo(frame_for_click);
-        cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
-        cv::inRange(hsv, Mask1.mini, Mask1.maxi, mask);
-
-        // Lissage du masque
-        cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(5, 5));
-        cv::erode(mask, mask, kernel);
-        cv::erode(mask, mask, kernel);
-        cv::erode(mask, mask, kernel);
-        cv::dilate(mask, mask, kernel);
         
-        // Variables pour calculer le centre
-        int sumX = 0, sumY = 0;
+        //-------------------SUIVI DE COULEUR-------------------//
+        int max_area = 0;
+        int max_idx = -1;
+        std::vector<std::vector<cv::Point>> contours;
+        MaskCreation(frame, mask, hsv,max_area, max_idx, contours);
+        //---------------FIN-DE-SUIVI DE COULEUR----------------//
+
+        
+        cv::Point2f color_center(-1, -1);
         int count = 0;
-        int xmin = mask.cols, xmax = 0,ymin = mask.rows, ymax = 0;
-        // Parcourir le masque pour trouver tous les pixels de la couleur
-        for(int y = 0; y < mask.rows; y++) {
-            for(int x = 0; x < mask.cols; x++) {
-                if(mask.at<uchar>(y, x) > 0) {  // Si le pixel est blanc dans le masque
-                    sumX += x;
-                    sumY += y;
-                    count++;
-                }
+        if (max_idx != -1 && max_area > Mask1.minArea) {
+            // Calcul du centre de position du plus grand contour
+            cv::Moments mu = cv::moments(contours[max_idx]);
+            if (mu.m00 != 0) {
+            color_center = cv::Point2f(mu.m10 / mu.m00, mu.m01 / mu.m00);
+            count = max_area;
             }
+            // dessiner le contour suivi
+            cv::drawContours(frame, contours, max_idx, cv::Scalar(255,0,143), 2);
         }
 
         // Si on a trouvé assez de pixels de la couleur
         if(count > Mask1.minArea && isGamePageOpen==true) {
-            cv::Point2f color_center(sumX/float(count), sumY/float(count));
-            
             // Vérifier la collision avec les murs
             int ccx = static_cast<int>(color_center.x);
             int ccy = static_cast<int>(color_center.y);
@@ -134,9 +157,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             std::vector<cv::Vec4i> hierarchy;
             cv::findContours(mask, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
-            cv::circle(frame, color_center, 5, cv::Scalar(0,255,0), -1);  // Point vert: centre de la couleur
-            cv::circle(frame, cam_center, 5, cv::Scalar(0,0,255), -1);    // Point rouge: centre caméra
-            cv::line(frame, cam_center, color_center, cv::Scalar(255,0,0), 2);  // Ligne bleue entre les deux
+            cv::circle(frame, color_center, 5, cv::Scalar(130,0,74), -1);  // Point vert: centre de la couleur
 
             // Afficher les coordonnées et l'écart à l'écran
             std::string coord_text = "Position: (" + std::to_string(int(color_center.x)) + ", " + std::to_string(int(color_center.y)) + ")";
@@ -170,6 +191,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             consigne.x = 320;
             consigne.y = 240;
         }
+        
         cv::Mat hsv_grad(grad_size, grad_size, CV_8UC3);
         for (int y = 0; y < grad_size; ++y) {
             for (int x = 0; x < grad_size; ++x) {
