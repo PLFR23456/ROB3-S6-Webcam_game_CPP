@@ -282,7 +282,7 @@ int display(GameSession& game) {
                 window.draw(startText);
             }
 
-            if (game.getLabyrinthStatus() && !(game.getStatus() == GameStatus::NOT_PLAYING)) {
+            if (game.getLabyrinthStatus() && (game.getStatus() == GameStatus::NOT_PLAYING)) {
                 bouclestart = 0;
             }
             
@@ -337,7 +337,7 @@ int display(GameSession& game) {
                 startText.setPosition({100.f, basey + 200.f});
                 window.draw(startText);
             }
-            if (game.getLabyrinthStatus()==true && game.getWallTouched()) {
+            if (game.getWallTouched()) {
                 sf::Text endText(font);
                 endText.setString("!!GAME OVER!!");
                 endText.setStyle(sf::Text::Bold);
@@ -360,11 +360,8 @@ int display(GameSession& game) {
                     window.draw(gifSprite);
                     playingsound = true;
                     soundnumber = rand() % 2 + 1; // Tirage aléatoire entre 1 et 2 pour le son
-                    game.setLabyrinthStatus(false);
-                    game.idleGame();
-                    //// regrouper sur une seule commadne ?
-                    status=0;
                     playText.setString("Jouer");
+                    game.reset();
                     
                 }
             }

@@ -84,7 +84,6 @@ public:
     }
 
     void touchWall() {
-        isLabyrinthDisplayed = false;
         if (status == GameStatus::PLAYING) {
             isWallTouched = true;
         }
@@ -92,8 +91,8 @@ public:
 
     void reset() {
         isLabyrinthDisplayed = false;
-        isPageOpened = false;
         status = GameStatus::NOT_PLAYING;
+        isWallTouched = false;
     }
 };
 

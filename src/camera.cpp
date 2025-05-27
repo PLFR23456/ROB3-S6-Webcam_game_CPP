@@ -131,9 +131,9 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             // S'assurer que les coordonnées sont dans les limites
             if(ccx >= 0 && ccx < lab.image.cols && ccy >= 0 && ccy < lab.image.rows && game.getLabyrinthStatus()) {
                 if(game.getStatus() == GameStatus::NOT_PLAYING) {
-                    if(ccx<startbox.x+30 && ccx>=startbox.x && ccy<startbox.y+30 && ccy>=startbox.y) {
+                    if(ccx<startbox.x+30 & ccx>=startbox.x & ccy<startbox.y+30 & ccy>=startbox.y) {
                         std::cout << "STARTBOX ! " << std::endl;
-                        game.startGame();
+                        game.enterStartBox();
                         std::cout << "DANS LA START BOX" << std::endl;
                     }
                     else {
@@ -142,7 +142,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                     }
                 }
 
-                else{if(ccx<endbox.x+30 && ccx>=endbox.x && ccy<endbox.y+30 && ccy>=endbox.y) {
+                else{if(ccx<endbox.x+30 & ccx>=endbox.x & ccy<endbox.y+30 & ccy>=endbox.y) {
                         std::cout << "ENDBOX ! " << std::endl;
                         game.enterEndBox();
 
@@ -150,12 +150,10 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                 }
                 // Si le pixel est noir (mur), c'est une collision
                 if (lab.image.at<uchar>(ccy, ccx) < 128) {
-                    std::cout << "PERDU ! Collision avec un mur" << std::endl;
                     if(game.getStatus() == GameStatus::PLAYING) {
-                        game.touchWall(); // Mettre à jour le statut pour indiquer une collision
-                    } else {
-                        game.startGame(); // Pas de collision
-                    }   
+                        std::cout << "PERDU ! Collision avec un mur" << std::endl;
+                        game.touchWall(); // si on touche un mur
+                    }
                     // Option : retour au début
                     // consigne.x = lab.startPos.x;
                     // consigne.y = lab.startPos.y;
