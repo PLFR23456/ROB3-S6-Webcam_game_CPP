@@ -10,6 +10,7 @@ extern int tol;
 extern cv::Mat lastFrame;
 
 
+
 // Structure tampon partagée entre le thread de traitement et le thread principal 
 struct ProcessedFrame {
     cv::Mat frame;

@@ -12,6 +12,8 @@ Position consigne = {90, 90};
 std::mutex consigne_mutex;
 std::atomic<bool> stop_signal{false};
 
+GameSession game(startbox, endbox);
+
 void attendreReady(boost::asio::serial_port& serial) {
     std::string ligne;
     char c;
@@ -86,13 +88,15 @@ int main() {
 
     // ----------------------------------- PROGRAMME ----------------------------------- //
 
+    
+
     Position mesure = {320, 240};
 
     std::thread thread_camera(camera);
 
     //std::thread thread_asservissement(asservirServo, &mesure, std::ref(serial)); // thread secondaire, pas d’UI
 
-    GameSession game(startbox, endbox);
+    
     display(game); // appel de la fonction avec UI OpenCV, dans le thread principal
 
     thread_asservissement.join();
