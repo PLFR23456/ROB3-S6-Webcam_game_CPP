@@ -94,7 +94,7 @@ int main() {
 
     std::thread thread_camera(camera);
 
-    //std::thread thread_asservissement(asservirServo, &mesure, std::ref(serial)); // thread secondaire, pas d’UI
+    std::thread thread_asservissement(asservirServo, &mesure, std::ref(serial)); // thread secondaire, pas d’UI
 
     
     display(game); // appel de la fonction avec UI OpenCV, dans le thread principal

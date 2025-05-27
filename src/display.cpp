@@ -64,6 +64,23 @@ int display(GameSession& game) {
     playButton.setPosition({50, basey + 410});
     playButton.setFillColor(sf::Color(218, 165, 32));
 
+    sf::RectangleShape colorBox(sf::Vector2f(150, 30)); 
+    colorBox.setPosition({350 + 100 + 30, basey + offsetybutton}); 
+    colorBox.setFillColor(sf::Color(64, 64, 64)); 
+
+    sf::RectangleShape scoreBox(sf::Vector2f(150, 30)); 
+    scoreBox.setPosition({350 + 100 + 30, basey + offsetybutton+60.f});
+    scoreBox.setFillColor(sf::Color(64, 64, 64));
+
+    sf::RectangleShape gamemodeBox(sf::Vector2f(400, 30));
+    gamemodeBox.setPosition({50, basey + offsetybutton+120.f});
+    gamemodeBox.setFillColor(sf::Color(109, 7, 26)); 
+
+    sf::RectangleShape CreditsBox(sf::Vector2f(150, 30));
+    CreditsBox.setPosition({350 + 100 + 30, basey + offsetybutton+120.f});
+    CreditsBox.setFillColor(sf::Color(64, 64, 64));
+
+
     sf::Text startText(font);
     startText.setString("Start");
     startText.setFont(font);
