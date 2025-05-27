@@ -141,12 +141,12 @@ void asservirServo(Position* mesure, boost::asio::serial_port& serial) {
 
         // Genere une consigne qui est un peu aléatoire pour simuler un mouvement
         
-
+        // FAIS MOI LALGO LE PLUS 
 
         //calculerCommande(mesure, &consigne_locale, &commande);
-        if(boucleconsigne%5==0){
-            commande.x = 90+(rand() % 3 - 1) * 5; // +/- 5 pixels
-            commande.y = 90+(rand() % 3 - 1) * 5; // +/- 5 pixels
+        if(boucleconsigne%8==0){
+            commande.x = 90+(rand() % 3 - 1) * 2; // +/- 6 pixels
+            commande.y = 90+(rand() % 3 - 1) * 2; // +/- 6 pixels
         }
         boucleconsigne++;
 

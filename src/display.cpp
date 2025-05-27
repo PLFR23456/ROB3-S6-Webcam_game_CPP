@@ -22,7 +22,7 @@ int gamemode = 1;
 bool isGamePageOpen = false;
 bool isGamePre_Started = false;
 bool isGameStarted = false; // si on a passe la startbox
-bool isCameraShaking = true;
+bool isCameraShaking = false;
 //GLOBAL INDICATORS
 int status = 0;
 int soundnumber=0;
@@ -42,7 +42,7 @@ extern double correctorTimeConstant;
 extern double correctorTimeConstantC; 
 extern double correctorTimeConstantD;
 Position startbox= {35, 35}; // Position de la startbox
-Position endbox = {60, 40}; // Position de la endbox
+Position endbox = { 600, 400}; // Position de la endbox
 
 
 int display() {

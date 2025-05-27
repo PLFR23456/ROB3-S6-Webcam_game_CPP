@@ -234,7 +234,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
 }
 
 int camera() {
-    cv::VideoCapture cap(2);
+    cv::VideoCapture cap(0);
     if (!cap.isOpened()) {
         std::cerr << "Erreur: Impossible d'ouvrir la webcam!" << std::endl;
         return -1;
