@@ -5,17 +5,17 @@
 
 enum class GameStatus {
     NOT_PLAYING,
-    IN_START_BOX,
+    INITIALIZING,
     PLAYING,
-    IN_END_BOX,
-    TOUCHING_WALLS,
+    WINNING,
     PAUSED
 };
 
 class GameSession {
 private:
-    bool isPageOpen = false;
-    bool isStarted = false;
+    bool isPageOpened = false;
+    bool isLabyrinthDisplayed = false;
+    bool isWallTouched = false;
 
     Position startBox;
     Position endBox;
@@ -26,50 +26,54 @@ public:
         : startBox(start), endBox(end) {}
 
     // Getters
-    bool pageOpen() const { return isPageOpen; }
-    bool started() const { return isStarted; }
+    bool getPageStatus() const { return isPageOpened; }
+    bool getLabyrinthStatus() const { return isLabyrinthDisplayed; }
     GameStatus getStatus() const { return status; }
 
     // Setters
-    void openPage() { isPageOpen = true; }
-    void closePage() { isPageOpen = false; }
+    void setLabyrinthStatus(bool status) { isLabyrinthDisplayed = true; }
 
-    void startGame() {
-        isStarted = true;
-        status = GameStatus::PLAYING;
-    }
+    void openPage() { isPageOpened = true; }
+    void closePage() { isPageOpened = false; }
+
+    void startGame() { status = GameStatus::PLAYING; }
 
     void pauseGame() {
+        isLabyrinthDisplayed = false;
         if (status == GameStatus::PLAYING) {
             status = GameStatus::PAUSED;
         }
     }
 
     void resumeGame() {
+        isLabyrinthDisplayed = true;
         if (status == GameStatus::PAUSED) {
             status = GameStatus::PLAYING;
         }
     }
 
     void enterStartBox() {
-        status = GameStatus::IN_START_BOX;
+        if (status == GameStatus::NOT_PLAYING) {
+            status = GameStatus::INITIALIZING;
+        }
     }
 
     void enterEndBox() {
         if (status == GameStatus::PLAYING) {
-            status = GameStatus::IN_END_BOX;
+            status = GameStatus::WINNING;
         }
     }
 
     void touchWall() {
+        isLabyrinthDisplayed = false;
         if (status == GameStatus::PLAYING) {
-            status = GameStatus::TOUCHING_WALLS;
+            isWallTouched = true;
         }
     }
 
     void reset() {
-        isPageOpen = false;
-        isStarted = false;
+        isLabyrinthDisplayed = false;
+        isPageOpened = false;
         status = GameStatus::NOT_PLAYING;
     }
 };

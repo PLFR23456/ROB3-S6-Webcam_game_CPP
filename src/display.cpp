@@ -1,3 +1,4 @@
+#include "display.hpp"
 #include "commande.hpp"
 #include "camera.hpp"
 #include <SFML/Graphics.hpp>
@@ -35,15 +36,7 @@ extern Position startbox;
 extern Position endbox;
 cv::Mat srcrgb, src;
 
-extern double gainK;
-extern double correctorTimeConstant;
-extern double correctorTimeConstantC; 
-extern double correctorTimeConstantD;
-Position startbox= {35, 35}; // Position de la startbox
-Position endbox = {60, 40}; // Position de la endbox
-
-
-int display() {
+int display(GameSession& game) {
     sf::RenderWindow window(sf::VideoMode({720u, 1000u}), "Color Tracking - Interface");
     float basey = 480.0 + 20.0 + 20.0;
     float offsetybutton = 30;
@@ -51,12 +44,6 @@ int display() {
     sf::SoundBuffer buffer;
     std::unique_ptr<sf::Sound> sound;
     font.openFromFile("./extras/DejaVuSans.ttf");
-    
-    // sf::RectangleShape correctorSliderD(sf::Vector2f(200, 5));
-    // correctorSliderD.setPosition({150, basey + 300});
-    // correctorSliderD.setFillColor(sf::Color::White);
-    // sf::CircleShape correctorKnobD(8);
-    // correctorKnobD.setFillColor(sf::Color::Magenta);
 
     sf::RectangleShape startButton(sf::Vector2f(100, 30));
     startButton.setPosition({50, basey + 350});
@@ -73,15 +60,6 @@ int display() {
     sf::RectangleShape playButton(sf::Vector2f(400, 30));
     playButton.setPosition({50, basey + 410});
     playButton.setFillColor(sf::Color(218, 165, 32));
-
-
-    // Remplacer la section des textes par :
-  
-    // sf::Text correctorTextD(font);
-    // correctorTextD.setString("Corr Time D");
-    // correctorTextD.setFont(font);
-    // correctorTextD.setCharacterSize(16);
-    // correctorTextD.setPosition({50.f, basey + 290.f});
 
     sf::Text startText(font);
     startText.setString("Start");
@@ -123,42 +101,36 @@ int display() {
     sf::Sprite labSprite(labTexture);
     labSprite.setPosition({20.f, 20.f});
 
-    /*
-    BOUCLE WHILE PRINCIPALE
-    BOUCLE WHILE PRINCIPALE
-
-    BOUCLE WHILE PRINCIPALE
-    BOUCLE WHILE PRINCIPALE
-
-    BOUCLE WHILE PRINCIPALE
-    BOUCLE WHILE PRINCIPALE    
-    */
-
-
     while (window.isOpen()) {              
-            while (const std::optional event = window.pollEvent()) {
+        while (const std::optional event = window.pollEvent()) {
             sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
             sf::Vector2f mouse = window.mapPixelToCoords(pixelPos);
             if (event->is<sf::Event::Closed>())
                 window.close();
 
             if (event->is<sf::Event::MouseButtonPressed>()) {
-                if (startButton.getGlobalBounds().contains(mouse)) isGamePageOpen = true;
-                if (stopButton.getGlobalBounds().contains(mouse)) isGamePageOpen = false;
-                if (quitButton.getGlobalBounds().contains(mouse)) { window.close(); stop_signal = true; }
-                if (playButton.getGlobalBounds().contains(mouse)) {isGamePre_Started = !isGamePre_Started; 
-                    isGamePre_Started ? playText.setString("Jouer") : playText.setString("Pause") ; 
-                //tirer un numero de 1 à 6
-                gifnumber = rand() % 6 + 1; // tirage aléatoire entre 1 et 6
-                std::cout << "Gif number: " << gifnumber << std::endl;
+                if (startButton.getGlobalBounds().contains(mouse)) game.openPage();
+                if (stopButton.getGlobalBounds().contains(mouse)) game.closePage();
+                if (quitButton.getGlobalBounds().contains(mouse)) { 
+                    window.close(); 
+                    stop_signal = true; // Signal d'interruption du thread de traitement
                 }
-                
-                
-                // if (mouse.y > basey + 295 && mouse.y < basey + 315 && mouse.x > 150 && mouse.x < 350) {
-                //     correctorTimeConstantD = (mouse.x - 150) / 2000.0f * 5.0f;
-                // }
+                if (playButton.getGlobalBounds().contains(mouse)) {
+                    if (game.getStatus() == GameStatus::NOT_PLAYING) {
+                        game.startGame();
+                        playText.setString("Jouer");
+                    } else { 
+                        game.pauseGame();
+                        playText.setString("Pause");
+                    }
+                    
+                    // Tirer un numéro de 1 à 6
+                    gifnumber = rand() % 6 + 1; // tirage aléatoire entre 1 et 6
+                    std::cout << "Gif number: " << gifnumber << std::endl;
+                }
 
-                if (isGamePageOpen) {
+                // Réglage des bouton en jeu
+                if (game.getPageStatus()) { 
                     std::lock_guard<std::mutex> lock(processed_data.mutex);
                     if (processed_data.ready && !processed_data.frame.empty()) {
                         srcrgb = processed_data.frame.clone();
@@ -182,18 +154,12 @@ int display() {
             }
 
             if (event->is<sf::Event::MouseButtonPressed>() || event->is<sf::Event::MouseMoved>()) {
-                
-                // if (mouse.y > basey+295 && mouse.y < basey+325 && mouse.x > 150 && mouse.x < 350) {
-                //     correctorTimeConstantD = float(mouse.x - 150) / 2000.0f * 5.0f; // 0.0 à 2.0
-                //     if (event->is<sf::Event::MouseButtonPressed>()) {
-                //         break;
-                //     }
-                // }
             }
         }
 
         window.clear(sf::Color(30, 30, 30));
-        if (isGamePageOpen) {
+
+        if (game.getPageStatus()) {
             std::lock_guard<std::mutex> lock(processed_data.mutex);
             if (processed_data.ready && !processed_data.frame.empty()) {
                 cv::Mat srcrgb = processed_data.frame;
@@ -205,21 +171,19 @@ int display() {
                 sf::Sprite sprite(texture);
                 sprite.setPosition({20.f, 20.f});
                 window.draw(sprite);
-                if(isGamePre_Started){
-                                // Puis superposer le labyrinthe avec transparence
-                float scaleX = static_cast<float>(src.cols) / labTexture.getSize().x;
-                float scaleY = static_cast<float>(src.rows) / labTexture.getSize().y;
-                labSprite.setScale({scaleX, scaleY});
-                labSprite.setColor(sf::Color(255, 255, 255, 128)); // 128 pour semi-transparent
-                if(isGameStarted){
-                    // superpsoer le labyrinthe avec transparence de 0.5
-                    labSprite.setColor(sf::Color(255, 255, 255, 255)); // 128 pour semi-transparent
+
+                if(game.getLabyrinthStatus()) {
+                    // Puis superposer le labyrinthe avec transparence
+                    float scaleX = static_cast<float>(src.cols) / labTexture.getSize().x;
+                    float scaleY = static_cast<float>(src.rows) / labTexture.getSize().y;
+                    labSprite.setScale({scaleX, scaleY});
+                    labSprite.setColor(sf::Color(255, 255, 255, 128)); // 128 pour semi-transparent
+                    if (game.getStatus == GameStatus::PLAYING) labSprite.setColor(sf::Color(255, 255, 255, 255)); // 128 pour semi-transparent
+                    window.draw(labSprite);
                 }
-                window.draw(labSprite);}
             }
 
-
-                        if(isGamePre_Started==true){
+            if(game.getLabyrinthStatus()) {
                 //dessiner un carré rouge dans le coin inferieur droit
                 sf::RectangleShape endBox(sf::Vector2f(30.f, 30.f));
                 //violet
@@ -248,18 +212,22 @@ int display() {
                 window.draw(startText);
             }
 
-            if(status==0&&isGamePre_Started){
-                if(bouclestart>0){bouclestart=0; isGameStarted=false;}
+            if (game.getLabyrinthStatus && !game.getStatus == GameStatus::INITIALIZING) {
+                bouclestart = 0;
             }
             
-            if(status==1&&isGamePre_Started){
+            if (game.getStatus == GameStatus::INITIALIZING) {
                 bouclestart++;
-                if(bouclestart>100){status=2; bouclestart=0; std::cout << "Lancement du jeu" << std::endl;isGameStarted=true;}
+                if(bouclestart > 100) { 
+                    std::cout << "Lancement du jeu" << std::endl;
+                    game.startGame();
+                    bouclestart = 0;
+                }
             }
 
 
 
-            if(status==3){
+            if (game.getStatus == GameStatus::WINNING) {
                 //jouer le gif ./extras/win.gif avec les frames qui tournent 5 fois puis stop
                 sf::Text winText(font);
                 winText.setString("Vous avez gagné !");
@@ -286,12 +254,10 @@ int display() {
                     }
                 }
                 score++;
-                isGamePre_Started= false; // on quitte le jeu
-                isGameStarted = false; // on quitte le jeu
-                status=0; // on remet le status à 0
+                game.reset();
                 playText.setString("Jouer");
             }
-            if(status==1){
+            if (game.getStatus == GameStatus::INITIALIZING) {
                 sf::Text startText(font);
                 startText.setString("En attente de 3 secondes...");
                 startText.setFont(font);
@@ -300,7 +266,7 @@ int display() {
                 startText.setPosition({50.f, basey + 100.f});
                 window.draw(startText);
             }
-            if(isGamePre_Started && status==4){
+            if (game.getLabyrinthStatus() && game.isWallTouched()) {
                 sf::Text endText(font);
                 endText.setString("GAME OVER!!");
                 endText.setFont(font);
@@ -333,56 +299,46 @@ int display() {
         else {
             window.draw(logoSprite);
         } 
-        
-        
-        
-        
-
-
-        // correctorKnobD.setPosition({static_cast<float>(150 + (correctorTimeConstantD / 5) * 2000 - 8), static_cast<float>(basey + 296)});
-
-        if(isGamePageOpen){
-        startButton.setPosition({50, basey + offsetybutton});
-        stopButton.setPosition({200, basey + offsetybutton});
-        quitButton.setPosition({350, basey + offsetybutton});
-        playButton.setPosition({50, basey + offsetybutton+60.f});
-        startText.setPosition({75.f, basey + offsetybutton+5.5f});
-        stopText.setPosition({230.f, basey + offsetybutton+5.5f});
-        quitText.setPosition({370.f, basey + offsetybutton+5.5f});
-        playText.setPosition({230.f, basey + offsetybutton+5.5f +60.0f});
-        window.draw(playButton);
-        window.draw(playText);
-
-        // window.draw(correctorKnobD);
-        // window.draw(correctorTextD);
     
+        // Configuration de l'interface
+        if (game.pageOpen()) { // Si le jeu est lancé
+            startButton.setPosition({50, basey + offsetybutton});
+            stopButton.setPosition({200, basey + offsetybutton});
+            quitButton.setPosition({350, basey + offsetybutton});
+            playButton.setPosition({50, basey + offsetybutton+60.f});
+            startText.setPosition({75.f, basey + offsetybutton+5.5f});
+            stopText.setPosition({230.f, basey + offsetybutton+5.5f});
+            quitText.setPosition({370.f, basey + offsetybutton+5.5f});
+            playText.setPosition({230.f, basey + offsetybutton+5.5f +60.0f});
+            window.draw(playButton);
+            window.draw(playText);
+            startButton.setFillColor(sf::Color(64, 64, 64));
+            stopButton.setFillColor(sf::Color(200, 100, 100));
+        } else {
+            startButton.setPosition({50, basey});
+            stopButton.setPosition({200, basey});
+            quitButton.setPosition({350, basey});
+            startText.setPosition({75.f, basey + 5.f});
+            stopText.setPosition({230.f, basey + 5.f});
+            quitText.setPosition({370.f, basey + 5.f});
+            startButton.setFillColor(sf::Color(100, 200, 100));
+            stopButton.setFillColor(sf::Color(64, 64, 64));
+        }
         
-        // oss.str(""); oss.clear();
-        // oss << "CorrectorTimeConstantD: " << correctorTimeConstantD;
-        // sf::Text correctorTimeConstantD(font);
-        // correctorTimeConstantD.setString(oss.str());
-        // correctorTimeConstantD.setFont(font);
-        // correctorTimeConstantD.setCharacterSize(14);
-        // correctorTimeConstantD.setPosition({370, basey + 290});
-        // window.draw(correctorTimeConstantD);
-
-
-
-    }
-        else{
-        startButton.setPosition({50, basey});
-        stopButton.setPosition({200, basey});
-        quitButton.setPosition({350, basey});
-        startText.setPosition({75.f, basey + 5.f});
-        stopText.setPosition({230.f, basey + 5.f});
-        quitText.setPosition({370.f, basey + 5.f});
-    } // on affiche les boutons + bas
-
-        
-        if(isGamePageOpen){startButton.setFillColor(sf::Color(64, 64, 64));
-            stopButton.setFillColor(sf::Color(200, 100, 100));}
-        else{startButton.setFillColor(sf::Color(100, 200, 100));
-            stopButton.setFillColor(sf::Color(64, 64, 64));}
+        if (playingsound) {
+            //joue le son extras/sound/1.mp3
+            sf::SoundBuffer buffer;
+            if (!buffer.loadFromFile("./extras/sounds/"+std::to_string(soundnumber)+".mp3")) {
+                std::cerr << "Erreur chargement son" << std::endl;
+            } else {
+                sound = std::make_unique<sf::Sound>(buffer);
+                sound->play();
+                while (sound->getStatus() == sf::SoundSource::Status::Playing) {    
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                }
+            }
+            playingsound = false; // Réinitialiser le flag pour ne pas jouer le son à chaque frame}
+        }
 
         window.draw(stopButton);
         window.draw(quitButton);
@@ -390,24 +346,9 @@ int display() {
         window.draw(quitText);
         window.draw(startButton);
         window.draw(startText);
-                
 
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
         window.display();
-
-
-        if (playingsound){//joue le son extras/sound/1.mp3
-                sf::SoundBuffer buffer;
-                if (!buffer.loadFromFile("./extras/sounds/"+std::to_string(soundnumber)+".mp3")) {
-                    std::cerr << "Erreur chargement son" << std::endl;
-                } else {
-                    sound = std::make_unique<sf::Sound>(buffer);
-                sound->play();
-                while (sound->getStatus() == sf::SoundSource::Status::Playing) {    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                    }
-                }
-                playingsound = false; // Réinitialiser le flag pour ne pas jouer le son à chaque frame}
-    }}
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000/60));
+    }
     return 0;
 }

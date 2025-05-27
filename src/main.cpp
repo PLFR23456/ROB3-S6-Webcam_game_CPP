@@ -91,7 +91,10 @@ int main() {
     std::thread thread_camera(camera);
 
     //std::thread thread_asservissement(asservirServo, &mesure, std::ref(serial)); // thread secondaire, pas d’UI
-    display(); // appel de la fonction avec UI OpenCV, dans le thread principal
+    Position startbox = {35, 35}; // Position de la startbox
+    Position endbox = {60, 40}; // Position de la endbox
+    GameSession game(startbox, endbox);
+    display(game); // appel de la fonction avec UI OpenCV, dans le thread principal
 
     //thread_asservissement.join();
     thread_camera.join();
