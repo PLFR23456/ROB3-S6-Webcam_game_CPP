@@ -3,6 +3,9 @@
 
 #include "commande.hpp"
 
+extern Position startbox;
+extern Position endbox;
+
 enum class GameStatus {
     NOT_PLAYING,
     INITIALIZING,
@@ -29,6 +32,7 @@ public:
     bool getPageStatus() const { return isPageOpened; }
     bool getLabyrinthStatus() const { return isLabyrinthDisplayed; }
     GameStatus getStatus() const { return status; }
+    bool getWallTouched() { return isWallTouched; }
 
     // Setters
     void setLabyrinthStatus(bool status) { isLabyrinthDisplayed = true; }
@@ -38,17 +42,18 @@ public:
 
     void startGame() { status = GameStatus::PLAYING; }
 
+
+
     void pauseGame() {
-        isLabyrinthDisplayed = false;
         if (status == GameStatus::PLAYING) {
             status = GameStatus::PAUSED;
         }
     }
 
     void resumeGame() {
-        isLabyrinthDisplayed = true;
-        if (status == GameStatus::PAUSED) {
+        if (status == GameStatus::PAUSED || status == GameStatus::NOT_PLAYING) {
             status = GameStatus::PLAYING;
+            isLabyrinthDisplayed = true;
         }
     }
 

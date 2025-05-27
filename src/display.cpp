@@ -32,8 +32,8 @@ int bouclestart = 0;
 extern int tol;
 extern MasqueCouleur Mask1;
 extern Position consigne;
-extern Position startbox;
-extern Position endbox;
+Position startbox = {35, 35}; // Position de la startbox
+Position endbox = {60, 40}; // Position de la endbox
 cv::Mat srcrgb, src;
 
 int display(GameSession& game) {
@@ -116,12 +116,12 @@ int display(GameSession& game) {
                     stop_signal = true; // Signal d'interruption du thread de traitement
                 }
                 if (playButton.getGlobalBounds().contains(mouse)) {
-                    if (game.getStatus() == GameStatus::NOT_PLAYING) {
-                        game.startGame();
-                        playText.setString("Jouer");
-                    } else { 
-                        game.pauseGame();
+                    if (game.getStatus() == GameStatus::NOT_PLAYING || game.getStatus() == GameStatus::PAUSED) {
+                        game.resumeGame(); // Reprendre si en pause, démarrer si non joué
                         playText.setString("Pause");
+                    } else if (game.getStatus() == GameStatus::PLAYING) {
+                        game.pauseGame();
+                        playText.setString("Jouer");
                     }
                     
                     // Tirer un numéro de 1 à 6
@@ -178,7 +178,7 @@ int display(GameSession& game) {
                     float scaleY = static_cast<float>(src.rows) / labTexture.getSize().y;
                     labSprite.setScale({scaleX, scaleY});
                     labSprite.setColor(sf::Color(255, 255, 255, 128)); // 128 pour semi-transparent
-                    if (game.getStatus == GameStatus::PLAYING) labSprite.setColor(sf::Color(255, 255, 255, 255)); // 128 pour semi-transparent
+                    if (game.getStatus() == GameStatus::PLAYING) labSprite.setColor(sf::Color(255, 255, 255, 255)); // 128 pour semi-transparent
                     window.draw(labSprite);
                 }
             }
@@ -212,11 +212,11 @@ int display(GameSession& game) {
                 window.draw(startText);
             }
 
-            if (game.getLabyrinthStatus && !game.getStatus == GameStatus::INITIALIZING) {
+            if (game.getLabyrinthStatus() && !(game.getStatus() == GameStatus::INITIALIZING)) {
                 bouclestart = 0;
             }
             
-            if (game.getStatus == GameStatus::INITIALIZING) {
+            if (game.getStatus() == GameStatus::INITIALIZING) {
                 bouclestart++;
                 if(bouclestart > 100) { 
                     std::cout << "Lancement du jeu" << std::endl;
@@ -227,7 +227,7 @@ int display(GameSession& game) {
 
 
 
-            if (game.getStatus == GameStatus::WINNING) {
+            if (game.getStatus() == GameStatus::WINNING) {
                 //jouer le gif ./extras/win.gif avec les frames qui tournent 5 fois puis stop
                 sf::Text winText(font);
                 winText.setString("Vous avez gagné !");
@@ -257,7 +257,7 @@ int display(GameSession& game) {
                 game.reset();
                 playText.setString("Jouer");
             }
-            if (game.getStatus == GameStatus::INITIALIZING) {
+            if (game.getStatus() == GameStatus::INITIALIZING) {
                 sf::Text startText(font);
                 startText.setString("En attente de 3 secondes...");
                 startText.setFont(font);
@@ -266,7 +266,7 @@ int display(GameSession& game) {
                 startText.setPosition({50.f, basey + 100.f});
                 window.draw(startText);
             }
-            if (game.getLabyrinthStatus() && game.isWallTouched()) {
+            if (game.getLabyrinthStatus() && game.getWallTouched()) {
                 sf::Text endText(font);
                 endText.setString("GAME OVER!!");
                 endText.setFont(font);
@@ -288,7 +288,7 @@ int display(GameSession& game) {
                     window.draw(gifSprite);
                     playingsound = true;
                     soundnumber = rand() % 2 + 1; // Tirage aléatoire entre 1 et 2 pour le son
-                    isGamePre_Started = false;
+                    game.setLabyrinthStatus(true);
                     isGameStarted = false;
                     status=0;
                     playText.setString("Jouer");
@@ -301,7 +301,7 @@ int display(GameSession& game) {
         } 
     
         // Configuration de l'interface
-        if (game.pageOpen()) { // Si le jeu est lancé
+        if (game.getPageStatus()) { // Si le jeu est lancé
             startButton.setPosition({50, basey + offsetybutton});
             stopButton.setPosition({200, basey + offsetybutton});
             quitButton.setPosition({350, basey + offsetybutton});
