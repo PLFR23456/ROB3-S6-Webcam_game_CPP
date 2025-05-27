@@ -166,10 +166,10 @@ int display(GameSession& game) {
                     stop_signal = true; // Signal d'interruption du thread de traitement
                 }
                 if (playButton.getGlobalBounds().contains(mouse)) {
-                    if (game.getStatus() == GameStatus::NOT_PLAYING || game.getStatus() == GameStatus::PAUSED) {
+                    if ((game.getLabyrinthStatus()==false)) {
                         game.resumeGame(); // Reprendre si en pause, démarrer si non joué
                         playText.setString("Pause");
-                    } else if (game.getStatus() == GameStatus::PLAYING) {
+                    } else if (game.getLabyrinthStatus()==true) {
                         game.pauseGame();
                         playText.setString("Jouer");
                     }

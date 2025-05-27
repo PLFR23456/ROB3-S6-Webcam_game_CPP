@@ -56,9 +56,10 @@ public:
     }
 
     void pauseGame() {
-        if (status == GameStatus::PLAYING) {
+        if (status == GameStatus::PLAYING || status == GameStatus::INITIALIZING) {
             status = GameStatus::PAUSED;
         }
+        isLabyrinthDisplayed = false;
     }
 
     void resumeGame() {
