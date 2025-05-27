@@ -39,6 +39,32 @@ Position startbox = {35, 35}; // Position de la startbox
 Position endbox = {60, 40}; // Position de la endbox
 cv::Mat srcrgb, src;
 
+void table(int gamemode, Position& startpos, Position& endbox){
+    switch (gamemode) {
+        case 1: // Mode 1
+            startpos = {35, 35}; // Position centrale par défaut
+            endbox = {640-35, 480-35}; // Position centrale par défaut
+            break;
+        case 0: // Mode 0
+            startpos = {300, 80}; // Position de la startbox
+            endbox = {200, 480-80}; // Position de la endbox
+            break;
+        case 2: // Mode 2
+            startpos = {140, 35}; // Position de la startbox
+            endbox = {640-140, 480-35}; // Position de la endbox
+            break;
+        case 3: // Mode 3
+            startpos = {640-30, 40}; // Position de la startbox
+            endbox = {640-35, 480-35}; // Position de la endbox
+            break;
+        default: // Mode par défaut
+            startpos = {0, 0}; // Position centrale par défaut
+            endbox = {0, 0}; // Position centrale par défaut
+            break;
+    }
+}
+
+
 int display(GameSession& game) {
     sf::RenderWindow window(sf::VideoMode({720u, 1000u}), "Color Tracking - Interface");
     float basey = 480.0 + 20.0 + 20.0;
@@ -182,7 +208,7 @@ int display(GameSession& game) {
                 if (gamemodeBox.getGlobalBounds().contains(mouse)) {
                     // rajouter 1 à gamemode et le garder entre 1 et 6
                     gamemode++;
-                    if (gamemode > 6) gamemode = 1;
+                    if (gamemode > 8) gamemode = 1;
                     gamemodeText.setString("Mode de jeu : " + std::to_string(gamemode));
                     // changer la couleur de la box en fonction du mode de jeu
                     gamemodeBox.setFillColor(sf::Color(109, 7, 26 + (gamemode - 1) * 20)); // Couleur différente pour chaque mode
@@ -195,6 +221,7 @@ int display(GameSession& game) {
                     } else {
                         labSprite.setTexture(labTexture);
                         labSprite.setPosition({20.f, 20.f});
+                        table(1+(1+gamemode)/2, startbox, endbox); // Mettre à jour les positions de la startbox et de la endbox
                     }
                 }
                 // Réglage des bouton en jeu
@@ -433,3 +460,5 @@ int display(GameSession& game) {
     }
     return 0;
 }
+
+
