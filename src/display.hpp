@@ -51,7 +51,9 @@ public:
 
     void startGame() { status = GameStatus::PLAYING; }
 
-
+    void idleGame() {
+        status = GameStatus::NOT_PLAYING;
+    }
 
     void pauseGame() {
         if (status == GameStatus::PLAYING) {
