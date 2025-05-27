@@ -94,6 +94,7 @@ public:
     }
 };
 
+extern GameSession game;
 // Prototype de fonction
 int display(GameSession& game);
 
