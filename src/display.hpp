@@ -1,10 +1,10 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
-extern bool running;
-//running si on est pas sur l'écran logo
-extern bool jeu;
+extern bool isGamePageOpen;
+//isGamePageOpen si on est pas sur l'écran logo
+extern bool isGamePre_Started;
 //si la partie est lancée
-extern bool jeu2;
+extern bool isGameStarted;
 // si on a passe la startbox
 extern int status;
 extern Position startbox;
