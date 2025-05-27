@@ -63,8 +63,11 @@ public:
 
     void resumeGame() {
         if (status == GameStatus::PAUSED || status == GameStatus::NOT_PLAYING) {
-            status = GameStatus::PLAYING;
             isLabyrinthDisplayed = true;
+        
+            if( status == GameStatus::PAUSED){
+                status = GameStatus::PLAYING;
+            }
         }
     }
 
