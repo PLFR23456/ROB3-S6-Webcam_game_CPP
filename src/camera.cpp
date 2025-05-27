@@ -84,7 +84,8 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
 
     // Charger le labyrinthe
     Labyrinthe lab;
-    lab.image = cv::imread("./extras/labyrinth.png", cv::IMREAD_GRAYSCALE);
+    int locallabnumber = labnumber;
+    lab.image = cv::imread("./extras/lab"+std::to_string(locallabnumber) +".png", cv::IMREAD_GRAYSCALE);
     if(lab.image.empty()) {
         std::cerr << "Erreur: Impossible de charger le labyrinthe!" << std::endl;
         return;
@@ -97,6 +98,17 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         cap >> frame;
         if (frame.empty()) continue;
         frame.copyTo(frame_for_click);
+
+        if(locallabnumber!= labnumber) {
+            locallabnumber = labnumber;
+            lab.image = cv::imread("./extras/lab"+std::to_string(locallabnumber) +".png", cv::IMREAD_GRAYSCALE);
+            if(lab.image.empty()) {
+                std::cerr << "Erreur: Impossible de charger le labyrinthe!" << std::endl;
+                return;
+            }
+            // Redimensionner le labyrinthe à la taille de la caméra
+            cv::resize(lab.image, lab.image, cv::Size(cam_width, cam_height));
+        }
         
         //-------------------SUIVI DE COULEUR-------------------//
         int max_area = 0;

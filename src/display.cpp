@@ -16,8 +16,6 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
-int score = 0;
-int gamemode = 1;
 //STATES
 bool isGamePageOpen = false;
 bool isGamePre_Started = false;
@@ -25,6 +23,9 @@ bool isGameStarted = false; // si on a passe la startbox
 bool isCameraShaking = false;
 //GLOBAL INDICATORS
 int status = 0;
+int score = 0;
+int gamemode = 1;
+extern int labnumber = 1;
 int soundnumber=0;
 int gifnumber = 0;
 int playingsound = 0;
@@ -165,8 +166,8 @@ int display() {
     logoSprite.setPosition({20.f,240+ 20.f});
 
     sf::Texture labTexture;
-    if (!labTexture.loadFromFile("./extras/labyrinth.png")) {
-        std::cerr << "Erreur chargement labyrinthe.png" << std::endl;
+    if (!labTexture.loadFromFile("./extras/lab"+std::to_string(labnumber) +".png")) {
+        std::cerr << "Erreur chargement lab"+std::to_string(labnumber) +"png" << std::endl;
         return -1;
     }
     sf::Sprite labSprite(labTexture);
@@ -208,6 +209,15 @@ int display() {
                     // changer la couleur de la box en fonction du mode de jeu
                     gamemodeBox.setFillColor(sf::Color(109, 7, 26 + (gamemode - 1) * 20)); // Couleur différente pour chaque mode
                     isCameraShaking = (gamemode-1)%2;
+                    labnumber = (gamemode-1)/2 + 1; // 1, 2, 3, 4, 5, 6
+                    std::cout << "Mode de jeu changé : " << gamemode << std::endl;
+                    // Charger le labyrinthe correspondant
+                    if (!labTexture.loadFromFile("./extras/lab" + std::to_string(labnumber) + ".png")) {
+                        std::cerr << "Erreur chargement lab" << std::to_string(labnumber) + ".png" << std::endl;
+                    } else {
+                        labSprite.setTexture(labTexture);
+                        labSprite.setPosition({20.f, 20.f});
+                    }
                 }
                 
                 
