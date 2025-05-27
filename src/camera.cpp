@@ -38,7 +38,7 @@ void onCorrectorTimeConstantDChange(int value, void*) {correctorTimeConstantD = 
 void onTolChange(int value, void*) {tol = value;}
 
 
-void MaskCreation(cv::Mat& frame, cv::Mat& mask, cv::Mat& hsv, int& max_area, int& max_idx, std::vector<std::vector<cv::Point>>& contours) {
+void MaskCreation(cv::Mat& frame, cv::Mat& mask, cv::Mat& hsv, int& max_area, int& max_idx, std::vector<std::vector<cv::Point>>& contours, cv::Point2f& color_center, int& count) {
         cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
         // Conversion HSV et seuillage adaptatif pour robustesse à la luminosité
         cv::inRange(hsv, Mask1.mini, Mask1.maxi, mask);
@@ -59,6 +59,16 @@ void MaskCreation(cv::Mat& frame, cv::Mat& mask, cv::Mat& hsv, int& max_area, in
             max_area = area;
             max_idx = i;
             }
+        }
+        if (max_idx != -1 && max_area > Mask1.minArea) {
+            // Calcul du centre de position du plus grand contour
+            cv::Moments mu = cv::moments(contours[max_idx]);
+            if (mu.m00 != 0) {
+            color_center = cv::Point2f(mu.m10 / mu.m00, mu.m01 / mu.m00);
+            count = max_area;
+            }
+            // dessiner le contour suivi
+            cv::drawContours(frame, contours, max_idx, cv::Scalar(255,0,143), 2);
         }
 
 }
@@ -92,22 +102,13 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         int max_area = 0;
         int max_idx = -1;
         std::vector<std::vector<cv::Point>> contours;
-        MaskCreation(frame, mask, hsv,max_area, max_idx, contours);
-        //---------------FIN-DE-SUIVI DE COULEUR----------------//
-
-        
-        cv::Point2f color_center(-1, -1);
+        cv::Point2f color_center;
         int count = 0;
-        if (max_idx != -1 && max_area > Mask1.minArea) {
-            // Calcul du centre de position du plus grand contour
-            cv::Moments mu = cv::moments(contours[max_idx]);
-            if (mu.m00 != 0) {
-            color_center = cv::Point2f(mu.m10 / mu.m00, mu.m01 / mu.m00);
-            count = max_area;
-            }
-            // dessiner le contour suivi
-            cv::drawContours(frame, contours, max_idx, cv::Scalar(255,0,143), 2);
-        }
+        MaskCreation(frame, mask, hsv,max_area, max_idx, contours, color_center,count);
+        //---------------FIN-DE-SUIVI DE COULEUR----------------//
+        
+        
+        
 
         // Si on a trouvé assez de pixels de la couleur
         if(count > Mask1.minArea && isGamePageOpen==true) {
@@ -144,13 +145,15 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                 
             }
 
+
+        //----------------------DESSIN--------------------------//
             // Dessiner le point de départ (vert) et d'arrivée (rouge)
             cv::circle(frame, lab.startPos, 10, cv::Scalar(0,255,0), -1);
             cv::circle(frame, lab.endPos, 10, cv::Scalar(0,0,255), -1);
             
-            // Calculer l'écart avec le centre de la caméra
-            float dx = color_center.x - cam_center.x;
-            float dy = color_center.y - cam_center.y;
+            // // Calculer l'écart avec le centre de la caméra
+            // float dx = color_center.x - cam_center.x;
+            // float dy = color_center.y - cam_center.y;
 
             // Trouver et dessiner les contours du masque
             std::vector<std::vector<cv::Point>> contours;
@@ -179,6 +182,9 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                 cv::putText(frame, line, cv::Point(x, y), fontFace, fontScale, textColor, thickness);
                 y += textSize.height + baseLine + 10;
             }
+
+        //--------------------FIN DE DESSIN---------------------//
+
 
             // met a jour la variable global
             std::lock_guard<std::mutex> lock(consigne_mutex); // se ferme tout seul à la fin du "}"
