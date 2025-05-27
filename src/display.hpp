@@ -9,6 +9,7 @@ extern bool isGameStarted;
 extern int status;
 extern Position startbox;
 extern Position endbox;
+extern bool isCameraShaking;
 //doc
 // 0= not playing
 // 1= in the start box (waiting ~3 seconds)

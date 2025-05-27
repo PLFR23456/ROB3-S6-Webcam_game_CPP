@@ -181,21 +181,22 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                 cv::rectangle(frame, cv::Point(x - 5, y - textSize.height - 2), cv::Point(x + textSize.width + 5, y + baseLine + 2), bgColor, cv::FILLED);
                 cv::putText(frame, line, cv::Point(x, y), fontFace, fontScale, textColor, thickness);
                 y += textSize.height + baseLine + 10;
+                
             }
 
         //--------------------FIN DE DESSIN---------------------//
 
 
             // met a jour la variable global
-            std::lock_guard<std::mutex> lock(consigne_mutex); // se ferme tout seul à la fin du "}"
-            consigne.x = color_center.x;
-            consigne.y = color_center.y;
+            // std::lock_guard<std::mutex> lock(consigne_mutex); // se ferme tout seul à la fin du "}"
+            // consigne.x = color_center.x;
+            // consigne.y = color_center.y;
         }
 
         else{
-            std::lock_guard<std::mutex> lock(consigne_mutex);
-            consigne.x = 320;
-            consigne.y = 240;
+            // std::lock_guard<std::mutex> lock(consigne_mutex);
+            // consigne.x = 320;
+            // consigne.y = 240;
         }
         //--------------------GRADIENT---------------------//
         // cv::Mat hsv_grad(grad_size, grad_size, CV_8UC3);
