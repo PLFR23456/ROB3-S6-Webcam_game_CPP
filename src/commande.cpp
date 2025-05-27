@@ -12,7 +12,7 @@
 #define YSIGN (1) // 1 = bas, (-1) = haut
 
 const bool isXBase = true; // true = X est la base, false = Y est la base
-
+int boucleconsigne = 0; // Compteur de boucle pour la consigne
 // ----------------- Correcteur ----------------- //
 // Coefficients du correcteur PID
 
@@ -137,9 +137,30 @@ void asservirServo(Position* mesure, boost::asio::serial_port& serial) {
             std::lock_guard<std::mutex> lock(consigne_mutex);
             consigne_locale = consigne;
         }
-        calculerCommande(mesure, &consigne_locale, &commande);
-        envoyerCommande(&commande, serial);
-    
+
+
+        // Genere une consigne qui est un peu aléatoire pour simuler un mouvement
+        
+        // FAIS MOI LALGO LE PLUS 
+
+        //calculerCommande(mesure, &consigne_locale, &commande);
+        if(boucleconsigne%8==0){
+            commande.x = 90+(rand() % 3 - 1) * 2; // +/- 6 pixels
+            commande.y = 90+(rand() % 3 - 1) * 2; // +/- 6 pixels
+        }
+        boucleconsigne++;
+
+        if(isCameraShaking){
+            envoyerCommande(&commande, serial);
+        }
+        else{
+            // Si la caméra ne bouge pas, on envoie une consigne fixe
+            commande.x = 90;
+            commande.y = 90;
+            envoyerCommande(&commande, serial);
+        }
+
+
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
     serial.close();

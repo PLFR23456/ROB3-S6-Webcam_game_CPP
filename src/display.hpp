@@ -5,6 +5,15 @@
 
 extern Position startbox;
 extern Position endbox;
+extern bool isCameraShaking;
+extern int labnumber;
+//doc
+// 0= not playing
+// 1= in the start box (waiting ~3 seconds)
+// 2= playing
+// 3= in the end box
+// 4= touching the walls 
+
 
 enum class GameStatus {
     NOT_PLAYING,

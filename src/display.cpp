@@ -17,13 +17,16 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
-int score = 0;
 //STATES
 bool isGamePageOpen = false;
 bool isGamePre_Started = false;
 bool isGameStarted = false; // si on a passe la startbox
+bool isCameraShaking = false;
 //GLOBAL INDICATORS
 int status = 0;
+int score = 0;
+int gamemode = 1;
+extern int labnumber = 1;
 int soundnumber=0;
 int gifnumber = 0;
 int playingsound = 0;
@@ -83,7 +86,37 @@ int display(GameSession& game) {
     playText.setString("Lancer");
     playText.setFont(font);
     playText.setCharacterSize(16);
-    playText.setPosition({230.f, basey + offsetybutton+5.5f+60.0f});
+    playText.setPosition({220.f, basey + offsetybutton+5.5f+60.0f});
+
+    sf::Text colorText(font);
+    colorText.setString("Color tracked :");
+    colorText.setFont(font);
+    colorText.setCharacterSize(16);
+    colorText.setPosition({colorBox.getPosition().x + 10.f, colorBox.getPosition().y - 20.f});
+
+    sf::Text scoreText(font);
+    scoreText.setString("Score: " + std::to_string(score));
+    scoreText.setFont(font);
+    scoreText.setCharacterSize(16);
+    scoreText.setPosition({scoreBox.getPosition().x + 10.f, scoreBox.getPosition().y - 20.f});
+
+    sf::Text scoreValueText(font);
+    scoreValueText.setString(std::to_string(score));
+    scoreValueText.setFont(font);
+    scoreValueText.setCharacterSize(16);
+    scoreValueText.setPosition({scoreBox.getPosition().x + 10.f, scoreBox.getPosition().y + 5.5f});
+
+    sf::Text gamemodeText(font);
+    gamemodeText.setString("Mode de jeu : 1");
+    gamemodeText.setFont(font);
+    gamemodeText.setCharacterSize(16);
+    gamemodeText.setPosition({190.f, gamemodeBox.getPosition().y + 5.5f});
+
+    sf::Text creditsText(font);
+    creditsText.setString("Credits");
+    creditsText.setFont(font);
+    creditsText.setCharacterSize(16);
+    creditsText.setPosition({CreditsBox.getPosition().x + 45.f, CreditsBox.getPosition().y + 5.5f});
 
     sf::Texture logoTexture;
     if (!logoTexture.loadFromFile("./extras/logo2.png")) {
@@ -94,8 +127,8 @@ int display(GameSession& game) {
     logoSprite.setPosition({20.f,240+ 20.f});
 
     sf::Texture labTexture;
-    if (!labTexture.loadFromFile("./extras/labyrinth.png")) {
-        std::cerr << "Erreur chargement labyrinthe.png" << std::endl;
+    if (!labTexture.loadFromFile("./extras/lab"+std::to_string(labnumber) +".png")) {
+        std::cerr << "Erreur chargement lab"+std::to_string(labnumber) +"png" << std::endl;
         return -1;
     }
     sf::Sprite labSprite(labTexture);
@@ -148,6 +181,8 @@ int display(GameSession& game) {
                             Mask1.mini = cv::Scalar(std::max(0, H - tol), std::max(0, S - tol * 2), std::max(0, V - tol * 4));
                             Mask1.maxi = cv::Scalar(std::min(180, H + tol), std::min(255, S + tol * 2), std::min(255, V + tol * 5));
                             std::cout << "Nouvelle couleur HSV : " << H << "," << S << "," << V << std::endl;
+                            //mettre la couleur BGR
+                            colorBox.setFillColor(sf::Color(color[2], color[1], color[0])); // BGR to RGB
                         }
                     }   
                 }
@@ -230,11 +265,11 @@ int display(GameSession& game) {
             if (game.getStatus() == GameStatus::WINNING) {
                 //jouer le gif ./extras/win.gif avec les frames qui tournent 5 fois puis stop
                 sf::Text winText(font);
-                winText.setString("Vous avez gagné !");
+                winText.setString("WIN ! +1 POINT");
                 winText.setFont(font);
                 winText.setCharacterSize(24);
                 winText.setFillColor(sf::Color::Green);
-                winText.setPosition({50.f, basey + 100.f});
+                winText.setPosition({100.f, basey + 200.f});
                 window.draw(winText);
                 //faire tourner le gif 5 fois
                 for(int i=0; i<5; i++){
@@ -259,20 +294,21 @@ int display(GameSession& game) {
             }
             if (game.getStatus() == GameStatus::INITIALIZING) {
                 sf::Text startText(font);
-                startText.setString("En attente de 3 secondes...");
+                startText.setString("Restez dans la startbox ...");
                 startText.setFont(font);
                 startText.setCharacterSize(24);
                 startText.setFillColor(sf::Color::White);
-                startText.setPosition({50.f, basey + 100.f});
+                startText.setPosition({100.f, basey + 200.f});
                 window.draw(startText);
             }
             if (game.getLabyrinthStatus() && game.getWallTouched()) {
                 sf::Text endText(font);
-                endText.setString("GAME OVER!!");
+                endText.setString("!!GAME OVER!!");
+                endText.setStyle(sf::Text::Bold);
                 endText.setFont(font);
                 endText.setCharacterSize(24);
                 endText.setFillColor(sf::Color::Red);
-                endText.setPosition({50.f, basey + 100.f});
+                endText.setPosition({100.f, basey + 200.f});
                 window.draw(endText);
                 //afficher le gif correspondant au numero
                 std::string gifPath = "./extras/screamgif/00" + std::to_string(gifnumber) + ".gif";
