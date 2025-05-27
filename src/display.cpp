@@ -17,10 +17,12 @@
 #include <thread>
 #include <mutex>
 int score = 0;
+int gamemode = 1;
 //STATES
 bool isGamePageOpen = false;
 bool isGamePre_Started = false;
 bool isGameStarted = false; // si on a passe la startbox
+bool isCameraShaking = true;
 //GLOBAL INDICATORS
 int status = 0;
 int soundnumber=0;
@@ -80,7 +82,15 @@ int display() {
 
     sf::RectangleShape scoreBox(sf::Vector2f(150, 30)); 
     scoreBox.setPosition({350 + 100 + 30, basey + offsetybutton+60.f});
-    scoreBox.setFillColor(sf::Color(85, 152, 248)); // Gris foncé
+    scoreBox.setFillColor(sf::Color(64, 64, 64)); // Gris foncé
+
+    sf::RectangleShape gamemodeBox(sf::Vector2f(400, 30));
+    gamemodeBox.setPosition({50, basey + offsetybutton+120.f});
+    gamemodeBox.setFillColor(sf::Color(109, 7, 26)); // Gris foncé
+
+    sf::RectangleShape CreditsBox(sf::Vector2f(150, 30));
+    CreditsBox.setPosition({350 + 100 + 30, basey + offsetybutton+120.f});
+    CreditsBox.setFillColor(sf::Color(64, 64, 64)); // Gris foncé
 
 
 
@@ -114,7 +124,7 @@ int display() {
     playText.setString("Lancer");
     playText.setFont(font);
     playText.setCharacterSize(16);
-    playText.setPosition({230.f, basey + offsetybutton+5.5f+60.0f});
+    playText.setPosition({220.f, basey + offsetybutton+5.5f+60.0f});
 
     sf::Text colorText(font);
     colorText.setString("Color tracked :");
@@ -133,6 +143,18 @@ int display() {
     scoreValueText.setFont(font);
     scoreValueText.setCharacterSize(16);
     scoreValueText.setPosition({scoreBox.getPosition().x + 10.f, scoreBox.getPosition().y + 5.5f});
+
+    sf::Text gamemodeText(font);
+    gamemodeText.setString("Mode de jeu : 1");
+    gamemodeText.setFont(font);
+    gamemodeText.setCharacterSize(16);
+    gamemodeText.setPosition({190.f, gamemodeBox.getPosition().y + 5.5f});
+
+    sf::Text creditsText(font);
+    creditsText.setString("Credits");
+    creditsText.setFont(font);
+    creditsText.setCharacterSize(16);
+    creditsText.setPosition({CreditsBox.getPosition().x + 45.f, CreditsBox.getPosition().y + 5.5f});
 
     sf::Texture logoTexture;
     if (!logoTexture.loadFromFile("./extras/logo2.png")) {
@@ -175,9 +197,17 @@ int display() {
                 if (quitButton.getGlobalBounds().contains(mouse)) { window.close(); stop_signal = true; }
                 if (playButton.getGlobalBounds().contains(mouse)) {isGamePre_Started = !isGamePre_Started; 
                     isGamePre_Started ? playText.setString("Jouer") : playText.setString("Pause") ; 
-                //tirer un numero de 1 à 6
                 gifnumber = rand() % 6 + 1; // tirage aléatoire entre 1 et 6
                 std::cout << "Gif number: " << gifnumber << std::endl;
+                }
+                if (gamemodeBox.getGlobalBounds().contains(mouse)) {
+                    // rajouter 1 à gamemode et le garder entre 1 et 6
+                    gamemode++;
+                    if (gamemode > 6) gamemode = 1;
+                    gamemodeText.setString("Mode de jeu : " + std::to_string(gamemode));
+                    // changer la couleur de la box en fonction du mode de jeu
+                    gamemodeBox.setFillColor(sf::Color(109, 7, 26 + (gamemode - 1) * 20)); // Couleur différente pour chaque mode
+                    isCameraShaking = (gamemode-1)%2;
                 }
                 
                 
@@ -295,7 +325,7 @@ int display() {
                 winText.setFont(font);
                 winText.setCharacterSize(24);
                 winText.setFillColor(sf::Color::Green);
-                winText.setPosition({100.f, basey + 140.f});
+                winText.setPosition({100.f, basey + 200.f});
                 window.draw(winText);
                 //faire tourner le gif 5 fois
                 for(int i=0; i<5; i++){
@@ -327,7 +357,7 @@ int display() {
                 startText.setFont(font);
                 startText.setCharacterSize(24);
                 startText.setFillColor(sf::Color::White);
-                startText.setPosition({100.f, basey + 140.f});
+                startText.setPosition({100.f, basey + 200.f});
                 window.draw(startText);
             }
             if(isGamePre_Started && status==4){
@@ -337,7 +367,7 @@ int display() {
                 endText.setFont(font);
                 endText.setCharacterSize(24);
                 endText.setFillColor(sf::Color::Red);
-                endText.setPosition({100.f, basey + 140.f});
+                endText.setPosition({100.f, basey + 200.f});
                 window.draw(endText);
                 //afficher le gif correspondant au numero
                 std::string gifPath = "./extras/screamgif/00" + std::to_string(gifnumber) + ".gif";
@@ -428,6 +458,10 @@ int display() {
             window.draw(scoreBox);
             window.draw(scoreText);
             window.draw(scoreValueText);
+            window.draw(gamemodeBox);
+            window.draw(gamemodeText);
+            window.draw(CreditsBox);
+            window.draw(creditsText);
         }
         
 
