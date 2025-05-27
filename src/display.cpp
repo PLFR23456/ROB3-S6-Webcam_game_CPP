@@ -74,6 +74,15 @@ int display() {
     playButton.setPosition({50, basey + 410});
     playButton.setFillColor(sf::Color(218, 165, 32));
 
+    sf::RectangleShape colorBox(sf::Vector2f(150, 30)); 
+    colorBox.setPosition({350 + 100 + 30, basey + offsetybutton}); 
+    colorBox.setFillColor(sf::Color(64, 64, 64)); // Gris foncé
+
+    sf::RectangleShape scoreBox(sf::Vector2f(150, 30)); 
+    scoreBox.setPosition({350 + 100 + 30, basey + offsetybutton+60.f});
+    scoreBox.setFillColor(sf::Color(85, 152, 248)); // Gris foncé
+
+
 
     // Remplacer la section des textes par :
   
@@ -106,6 +115,24 @@ int display() {
     playText.setFont(font);
     playText.setCharacterSize(16);
     playText.setPosition({230.f, basey + offsetybutton+5.5f+60.0f});
+
+    sf::Text colorText(font);
+    colorText.setString("Color tracked :");
+    colorText.setFont(font);
+    colorText.setCharacterSize(16);
+    colorText.setPosition({colorBox.getPosition().x + 10.f, colorBox.getPosition().y - 20.f});
+
+    sf::Text scoreText(font);
+    scoreText.setString("Score: " + std::to_string(score));
+    scoreText.setFont(font);
+    scoreText.setCharacterSize(16);
+    scoreText.setPosition({scoreBox.getPosition().x + 10.f, scoreBox.getPosition().y - 20.f});
+
+    sf::Text scoreValueText(font);
+    scoreValueText.setString(std::to_string(score));
+    scoreValueText.setFont(font);
+    scoreValueText.setCharacterSize(16);
+    scoreValueText.setPosition({scoreBox.getPosition().x + 10.f, scoreBox.getPosition().y + 5.5f});
 
     sf::Texture logoTexture;
     if (!logoTexture.loadFromFile("./extras/logo2.png")) {
@@ -176,6 +203,8 @@ int display() {
                             Mask1.mini = cv::Scalar(std::max(0, H - tol), std::max(0, S - tol * 2), std::max(0, V - tol * 4));
                             Mask1.maxi = cv::Scalar(std::min(180, H + tol), std::min(255, S + tol * 2), std::min(255, V + tol * 5));
                             std::cout << "Nouvelle couleur HSV : " << H << "," << S << "," << V << std::endl;
+                            //mettre la couleur BGR
+                            colorBox.setFillColor(sf::Color(color[2], color[1], color[0])); // BGR to RGB
                         }
                     }   
                 }
@@ -262,11 +291,11 @@ int display() {
             if(status==3){
                 //jouer le gif ./extras/win.gif avec les frames qui tournent 5 fois puis stop
                 sf::Text winText(font);
-                winText.setString("Vous avez gagné !");
+                winText.setString("WIN ! +1 POINT");
                 winText.setFont(font);
                 winText.setCharacterSize(24);
                 winText.setFillColor(sf::Color::Green);
-                winText.setPosition({50.f, basey + 100.f});
+                winText.setPosition({100.f, basey + 140.f});
                 window.draw(winText);
                 //faire tourner le gif 5 fois
                 for(int i=0; i<5; i++){
@@ -286,27 +315,29 @@ int display() {
                     }
                 }
                 score++;
+                scoreValueText.setString(std::to_string(score));
                 isGamePre_Started= false; // on quitte le jeu
                 isGameStarted = false; // on quitte le jeu
                 status=0; // on remet le status à 0
                 playText.setString("Jouer");
             }
-            if(status==1){
+            if(status ==1){
                 sf::Text startText(font);
-                startText.setString("En attente de 3 secondes...");
+                startText.setString("Restez dans la startbox ...");
                 startText.setFont(font);
                 startText.setCharacterSize(24);
                 startText.setFillColor(sf::Color::White);
-                startText.setPosition({50.f, basey + 100.f});
+                startText.setPosition({100.f, basey + 140.f});
                 window.draw(startText);
             }
             if(isGamePre_Started && status==4){
                 sf::Text endText(font);
-                endText.setString("GAME OVER!!");
+                endText.setString("!!GAME OVER!!");
+                endText.setStyle(sf::Text::Bold);
                 endText.setFont(font);
                 endText.setCharacterSize(24);
                 endText.setFillColor(sf::Color::Red);
-                endText.setPosition({50.f, basey + 100.f});
+                endText.setPosition({100.f, basey + 140.f});
                 window.draw(endText);
                 //afficher le gif correspondant au numero
                 std::string gifPath = "./extras/screamgif/00" + std::to_string(gifnumber) + ".gif";
@@ -391,6 +422,14 @@ int display() {
         window.draw(startButton);
         window.draw(startText);
                 
+        if(isGamePageOpen){
+            window.draw(colorBox);
+            window.draw(colorText);
+            window.draw(scoreBox);
+            window.draw(scoreText);
+            window.draw(scoreValueText);
+        }
+        
 
 
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
