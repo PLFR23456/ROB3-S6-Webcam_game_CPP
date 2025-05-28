@@ -15,6 +15,7 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <ctime>
 
 //GLOBAL INDICATORS
 int labnumber = (gamemode-1)/2 + 1;
@@ -37,31 +38,33 @@ cv::Mat srcrgb, src;
 
 void table(int gamemode, Position& startpos, Position& endbox){
     switch (gamemode) {
-        case 1: // Mode 1
-            startpos = {35, 35}; // Position centrale par défaut
-            endbox = {640-35, 480-35}; // Position centrale par défaut
-            break;
         case 0: // Mode 0
             startpos = {300, 80}; // Position de la startbox
-            endbox = {200, 480-80}; // Position de la endbox
+            endbox = {200, 400}; // Position de la endbox
+            break;
+        case 1: // Mode 1
+            startpos = {35, 35}; // Position centrale par défaut
+            endbox = {605, 445}; // Position centrale par défaut
             break;
         case 2: // Mode 2
             startpos = {140, 35}; // Position de la startbox
-            endbox = {640-140, 480-35}; // Position de la endbox
+            endbox = {500, 445}; // Position de la endbox
             break;
         case 3: // Mode 3
-            startpos = {640-30, 40}; // Position de la startbox
+            startpos = {510, 40}; // Position de la startbox
             endbox = {640-35, 480-35}; // Position de la endbox
             break;
         default: // Mode par défaut
-            startpos = {0, 0}; // Position centrale par défaut
+            startpos = {100, 100}; // Position centrale par défaut
             endbox = {0, 0}; // Position centrale par défaut
             break;
+        return;
     }
 }
 
 
 int display(GameSession& game) {
+    srand(time(nullptr));
     sf::RenderWindow window(sf::VideoMode({720u, 1000u}), "Color Tracking - Interface");
     float basey = 480.0 + 20.0 + 20.0;
     float offsetybutton = 30;
@@ -272,9 +275,13 @@ int display(GameSession& game) {
                 cv::Mat srcrgb = processed_data.frame;
                 cv::Mat src;
                 cv::cvtColor(srcrgb, src, cv::COLOR_BGR2RGBA);
-                sf::Image image({static_cast<unsigned int>(src.cols), static_cast<unsigned int>(src.rows)},reinterpret_cast<const std::uint8_t*>(src.ptr()));
+                sf::Image image({static_cast<unsigned int>(src.cols), static_cast<unsigned int>(src.rows)},
+                    reinterpret_cast<const std::uint8_t*>(src.ptr()));
                 sf::Texture texture;
-                texture.loadFromImage(image);
+                if (!texture.loadFromImage(image)) {
+                    std::cerr << "Failed to load texture from camera image" << std::endl;
+                    continue;
+                }
                 sf::Sprite sprite(texture);
                 sprite.setPosition({20.f, 20.f});
                 window.draw(sprite);
