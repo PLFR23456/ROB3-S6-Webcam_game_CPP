@@ -38,6 +38,45 @@ void onCorrectorTimeConstantDChange(int value, void*) {correctorTimeConstantD = 
 void onTolChange(int value, void*) {tol = value;}
 
 
+void MooreNeighborTracing(const cv::Point& start, const cv::Mat& mask, std::vector<cv::Point>& contour, int& max_area, int& max_idx, std::vector<std::vector<cv::Point>>& contours) {
+    cv::Point current = start;
+    int dir = 7; // direction précédente (commence à gauche du pixel)
+    do {
+        contour.push_back(current);
+        bool found = false;
+        for (int i = 0; i < 8; ++i) {
+            // directions Moore (autour du pixel courant)
+            static const int dx[8] = {1, 1, 0, -1, -1, -1, 0, 1};
+            static const int dy[8] = {0, 1, 1, 1, 0, -1, -1, -1};
+            int ndir = (dir + 1 + i) % 8;
+            int nx = current.x + dx[ndir];
+            int ny = current.y + dy[ndir];
+            if (nx >= 0 && nx < mask.cols && ny >= 0 && ny < mask.rows && mask.at<uchar>(ny, nx) != 0) {
+                current = cv::Point(nx, ny);
+                dir = (ndir + 6) % 8; // nouvelle direction précédente
+                found = true;
+                break;
+            }
+        }
+        if (!found) break; // pixel isolé
+    } while (current != start && contour.size() < 10000); // limite de sécurité
+
+    if (contour.size() > 5) { // seuil pour éviter le bruit
+        contours.push_back(contour);
+        max_idx = 0;
+        // calcul de l'aire par la formule du polygone
+        double area = 0.0;
+        for (size_t i = 0; i < contour.size(); ++i) {
+            cv::Point2f p1 = contour[i];
+            cv::Point2f p2 = contour[(i+1)%contour.size()];
+            area += (p1.x * p2.y - p2.x * p1.y);
+        }
+        area = std::abs(area) / 2.0;
+        max_area = static_cast<int>(area);
+        ///////////////////////////////////////
+    }
+}
+
 void MaskCreation(cv::Mat& frame, cv::Mat& mask, cv::Mat& hsv, int& max_area, int& max_idx, std::vector<std::vector<cv::Point>>& contours, cv::Point2f& color_center, int& count) {
         cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
         // Conversion HSV et seuillage adaptatif pour robustesse à la luminosité
@@ -50,16 +89,35 @@ void MaskCreation(cv::Mat& frame, cv::Mat& mask, cv::Mat& hsv, int& max_area, in
 
         // Recherche du plus grand contour (l'objet le plus gros)
         std::vector<cv::Vec4i> hierarchy;
-        cv::findContours(mask, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+        ///
+        // Remplacement de findContours par l'algorithme de Moore-Neighbor Tracing (algorithme de suivi de contour)
+        // Complexité : O(P), P = nombre de pixels du contour (généralement bien inférieur au nombre total de pixels)
 
-        
-        for (size_t i = 0; i < contours.size(); ++i) {
-            int area = cv::contourArea(contours[i]);
-            if (area > max_area) {
-            max_area = area;
-            max_idx = i;
+        max_area = 0;
+        max_idx = -1;
+        contours.clear();
+
+        // Recherche du pixel de départ (premier pixel blanc du masque)
+        cv::Point start(-1, -1);
+        for (int y = 0; y < mask.rows && start.x == -1; ++y) {
+            for (int x = 0; x < mask.cols; ++x) {
+                if (mask.at<uchar>(y, x) != 0) {
+                    start = cv::Point(x, y);
+                    break;
+                }
             }
         }
+
+        if (start.x != -1) {
+            
+            // Moore-Neighbor Tracing
+            std::vector<cv::Point> contour;
+            MooreNeighborTracing(start, mask, contour, max_area, max_idx, contours);
+            
+        }
+        // Complexité Moore-Neighbor Tracing : O(P), P = nombre de pixels du contour
+
+
         if (max_idx != -1 && max_area > Mask1.minArea) {
             // Calcul du centre de position du plus grand contour
             cv::Moments mu = cv::moments(contours[max_idx]);
@@ -111,11 +169,6 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             
 
         }
-        // cv::resize(lab.image, lab.image, cv::Size(cam_width, cam_height));
-        // //afficher lab.image sur frame
-        // cv::Mat lab_colored;
-        // cv::cvtColor(lab.image, lab_colored, cv::COLOR_GRAY2BGR);
-        // cv::addWeighted(frame, 0.5, lab_colored, 0.5, 0, frame);
         //-------------------SUIVI DE COULEUR-------------------//
         int max_area = 0;
         int max_idx = -1;
