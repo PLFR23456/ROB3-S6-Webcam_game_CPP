@@ -169,10 +169,9 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             int ccy = static_cast<int>(color_center.y);
             
             // S'assurer que les coordonnées sont dans les limites
-            if(ccx >= 0 && ccx < lab.image.cols && ccy >= 0 && ccy < lab.image.rows && game.getLabyrinthStatus()) {
-                if(game.getStatus() == GameStatus::NOT_PLAYING || game.getStatus() == GameStatus::INITIALIZING) {    
+            if(ccx >= 0 && ccx < cam_width && ccy >= 0 && ccy < cam_height && game.getLabyrinthStatus()) {
+                if(game.getStatus() == GameStatus::NOT_PLAYING || game.getStatus() == GameStatus::INITIALIZING) { 
                     if(ccx<startbox.x+30 && ccx>=startbox.x && ccy<startbox.y+30 && ccy>=startbox.y) {
-                        std::cout << "STARTBOX ! " << std::endl;
                         game.enterStartBox();
                         std::cout << "DANS LA START BOX" << std::endl;
                     }

@@ -37,7 +37,8 @@ extern MasqueCouleur Mask1; // Déclarée dans camera.cpp
 cv::Mat srcrgb, src;
 
 void table(int gamemode, Position& startpos, Position& endbox){
-    switch (gamemode) {
+    int res = (gamemode-1)/2;
+    switch (res) {
         case 0: // Mode 0
             startpos = {300, 80}; // Position de la startbox
             endbox = {200, 400}; // Position de la endbox
@@ -58,8 +59,8 @@ void table(int gamemode, Position& startpos, Position& endbox){
             startpos = {100, 100}; // Position centrale par défaut
             endbox = {0, 0}; // Position centrale par défaut
             break;
-        return;
     }
+    return;
 }
 
 
@@ -234,7 +235,7 @@ int display(GameSession& game) {
                         labSprite.setPosition({20.f, 20.f});
                         labSprite.setScale({scaleX, scaleY});
                         
-                        table((gamemode-1)/2, startbox, endbox); // Mettre à jour les positions de la startbox et de la endbox
+                        table(gamemode, startbox, endbox); // Mettre à jour les positions de la startbox et de la endbox
                     }
                 }
                 // Réglage des bouton en jeu
