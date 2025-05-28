@@ -15,17 +15,13 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
-//STATES
-bool isGamePageOpen = false;
-bool isGamePre_Started = false;
-bool isGameStarted = false; // si on a passe la startbox
-bool isCameraShaking = false;
+
 //GLOBAL INDICATORS
-int status = 0;
+extern int labnumber = (gamemode-1)/2 + 1;
+
 int score = 0;
 int gamemode = 1;
-extern int labnumber = (gamemode-1)/2 + 1;;
-int soundnumber=0;
+int soundnumber = 0;
 int gifnumber = 0;
 int playingsound = 0;
 int bouclestart = 0;
@@ -33,6 +29,7 @@ int bouclestart = 0;
 //SHARED DATA
 extern Position startbox; // Déclaré dans main.cpp
 extern Position endbox; // Déclaré dans main.cpp
+
 extern int tol; // Déclarée dans camera.cpp
 extern MasqueCouleur Mask1; // Déclarée dans camera.cpp
 cv::Mat srcrgb, src;
