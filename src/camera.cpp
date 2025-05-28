@@ -136,7 +136,9 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
     
     while (!stop_signal) {
         cap >> frame;
-        cv::flip(frame, frame, 1); // 1 pour inverser horizontalement
+        if(gamemode%2==1){
+            cv::flip(frame, frame, 1); // 1 pour inverser horizontalement
+        }
         if (frame.empty()) continue;
         frame.copyTo(frame_for_click);
 
