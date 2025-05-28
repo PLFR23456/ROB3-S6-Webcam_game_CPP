@@ -15,27 +15,13 @@ MasqueCouleur Mask1 {
 int sources = 2 ;
 int screensources = 0; //0 = camera ; 1 = masque
 
-// Variable modifiable par le trackbar
-// TODO : Ajouter une protection mutex pour ces variables (peut-être créer un tampon ?) 
-double gainK = 0.1;
-double correctorTimeConstant = 0.01; 
-double correctorTimeConstantC = 0.01; 
-double correctorTimeConstantD = 0.01;
-// TODO FIN
-int tol = 20; // Définition globale
-const int grad_size = 120;
+// Tolérance du masque
+int tol = 20;
 
 cv::Mat frame_for_click; // Pour stocker la frame pour le clic
 cv::Scalar last_color; // À déclarer en global
 
 ProcessedFrame processed_data;
-
-void onGainKChange(int value, void*) { gainK = value / 100.0;} // Le trackbar va de 0 à 200, donc gainK de 0.0 à 2.0
-void onCorrectorTimeConstantChange(int value, void*) {correctorTimeConstant = value / 1000.0;} // Le trackbar va de 0 à 2000, donc correctorTimeConstant de 0.0 à 2.0
-void onCorrectorTimeConstantCChange(int value, void*) {correctorTimeConstantC = value / 1000.0;} // Le trackbar va de 0 à 2000, donc correctorTimeConstantC de 0.0 à 2.0
-void onCorrectorTimeConstantDChange(int value, void*) {correctorTimeConstantD = value / 1000.0;} // Le trackbar va de 0 à 2000, donc correctorTimeConstantD de 0.0 à 2.0
-void onTolChange(int value, void*) {tol = value;}
-
 
 void MooreNeighborTracing(const cv::Point& start, const cv::Mat& mask, std::vector<cv::Point>& contour, int& max_area, int& max_idx, std::vector<std::vector<cv::Point>>& contours) {
     cv::Point current = start;

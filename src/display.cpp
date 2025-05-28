@@ -29,12 +29,12 @@ int soundnumber=0;
 int gifnumber = 0;
 int playingsound = 0;
 int bouclestart = 0;
+
 //SHARED DATA
-extern int tol;
-extern MasqueCouleur Mask1;
-extern Position consigne;
-Position startbox = {300, 80}; // Position de la startbox
-Position endbox = {200, 480-80}; // Position de la endbox
+extern Position startbox; // Déclaré dans main.cpp
+extern Position endbox; // Déclaré dans main.cpp
+extern int tol; // Déclarée dans camera.cpp
+extern MasqueCouleur Mask1; // Déclarée dans camera.cpp
 cv::Mat srcrgb, src;
 
 void table(int gamemode, Position& startpos, Position& endbox){
