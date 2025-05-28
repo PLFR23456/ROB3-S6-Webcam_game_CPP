@@ -315,7 +315,7 @@ int display(GameSession& game) {
                 startText.setFont(font);
                 startText.setCharacterSize(24);
                 startText.setFillColor(sf::Color::White);
-                startText.setPosition({50.f, 50.f});
+                startText.setPosition({20+ startbox.x+6,20+ startbox.y+6});
                 window.draw(startText);
             }
 

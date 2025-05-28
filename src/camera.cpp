@@ -85,7 +85,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
     // Charger le labyrinthe
     Labyrinthe lab;
     int locallabnumber = labnumber;
-    lab.image = cv::imread("./extras/lab"+std::to_string(locallabnumber) +".png", cv::IMREAD_GRAYSCALE);
+    lab.image = cv::imread("./extras/lab"+std::to_string(locallabnumber) +".jpg", cv::IMREAD_GRAYSCALE);
     if(lab.image.empty()) {
         std::cerr << "Erreur: Impossible de charger le labyrinthe!" << std::endl;
         return;
@@ -102,15 +102,20 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         if(locallabnumber!= labnumber) {
             std::cout << "changement de lab !" << std::endl;
             locallabnumber = labnumber;
-            lab.image = cv::imread("./extras/lab"+std::to_string(locallabnumber) +".png", cv::IMREAD_GRAYSCALE);
+            lab.image = cv::imread("./extras/lab"+std::to_string(locallabnumber) +".jpg", cv::IMREAD_GRAYSCALE);
             if(lab.image.empty()) {
                 std::cerr << "Erreur: Impossible de charger le labyrinthe!" << std::endl;
                 return;
             }
             // Redimensionner le labyrinthe à la taille de la caméra
-            cv::resize(lab.image, lab.image, cv::Size(cam_width, cam_height));
+            
+
         }
-        
+        // cv::resize(lab.image, lab.image, cv::Size(cam_width, cam_height));
+        // //afficher lab.image sur frame
+        // cv::Mat lab_colored;
+        // cv::cvtColor(lab.image, lab_colored, cv::COLOR_GRAY2BGR);
+        // cv::addWeighted(frame, 0.5, lab_colored, 0.5, 0, frame);
         //-------------------SUIVI DE COULEUR-------------------//
         int max_area = 0;
         int max_idx = -1;
@@ -131,7 +136,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             
             // S'assurer que les coordonnées sont dans les limites
             if(ccx >= 0 && ccx < lab.image.cols && ccy >= 0 && ccy < lab.image.rows && game.getLabyrinthStatus()) {
-                if(game.getStatus() == GameStatus::NOT_PLAYING) {
+                if(game.getStatus() == GameStatus::NOT_PLAYING || game.getStatus() == GameStatus::INITIALIZING) {    
                     if(ccx<startbox.x+30 & ccx>=startbox.x & ccy<startbox.y+30 & ccy>=startbox.y) {
                         std::cout << "STARTBOX ! " << std::endl;
                         game.enterStartBox();
