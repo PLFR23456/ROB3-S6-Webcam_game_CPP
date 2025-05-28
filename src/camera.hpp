@@ -9,6 +9,12 @@ extern std::atomic<bool> stop_signal;
 extern int tol;
 extern cv::Mat lastFrame;
 
+struct Position {
+    int x;
+    int y;
+};
+typedef struct Position Position;
+
 
 // Structure tampon partagée entre le thread de traitement et le thread principal 
 struct ProcessedFrame {

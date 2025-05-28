@@ -5,7 +5,7 @@ EXEC = program
 # Compilateur et ses arguments
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall `pkg-config --cflags opencv4`
-LDLIBS = `pkg-config --libs opencv4` -lboost_system -lsfml-graphics -lsfml-window -lsfml-system
+LDLIBS = `pkg-config --libs opencv4` -lboost_system -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 # Répertoires type
 SRC_DIR = src

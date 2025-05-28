@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport - Labyrinthe avec Tracking Couleur</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .code {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .tech-stack {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .tech-item {
+            text-align: center;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Labyrinthe avec Tracking de Couleur en Temps Réel</h1>
+    
+    <h2>Introduction</h2>
+    <p>
+        Ce projet consiste en un jeu interactif où l'utilisateur doit naviguer dans un labyrinthe en utilisant un objet coloré devant sa webcam. 
+        Le système utilise la reconnaissance de couleur en temps réel pour suivre les mouvements de l'objet et les traduire en déplacements dans le jeu.
+    </p>
+
+    <h2>Technologies Utilisées</h2>
+    <div class="tech-stack">
+        <div class="tech-item">
+            <h3>OpenCV</h3>
+            <p>Traitement d'image et détection de couleur</p>
+        </div>
+        <div class="tech-item">
+            <h3>SFML</h3>
+            <p>Interface graphique et gestion des événements</p>
+        </div>
+        <div class="tech-item">
+            <h3>C++</h3>
+            <p>Langage de programmation principal</p>
+        </div>
+    </div>
+
+    <h2>Fonctionnalités Principales</h2>
+    <h3>1. Détection de Couleur</h3>
+    <p>
+        Le système utilise l'espace colorimétrique HSV pour une détection robuste des couleurs. 
+        L'utilisateur peut sélectionner n'importe quelle couleur en cliquant sur l'objet dans l'image de la caméra.
+    </p>
+    <div class="code">
+        <pre>
+void MaskCreation(cv::Mat& frame, cv::Mat& mask, cv::Mat& hsv) {
+    cv::cvtColor(frame, hsv, cv::COLOR_BGR2HSV);
+    cv::inRange(hsv, Mask1.mini, Mask1.maxi, mask);
+}
+        </pre>
+    </div>
+
+    <h3>2. Suivi de Position</h3>
+    <p>
+        L'algorithme Moore-Neighbor Tracing est utilisé pour suivre le contour de l'objet coloré avec une complexité O(P),
+        où P représente le nombre de pixels du contour. Cet algorithme est basé sur 
+        <a href="https://www.imageprocessingplace.com/downloads_V3/root_downloads/tutorials/contour_tracing_Abeer_George_Ghuneim/moore.html">
+        cette implémentation</a> qui permet un suivi de contour efficace.
+    </p>
+
+    <h3>3. Gestion du Jeu</h3>
+    <p>
+        Le jeu propose plusieurs niveaux de labyrinthe avec des difficultés croissantes.
+        Une particularité intéressante est l'utilisation de deux représentations du même labyrinthe :
+        une version PNG affichée via SFML pour le rendu graphique, et une version JPG traitée par OpenCV 
+        pour la détection des collisions. Les variables sont partagées entre les différents modules 
+        (comme le numéro du labyrinthe actuel) pour assurer la synchronisation entre l'affichage et 
+        la logique de jeu.
+    </p>
+    
+    <p>
+        Le système inclut :
+    </p>
+    <ul>
+        <li>Détection de collision avec les murs</li>
+        <li>Zone de départ et d'arrivée</li>
+        <li>Système de score</li>
+        <li>Effets sonores et visuels</li>
+    </ul>
+
+    <h2>Architecture du Projet</h2>
+    <h3>Structure des Fichiers</h3>
+    <ul>
+        <li>camera.cpp : Gestion de la webcam et traitement d'image</li>
+        <li>display.cpp : Interface utilisateur et affichage</li>
+        <li>main.cpp : Gestion des threads et lancement des différentes instances</li>
+    </ul>
+
+    <h2>Algorithmes Clés</h2>
+    <h3>Détection de Collision</h3>
+    <p>
+        La détection de collision utilise une image en niveaux de gris du labyrinthe où les murs sont représentés par des pixels noirs.
+    </p>
+    <div class="code">
+        <pre>
+if (lab.image.at<uchar>(ccy, ccx) < 128) {
+    // Collision détectée
+    game.touchWall();
+}
+        </pre>
+    </div>
+
+    <h2>Interface Utilisateur</h2>
+    <p>
+        L'interface comprend :
+    </p>
+    <ul>
+        <li>Affichage en temps réel de la caméra</li>
+        <li>Superposition du labyrinthe</li>
+        <li>Indicateurs de position et de score</li>
+        <li>Boutons de contrôle (Start, Stop, Reset)</li>
+    </ul>
+
+    <h2>Optimisations</h2>
+    <ul>
+        <li>Utilisation de threads pour le traitement d'image</li>
+        <li>Algorithme optimisé de suivi de contour</li>
+        <li>Gestion efficace de la mémoire avec smart pointers</li>
+    </ul>
+
+    <h2>Programmation Orientée Objet</h2>
+    <p>
+        Ce projet a été l'occasion de plonger dans la programmation orientée objet en C++, 
+        un paradigme qui nous a initialement posé quelques difficultés. Nous avons implémenté 
+        plusieurs classes clés :
+    </p>
+    <ul>
+        <li>GameSession : Gère l'état du jeu et les transitions entre les différentes phases</li>
+        <li>MasqueCouleur : Encapsule les paramètres de détection de couleur</li>
+        <li>Position : Structure simple mais efficace pour la gestion des coordonnées</li>
+        <li>Labyrinthe : Contient les données et méthodes liées au labyrinthe actif</li>
+    </ul>
+    <p>
+        Bien que l'implémentation des classes ait été un défi au début, notamment pour la gestion 
+        des membres privés et l'organisation des méthodes, cela nous a permis de mieux structurer 
+        notre code et de faciliter la maintenance. C'était une excellente opportunité de mettre 
+        en pratique les concepts de la POO dans un projet concret.
+    </p>
+
+    <h2>Conclusion</h2>
+    <p>
+        Ce projet démontre l'utilisation efficace de la vision par ordinateur pour créer une interface homme-machine interactive.
+        Les choix technologiques (OpenCV, SFML) permettent un traitement en temps réel fluide et une expérience utilisateur agréable.
+    </p>
+
+</body>
+</html>
