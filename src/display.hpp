@@ -1,8 +1,7 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include "commande.hpp"
-
+#include "camera.hpp"
 extern Position startbox;
 extern Position endbox;
 extern bool isCameraShaking;

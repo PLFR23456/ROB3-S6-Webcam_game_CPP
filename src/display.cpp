@@ -1,5 +1,4 @@
 #include "display.hpp"
-#include "commande.hpp"
 #include "camera.hpp"
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -9,7 +8,6 @@
 #include <SFML/Network.hpp>
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-
 
 #include <string>
 #include <sstream>
@@ -295,27 +293,27 @@ int display(GameSession& game) {
                 sf::RectangleShape endBox(sf::Vector2f(30.f, 30.f));
                 //violet
                 endBox.setFillColor(sf::Color::Magenta);
-                endBox.setPosition({20+ endbox.x,20+ endbox.y});
+                endBox.setPosition({static_cast<float>(20) + endbox.x,static_cast<float>(20) + endbox.y});
                 window.draw(endBox);
                 sf::Text endText(font);
                 endText.setString("E");
                 endText.setFont(font);
                 endText.setCharacterSize(24);
                 endText.setFillColor(sf::Color::White);
-                endText.setPosition({20+ endbox.x+6,20+ endbox.y+6});
+                endText.setPosition({static_cast<float>(20) + endbox.x + static_cast<float>(6),static_cast<float>(20) + endbox.y+6});
                 window.draw(endText);
 
 
                 sf::RectangleShape startBox(sf::Vector2f(30.f, 30.f));
                 startBox.setFillColor(sf::Color::Green);
-                startBox.setPosition({20+ startbox.x,20+ startbox.y});
+                startBox.setPosition({static_cast<float>(20) + startbox.x,static_cast<float>(20) + startbox.y});
                 window.draw(startBox);
                 sf::Text startText(font);
                 startText.setString("S");
                 startText.setFont(font);
                 startText.setCharacterSize(24);
                 startText.setFillColor(sf::Color::White);
-                startText.setPosition({20+ startbox.x+6,20+ startbox.y+6});
+                startText.setPosition({static_cast<float>(20) + startbox.x + static_cast<float>(6),static_cast<float>(20) + startbox.y + static_cast<float>(6)});
                 window.draw(startText);
             }
 

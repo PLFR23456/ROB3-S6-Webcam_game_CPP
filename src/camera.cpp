@@ -1,5 +1,4 @@
 #include "camera.hpp"
-#include "commande.hpp"
 #include "display.hpp"
 
 #include <iostream> // Pour afficher des messages dans la console
@@ -128,10 +127,7 @@ void MaskCreation(cv::Mat& frame, cv::Mat& mask, cv::Mat& hsv, int& max_area, in
             // dessiner le contour suivi
             cv::drawContours(frame, contours, max_idx, cv::Scalar(255,0,143), 2);
         }
-
 }
-
-
 
 
 void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
@@ -179,8 +175,6 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         //---------------FIN-DE-SUIVI DE COULEUR----------------//
         
         
-        
-
         // Si on a trouvé assez de pixels de la couleur
         if(count > Mask1.minArea && game.getPageStatus()) {
             // Vérifier la collision avec les murs
@@ -213,11 +207,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                         std::cout << "PERDU ! Collision avec un mur" << std::endl;
                         game.touchWall(); // si on touche un mur
                     }
-                    // Option : retour au début
-                    // consigne.x = lab.startPos.x;
-                    // consigne.y = lab.startPos.y;
                 }
-                
             }
 
 
@@ -225,10 +215,6 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             // Dessiner le point de départ (vert) et d'arrivée (rouge)
             cv::circle(frame, lab.startPos, 10, cv::Scalar(0,255,0), -1);
             cv::circle(frame, lab.endPos, 10, cv::Scalar(0,0,255), -1);
-            
-            // // Calculer l'écart avec le centre de la caméra
-            // float dx = color_center.x - cam_center.x;
-            // float dy = color_center.y - cam_center.y;
 
             // Trouver et dessiner les contours du masque
             std::vector<std::vector<cv::Point>> contours;
@@ -259,53 +245,16 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                 
             }
 
-        //--------------------FIN DE DESSIN---------------------//
-
-
-            // met a jour la variable global
-            // std::lock_guard<std::mutex> lock(consigne_mutex); // se ferme tout seul à la fin du "}"
-            // consigne.x = color_center.x;
-            // consigne.y = color_center.y;
         }
-
-        else{
-            // std::lock_guard<std::mutex> lock(consigne_mutex);
-            // consigne.x = 320;
-            // consigne.y = 240;
-        }
-        //--------------------GRADIENT---------------------//
-        // cv::Mat hsv_grad(grad_size, grad_size, CV_8UC3);
-        // for (int y = 0; y < grad_size; ++y) {
-        //     for (int x = 0; x < grad_size; ++x) {
-        //         // Interpolation linéaire entre mini et maxi
-        //         int h = Mask1.mini[0] + x * (Mask1.maxi[0] - Mask1.mini[0]) / (grad_size - 1);
-        //         int s = Mask1.mini[1] + y * (Mask1.maxi[1] - Mask1.mini[1]) / (grad_size - 1);
-        //         int v = (Mask1.mini[2] + Mask1.maxi[2]) / 2; // Valeur centrale du V
-        //         hsv_grad.at<cv::Vec3b>(y, x) = cv::Vec3b(h, s, v);
-        //     }
-        // }
-        // // Conversion HSV -> BGR pour affichage
-        // cv::Mat bgr_grad;
-        // cv::cvtColor(hsv_grad, bgr_grad, cv::COLOR_HSV2BGR);
-        // // Position en bas à droite
-        // int x_offset = frame.cols - grad_size - 10;
-        // int y_offset = frame.rows - grad_size - 10;
-        // // Affichage du carré sur la frame
-        // bgr_grad.copyTo(frame(cv::Rect(x_offset, y_offset, grad_size, grad_size)));
-        //--------------------FIN DE GRADIENT---------------------//
-
 
         {
-        std::lock_guard<std::mutex> lock(data.mutex);
-        frame.copyTo(data.frame); // copie la frame courante dans la structure partagée
-        mask.copyTo(data.mask);   // copie le masque courant dans la structure partagée
-        data.ready = true;        // indique qu'une nouvelle frame est prête
+            std::lock_guard<std::mutex> lock(data.mutex);
+            frame.copyTo(data.frame); // copie la frame courante dans la structure partagée
+            mask.copyTo(data.mask);   // copie le masque courant dans la structure partagée
+            data.ready = true;        // indique qu'une nouvelle frame est prête
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10)); // pour ne pas surcharger
     }
-    while (!stop_signal) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-}
 }
 
 int camera() {
@@ -315,15 +264,7 @@ int camera() {
         return -1;
     }
 
-    // Création des trackbars
-    
-    // Création du callback pour la souris
-
     std::thread worker(traiterCamera, std::ref(cap), std::ref(processed_data));
-
-    while (!stop_signal) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-}
 
     worker.join();
     return 0;
