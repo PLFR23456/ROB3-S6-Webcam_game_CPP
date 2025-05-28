@@ -41,7 +41,6 @@ void attendreReady(boost::asio::serial_port& serial) {
 }
 
 
-
 int main() {
     // ----------------------------------- PORT SERIE ----------------------------------- //
     // Initialiser le port série

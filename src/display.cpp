@@ -26,7 +26,7 @@ bool isCameraShaking = false;
 int status = 0;
 int score = 0;
 int gamemode = 1;
-extern int labnumber = 1;
+extern int labnumber = (gamemode-1)/2 + 1;;
 int soundnumber=0;
 int gifnumber = 0;
 int playingsound = 0;
@@ -35,8 +35,8 @@ int bouclestart = 0;
 extern int tol;
 extern MasqueCouleur Mask1;
 extern Position consigne;
-Position startbox = {35, 35}; // Position de la startbox
-Position endbox = {60, 40}; // Position de la endbox
+Position startbox = {300, 80}; // Position de la startbox
+Position endbox = {200, 480-80}; // Position de la endbox
 cv::Mat srcrgb, src;
 
 void table(int gamemode, Position& startpos, Position& endbox){
@@ -176,6 +176,10 @@ int display(GameSession& game) {
     }
     sf::Sprite labSprite(labTexture);
     labSprite.setPosition({20.f, 20.f});
+    float scaleX = 640.0f / labTexture.getSize().x;
+    float scaleY = 480.0f / labTexture.getSize().y;
+    labSprite.setScale({scaleX, scaleY});
+    labSprite.setTexture(labTexture,true); 
 
     while (window.isOpen()) {              
         while (const std::optional event = window.pollEvent()) {
@@ -216,12 +220,19 @@ int display(GameSession& game) {
                     labnumber = (gamemode-1)/2 + 1; // 1, 2, 3, 4, 5, 6
                     std::cout << "Mode de jeu changé : " << gamemode << std::endl;
                     // Charger le labyrinthe correspondant
+                    labTexture = sf::Texture();
                     if (!labTexture.loadFromFile("./extras/lab" + std::to_string(labnumber) + ".png")) {
                         std::cerr << "Erreur chargement lab" << std::to_string(labnumber) + ".png" << std::endl;
                     } else {
-                        labSprite.setTexture(labTexture);
+                        // Forcer l'échelle pour obtenir 640x480
+                        float scaleX = 640.0f / labTexture.getSize().x;
+                        float scaleY = 480.0f / labTexture.getSize().y;
+                        
+                        labSprite.setTexture(labTexture, true); //true pour reset la taille
                         labSprite.setPosition({20.f, 20.f});
-                        table(1+(1+gamemode)/2, startbox, endbox); // Mettre à jour les positions de la startbox et de la endbox
+                        labSprite.setScale({scaleX, scaleY});
+                        
+                        table((gamemode-1)/2, startbox, endbox); // Mettre à jour les positions de la startbox et de la endbox
                     }
                 }
                 // Réglage des bouton en jeu
@@ -270,12 +281,11 @@ int display(GameSession& game) {
                 window.draw(sprite);
 
                 if(game.getLabyrinthStatus()) {
-                    // Puis superposer le labyrinthe avec transparence
-                    float scaleX = static_cast<float>(src.cols) / labTexture.getSize().x;
-                    float scaleY = static_cast<float>(src.rows) / labTexture.getSize().y;
-                    labSprite.setScale({scaleX, scaleY});
-                    labSprite.setColor(sf::Color(255, 255, 255, 128)); // 128 pour semi-transparent
-                    if (game.getStatus() == GameStatus::PLAYING) labSprite.setColor(sf::Color(255, 255, 255, 255)); // 128 pour semi-transparent
+                    // Garder l'échelle fixe au lieu de la recalculer
+                    labSprite.setColor(sf::Color(255, 255, 255, 128));
+                    if (game.getStatus() == GameStatus::PLAYING) {
+                        labSprite.setColor(sf::Color(255, 255, 255, 255));
+                    }
                     window.draw(labSprite);
                 }
             }

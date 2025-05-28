@@ -100,6 +100,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
         frame.copyTo(frame_for_click);
 
         if(locallabnumber!= labnumber) {
+            std::cout << "changement de lab !" << std::endl;
             locallabnumber = labnumber;
             lab.image = cv::imread("./extras/lab"+std::to_string(locallabnumber) +".png", cv::IMREAD_GRAYSCALE);
             if(lab.image.empty()) {
