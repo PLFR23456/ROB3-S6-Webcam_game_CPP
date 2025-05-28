@@ -136,6 +136,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
     
     while (!stop_signal) {
         cap >> frame;
+        cv::flip(frame, frame, 1); // 1 pour inverser horizontalement
         if (frame.empty()) continue;
         frame.copyTo(frame_for_click);
 
@@ -170,7 +171,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
             // S'assurer que les coordonnées sont dans les limites
             if(ccx >= 0 && ccx < lab.image.cols && ccy >= 0 && ccy < lab.image.rows && game.getLabyrinthStatus()) {
                 if(game.getStatus() == GameStatus::NOT_PLAYING || game.getStatus() == GameStatus::INITIALIZING) {    
-                    if(ccx<startbox.x+30 & ccx>=startbox.x & ccy<startbox.y+30 & ccy>=startbox.y) {
+                    if(ccx<startbox.x+30 && ccx>=startbox.x && ccy<startbox.y+30 && ccy>=startbox.y) {
                         std::cout << "STARTBOX ! " << std::endl;
                         game.enterStartBox();
                         std::cout << "DANS LA START BOX" << std::endl;
@@ -181,7 +182,7 @@ void traiterCamera(cv::VideoCapture& cap, ProcessedFrame& data) {
                     }
                 }
 
-                else{if(ccx<endbox.x+30 & ccx>=endbox.x & ccy<endbox.y+30 & ccy>=endbox.y) {
+                else{if(ccx<endbox.x+30 && ccx>=endbox.x && ccy<endbox.y+30 && ccy>=endbox.y) {
                         std::cout << "ENDBOX ! " << std::endl;
                         game.enterEndBox();
 

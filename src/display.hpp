@@ -3,8 +3,11 @@
 
 #include "camera.hpp"
 
-extern bool isCameraShaking;
 extern int labnumber;
+extern bool isCameraShaking;
+extern Position startbox;
+extern Position endbox;
+extern int gamemode;
 
 enum class GameStatus {
     NOT_PLAYING,

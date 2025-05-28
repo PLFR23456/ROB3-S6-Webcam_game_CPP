@@ -17,7 +17,8 @@
 #include <mutex>
 
 //GLOBAL INDICATORS
-extern int labnumber = (gamemode-1)/2 + 1;
+int labnumber = (gamemode-1)/2 + 1;
+bool isCameraShaking = false;
 
 int score = 0;
 int gamemode = 1;
@@ -67,7 +68,10 @@ int display(GameSession& game) {
     sf::Font font;
     sf::SoundBuffer buffer;
     std::unique_ptr<sf::Sound> sound;
-    font.openFromFile("./extras/DejaVuSans.ttf");
+    if (!font.openFromFile("./extras/DejaVuSans.ttf")) {
+        std::cerr << "Error loading font file" << std::endl;
+        return -1;
+    }
 
     sf::RectangleShape startButton(sf::Vector2f(100, 30));
     startButton.setPosition({50, basey + 350});
@@ -380,6 +384,7 @@ int display(GameSession& game) {
                 window.draw(endText);
                 //afficher le gif correspondant au numero
                 std::string gifPath = "./extras/screamgif/00" + std::to_string(gifnumber) + ".gif";
+                std::cout << "Gif number: affiché " << gifnumber << std::endl;
                 sf::Texture gifTexture;
                 if (!gifTexture.loadFromFile(gifPath)) {
                     std::cerr << "Erreur chargement " << gifPath << std::endl;

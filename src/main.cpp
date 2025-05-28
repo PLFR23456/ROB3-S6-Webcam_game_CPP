@@ -6,8 +6,9 @@
 
 std::atomic<bool> stop_signal{false}; // TODO : À supprimer pour cette branche
 
-Position startbox = {300, 80}; // Position de la startbox
-Position endbox = {200, 480-80}; // Position de la endbox
+// Définition des variables globales
+Position startbox = {300, 80};
+Position endbox = {200, 480-80};
 
 GameSession game(startbox, endbox);
 
