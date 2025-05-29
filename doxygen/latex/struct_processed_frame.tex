@@ -1,0 +1,97 @@
+\doxysection{Processed\+Frame Struct Reference}
+\hypertarget{struct_processed_frame}{}\label{struct_processed_frame}\index{ProcessedFrame@{ProcessedFrame}}
+
+
+Structure tampon partagée entre le thread de traitement et le thread principal.  
+
+
+
+
+{\ttfamily \#include $<$camera.\+hpp$>$}
+
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+cv\+::\+Mat \mbox{\hyperlink{struct_processed_frame_a619cabaf7ee0ea1cabf1b3bcbcad1a65}{frame}}
+\begin{DoxyCompactList}\small\item\em Frame originale de la caméra. \end{DoxyCompactList}\item 
+cv\+::\+Mat \mbox{\hyperlink{struct_processed_frame_aba9dced8d7dbf12fe467ae780259eebf}{mask}}
+\begin{DoxyCompactList}\small\item\em Masque de couleur généré \end{DoxyCompactList}\item 
+std\+::mutex \mbox{\hyperlink{struct_processed_frame_a16a0fe641791020f6930f6725c7f466c}{mutex}}
+\begin{DoxyCompactList}\small\item\em Mutex pour protéger l\textquotesingle{}accès concurrent. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{struct_processed_frame_ada7c84413c59972f8b477c57ab76dab2}{ready}} = false
+\begin{DoxyCompactList}\small\item\em Indicateur de disponibilité des données. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Structure tampon partagée entre le thread de traitement et le thread principal. 
+
+Contient les données d\textquotesingle{}image traitées avec protection par mutex 
+
+Definition at line \mbox{\hyperlink{camera_8hpp_source_l00045}{45}} of file \mbox{\hyperlink{camera_8hpp_source}{camera.\+hpp}}.
+
+
+
+\label{doc-variable-members}
+\Hypertarget{struct_processed_frame_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_processed_frame_a619cabaf7ee0ea1cabf1b3bcbcad1a65}\index{ProcessedFrame@{ProcessedFrame}!frame@{frame}}
+\index{frame@{frame}!ProcessedFrame@{ProcessedFrame}}
+\doxysubsubsection{\texorpdfstring{frame}{frame}}
+{\footnotesize\ttfamily \label{struct_processed_frame_a619cabaf7ee0ea1cabf1b3bcbcad1a65} 
+cv\+::\+Mat Processed\+Frame\+::frame}
+
+
+
+Frame originale de la caméra. 
+
+
+
+Definition at line \mbox{\hyperlink{camera_8hpp_source_l00046}{46}} of file \mbox{\hyperlink{camera_8hpp_source}{camera.\+hpp}}.
+
+\Hypertarget{struct_processed_frame_aba9dced8d7dbf12fe467ae780259eebf}\index{ProcessedFrame@{ProcessedFrame}!mask@{mask}}
+\index{mask@{mask}!ProcessedFrame@{ProcessedFrame}}
+\doxysubsubsection{\texorpdfstring{mask}{mask}}
+{\footnotesize\ttfamily \label{struct_processed_frame_aba9dced8d7dbf12fe467ae780259eebf} 
+cv\+::\+Mat Processed\+Frame\+::mask}
+
+
+
+Masque de couleur généré 
+
+
+
+Definition at line \mbox{\hyperlink{camera_8hpp_source_l00047}{47}} of file \mbox{\hyperlink{camera_8hpp_source}{camera.\+hpp}}.
+
+\Hypertarget{struct_processed_frame_a16a0fe641791020f6930f6725c7f466c}\index{ProcessedFrame@{ProcessedFrame}!mutex@{mutex}}
+\index{mutex@{mutex}!ProcessedFrame@{ProcessedFrame}}
+\doxysubsubsection{\texorpdfstring{mutex}{mutex}}
+{\footnotesize\ttfamily \label{struct_processed_frame_a16a0fe641791020f6930f6725c7f466c} 
+std\+::mutex Processed\+Frame\+::mutex}
+
+
+
+Mutex pour protéger l\textquotesingle{}accès concurrent. 
+
+
+
+Definition at line \mbox{\hyperlink{camera_8hpp_source_l00048}{48}} of file \mbox{\hyperlink{camera_8hpp_source}{camera.\+hpp}}.
+
+\Hypertarget{struct_processed_frame_ada7c84413c59972f8b477c57ab76dab2}\index{ProcessedFrame@{ProcessedFrame}!ready@{ready}}
+\index{ready@{ready}!ProcessedFrame@{ProcessedFrame}}
+\doxysubsubsection{\texorpdfstring{ready}{ready}}
+{\footnotesize\ttfamily \label{struct_processed_frame_ada7c84413c59972f8b477c57ab76dab2} 
+bool Processed\+Frame\+::ready = false}
+
+
+
+Indicateur de disponibilité des données. 
+
+
+
+Definition at line \mbox{\hyperlink{camera_8hpp_source_l00049}{49}} of file \mbox{\hyperlink{camera_8hpp_source}{camera.\+hpp}}.
+
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{camera_8hpp}{camera.\+hpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,247 @@
+\doxysection{src/main.cpp File Reference}
+\hypertarget{main_8cpp}{}\label{main_8cpp}\index{src/main.cpp@{src/main.cpp}}
+
+
+Point d\textquotesingle{}entrée principal de l\textquotesingle{}application de suivi de couleur.  
+
+
+{\ttfamily \#include "{}camera.\+hpp"{}}\newline
+{\ttfamily \#include "{}display.\+hpp"{}}\newline
+{\ttfamily \#include $<$thread$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}} ()
+\begin{DoxyCompactList}\small\item\em Fonction principale de l\textquotesingle{}application. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+std\+::atomic$<$ bool $>$ \mbox{\hyperlink{main_8cpp_aad20d5ca3f4debe1b619d0cd361be72b}{stop\+\_\+signal}} \{false\}
+\begin{DoxyCompactList}\small\item\em \texorpdfstring{$<$}{<} Fonctions d\textquotesingle{}affichage et interface utilisateur \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_position}{Position}} \mbox{\hyperlink{main_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}} = \{300, 80\}
+\begin{DoxyCompactList}\small\item\em \doxylink{struct_position}{Position} de la zone de départ (startbox) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_position}{Position}} \mbox{\hyperlink{main_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}} = \{200, 480-\/80\}
+\begin{DoxyCompactList}\small\item\em \doxylink{struct_position}{Position} de la zone d\textquotesingle{}arrivée (endbox) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_game_session}{Game\+Session}} \mbox{\hyperlink{main_8cpp_a81202c286fcb78e9e09fe44bae54f03a}{game}} (\mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}}, \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}})
+\begin{DoxyCompactList}\small\item\em Instance principale de la session de jeu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Point d\textquotesingle{}entrée principal de l\textquotesingle{}application de suivi de couleur. 
+
+Ce fichier contient la fonction main qui initialise et coordonne les différents composants de l\textquotesingle{}application \+: le traitement vidéo en temps réel et l\textquotesingle{}interface utilisateur graphique.
+
+L\textquotesingle{}application fonctionne avec une architecture multi-\/thread \+:
+\begin{DoxyItemize}
+\item Thread principal \+: Interface graphique (SFML) et gestion des événements
+\item Thread secondaire \+: Traitement vidéo (Open\+CV) et détection de couleur
+\end{DoxyItemize}
+
+\begin{DoxyAuthor}{Author}
+Votre nom 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2025 
+\end{DoxyDate}
+\begin{DoxyVersion}{Version}
+1.\+0 
+\end{DoxyVersion}
+
+
+Definition in file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{main_8cpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}\index{main.cpp@{main.cpp}!main@{main}}
+\index{main@{main}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily \label{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4} 
+int main (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Fonction principale de l\textquotesingle{}application. 
+
+Point d\textquotesingle{}entrée du programme qui \+:
+\begin{DoxyEnumerate}
+\item Initialise la session de jeu avec les positions par défaut
+\item Lance le thread de traitement vidéo (camera)
+\item Démarre l\textquotesingle{}interface graphique (display) dans le thread principal
+\item Attend la fin du thread de traitement vidéo avant de terminer
+\end{DoxyEnumerate}
+
+\begin{DoxyReturn}{Returns}
+int Code de retour du programme 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 0} & Exécution réussie \\
+\hline
+{\em -\/1} & Erreur lors de l\textquotesingle{}exécution (propagée depuis \doxylink{camera_8cpp_a4b0cfcdacc75426e5ed31b9ce093a6b1}{display()})\\
+\hline
+\end{DoxyRetVals}
+Architecture multi-\/thread \+:
+\begin{DoxyItemize}
+\item {\bfseries{Thread principal}} \+: Interface utilisateur SFML
+\begin{DoxyItemize}
+\item Gestion des événements utilisateur (clics, fermeture)
+\item Rendu graphique (flux vidéo, labyrinthes, interface)
+\item Contrôle du flux de jeu
+\end{DoxyItemize}
+\item {\bfseries{Thread secondaire}} \+: Traitement vidéo Open\+CV
+\begin{DoxyItemize}
+\item Capture depuis la webcam
+\item Détection et suivi de couleur
+\item Calcul de la position du marqueur
+\item Détection des collisions avec les murs
+\end{DoxyItemize}
+\end{DoxyItemize}
+
+\begin{DoxyNote}{Note}
+La synchronisation entre threads se fait via \+:
+\begin{DoxyItemize}
+\item Variables globales partagées (startbox, endbox, game)
+\item Mutex pour l\textquotesingle{}accès aux données de traitement vidéo
+\item Signal atomique stop\+\_\+signal pour l\textquotesingle{}arrêt coordonné
+\end{DoxyItemize}
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+Le programme doit être fermé proprement via l\textquotesingle{}interface pour éviter les fuites de ressources et assurer la terminaison correcte des threads
+\end{DoxyWarning}
+\begin{DoxySeeAlso}{See also}
+\doxylink{camera_8hpp_a871951369ab5d424568880b98bf3e182}{camera()} pour les détails du traitement vidéo 
+
+\doxylink{camera_8cpp_a4b0cfcdacc75426e5ed31b9ce093a6b1}{display()} pour les détails de l\textquotesingle{}interface graphique 
+
+\doxylink{class_game_session}{Game\+Session} pour la gestion d\textquotesingle{}état du jeu 
+\end{DoxySeeAlso}
+Thread dédié au traitement de l\textquotesingle{}image
+
+Ce thread exécute la fonction \doxylink{camera_8hpp_a871951369ab5d424568880b98bf3e182}{camera()} qui gère \+:
+\begin{DoxyItemize}
+\item L\textquotesingle{}acquisition vidéo depuis la webcam
+\item La détection de couleur en temps réel
+\item Le calcul de position du marqueur coloré
+\item La détection des collisions avec les éléments du jeu
+\end{DoxyItemize}
+
+Le thread fonctionne en boucle continue jusqu\textquotesingle{}à réception du signal d\textquotesingle{}arrêt stop\+\_\+signal.
+
+Interface graphique principale
+
+La fonction \doxylink{camera_8cpp_a4b0cfcdacc75426e5ed31b9ce093a6b1}{display()} s\textquotesingle{}exécute dans le thread principal et gère \+:
+\begin{DoxyItemize}
+\item La fenêtre SFML et les événements utilisateur
+\item L\textquotesingle{}affichage du flux vidéo traité
+\item Le rendu des éléments de jeu (labyrinthes, zones)
+\item L\textquotesingle{}interface utilisateur (boutons, score, paramètres)
+\end{DoxyItemize}
+
+Cette fonction est bloquante et retourne seulement quand l\textquotesingle{}utilisateur ferme l\textquotesingle{}application.
+
+Attente de la fin du thread de traitement
+
+Avant de terminer le programme, on s\textquotesingle{}assure que le thread de traitement vidéo se termine proprement. Cela évite \+:
+\begin{DoxyItemize}
+\item Les fuites de ressources (caméra, mémoire)
+\item La terminaison brutale du processus
+\item Les erreurs de segmentation potentielles
+\end{DoxyItemize}
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00106}{106}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+
+
+\label{doc-var-members}
+\Hypertarget{main_8cpp_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{main_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}\index{main.cpp@{main.cpp}!endbox@{endbox}}
+\index{endbox@{endbox}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{endbox}{endbox}}
+{\footnotesize\ttfamily \label{main_8cpp_a50a11b1f65c7f13657769a1077d7d2b1} 
+\mbox{\hyperlink{struct_position}{Position}} endbox = \{200, 480-\/80\}}
+
+
+
+\doxylink{struct_position}{Position} de la zone d\textquotesingle{}arrivée (endbox) 
+
+\doxylink{struct_position}{Position} de la zone d\textquotesingle{}arrivée (déclarée dans \doxylink{main_8cpp}{main.\+cpp})
+
+Coordonnées de la zone magenta que le joueur doit atteindre pour gagner. \doxylink{struct_position}{Position} par défaut \+: (200, 400) pour le mode de jeu initial.
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{camera_8cpp_a8201d4510fb919b800708ed8af14a2e1}{table()} pour la configuration des positions selon les modes de jeu 
+\end{DoxySeeAlso}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00054}{54}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+\Hypertarget{main_8cpp_a81202c286fcb78e9e09fe44bae54f03a}\index{main.cpp@{main.cpp}!game@{game}}
+\index{game@{game}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{game}{game}}
+{\footnotesize\ttfamily \label{main_8cpp_a81202c286fcb78e9e09fe44bae54f03a} 
+\mbox{\hyperlink{class_game_session}{Game\+Session}} game(\mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}}, \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}) (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}}}]{}{, }\item[{\mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Instance principale de la session de jeu. 
+
+Objet global qui gère l\textquotesingle{}état du jeu, les transitions entre les phases et la coordination entre les différents composants de l\textquotesingle{}application.
+
+
+\begin{DoxyParams}{Parameters}
+{\em startbox} & \doxylink{struct_position}{Position} de la zone de départ \\
+\hline
+{\em endbox} & \doxylink{struct_position}{Position} de la zone d\textquotesingle{}arrivée \\
+\hline
+\end{DoxyParams}
+\Hypertarget{main_8cpp_adc48713c34072ef5ffab2ec13772f522}\index{main.cpp@{main.cpp}!startbox@{startbox}}
+\index{startbox@{startbox}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{startbox}{startbox}}
+{\footnotesize\ttfamily \label{main_8cpp_adc48713c34072ef5ffab2ec13772f522} 
+\mbox{\hyperlink{struct_position}{Position}} startbox = \{300, 80\}}
+
+
+
+\doxylink{struct_position}{Position} de la zone de départ (startbox) 
+
+\doxylink{struct_position}{Position} de la zone de départ (déclarée dans \doxylink{main_8cpp}{main.\+cpp})
+
+Coordonnées de la zone verte où le joueur doit commencer chaque niveau. \doxylink{struct_position}{Position} par défaut \+: (300, 80) pour le mode de jeu initial.
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{camera_8cpp_a8201d4510fb919b800708ed8af14a2e1}{table()} pour la configuration des positions selon les modes de jeu 
+\end{DoxySeeAlso}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00044}{44}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+\Hypertarget{main_8cpp_aad20d5ca3f4debe1b619d0cd361be72b}\index{main.cpp@{main.cpp}!stop\_signal@{stop\_signal}}
+\index{stop\_signal@{stop\_signal}!main.cpp@{main.cpp}}
+\doxysubsubsection{\texorpdfstring{stop\_signal}{stop\_signal}}
+{\footnotesize\ttfamily \label{main_8cpp_aad20d5ca3f4debe1b619d0cd361be72b} 
+std\+::atomic$<$bool$>$ stop\+\_\+signal \{false\}}
+
+
+
+\texorpdfstring{$<$}{<} Fonctions d\textquotesingle{}affichage et interface utilisateur 
+
+Variable de signal d\textquotesingle{}arrêt atomique pour l\textquotesingle{}arrêt propre des threads.
+
+\texorpdfstring{$<$}{<} Fonctions de traitement vidéo et détection de couleur \texorpdfstring{$<$}{<} Support multi-\/threading \texorpdfstring{$<$}{<} Entrées/sorties standard
+
+Signal d\textquotesingle{}arrêt global pour coordination des threads
+
+Variable atomique partagée entre les threads pour assurer un arrêt propre de l\textquotesingle{}application. Quand elle est définie à true, tous les threads doivent se terminer de manière coordonnée.
+
+\begin{DoxyNote}{Note}
+Variable atomique pour éviter les conditions de course 
+\end{DoxyNote}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00034}{34}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+

@@ -1,0 +1,40 @@
+\doxysection{main.\+cpp}
+\hypertarget{main_8cpp_source}{}\label{main_8cpp_source}\index{src/main.cpp@{src/main.cpp}}
+\mbox{\hyperlink{main_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00018}00018\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00019}00019\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{camera_8hpp}{camera.hpp}}"{}}\ \ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00020}00020\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{display_8hpp}{display.hpp}}"{}}\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00022}00022\ \textcolor{preprocessor}{\#include\ <thread>}\ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00023}00023\ \textcolor{preprocessor}{\#include\ <iostream>}\ \ \ \ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00034}\mbox{\hyperlink{camera_8hpp_aad20d5ca3f4debe1b619d0cd361be72b}{00034}}\ std::atomic<bool>\ \mbox{\hyperlink{camera_8hpp_aad20d5ca3f4debe1b619d0cd361be72b}{stop\_signal}}\{\textcolor{keyword}{false}\};}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00035}00035\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00044}\mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{00044}}\ \mbox{\hyperlink{struct_position}{Position}}\ \mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}}\ =\ \{300,\ 80\};}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00045}00045\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00054}\mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{00054}}\ \mbox{\hyperlink{struct_position}{Position}}\ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}\ =\ \{200,\ 480-\/80\};}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00055}00055\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00065}\mbox{\hyperlink{main_8cpp_a81202c286fcb78e9e09fe44bae54f03a}{00065}}\ \mbox{\hyperlink{class_game_session}{GameSession}}\ \mbox{\hyperlink{main_8cpp_a81202c286fcb78e9e09fe44bae54f03a}{game}}(\mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}},\ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}});}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00066}00066\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00106}\mbox{\hyperlink{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{00106}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{main_8cpp_ae66f6b31b5ad750f1fe042a706a4e3d4}{main}}()\ \{}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00107}00107\ \ \ \ \ \textcolor{comment}{//\ ===\ INITIALISATION\ DE\ LA\ SESSION\ DE\ JEU\ ===}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00108}00108\ \ \ \ \ \textcolor{comment}{//\ L'objet\ GameSession\ est\ déjà\ initialisé\ globalement\ avec\ les\ positions\ par\ défaut}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00109}00109\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00110}00110\ \ \ \ \ \textcolor{comment}{//\ ===\ LANCEMENT\ DU\ THREAD\ DE\ TRAITEMENT\ VIDÉO\ ===}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00123}00123\ \ \ \ \ std::thread\ thread\_camera(\mbox{\hyperlink{camera_8hpp_a871951369ab5d424568880b98bf3e182}{camera}});}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00124}00124\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00125}00125\ \ \ \ \ \textcolor{comment}{//\ ===\ LANCEMENT\ DE\ L'INTERFACE\ GRAPHIQUE\ ===}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00138}00138\ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a4b0cfcdacc75426e5ed31b9ce093a6b1}{display}}(\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}});}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00139}00139\ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00140}00140\ \ \ \ \ \textcolor{comment}{//\ ===\ NETTOYAGE\ ET\ FERMETURE\ ===}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00150}00150\ \ \ \ \ thread\_camera.join();}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00151}00151\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00152}00152\ \ \ \ \ \textcolor{comment}{//\ ===\ MESSAGE\ DE\ CONFIRMATION\ ===}}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00153}00153\ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Fermeture\ propre\ du\ programme."{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00154}00154\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00155}00155\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{main_8cpp_source_l00156}00156\ \}}
+
+\end{DoxyCode}

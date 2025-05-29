@@ -1,0 +1,533 @@
+\doxysection{camera.\+cpp}
+\hypertarget{camera_8cpp_source}{}\label{camera_8cpp_source}\index{src/camera.cpp@{src/camera.cpp}}
+\mbox{\hyperlink{camera_8cpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00001}00001\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00012}00012\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{display_8hpp}{display.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00013}00013\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{camera_8hpp}{camera.hpp}}"{}}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00014}00014\ \textcolor{preprocessor}{\#include\ <SFML/Graphics.hpp>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00015}00015\ \textcolor{preprocessor}{\#include\ <SFML/Window.hpp>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00016}00016\ \textcolor{preprocessor}{\#include\ <SFML/Window/Event.hpp>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00017}00017\ \textcolor{preprocessor}{\#include\ <SFML/System.hpp>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00018}00018\ \textcolor{preprocessor}{\#include\ <SFML/Audio.hpp>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00019}00019\ \textcolor{preprocessor}{\#include\ <SFML/Network.hpp>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00020}00020\ \textcolor{preprocessor}{\#include\ <SFML/Config.hpp>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00021}00021\ \textcolor{preprocessor}{\#include\ <SFML/Graphics/RenderWindow.hpp>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00023}00023\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00024}00024\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00025}00025\ \textcolor{preprocessor}{\#include\ <opencv2/opencv.hpp>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00026}00026\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00027}00027\ \textcolor{preprocessor}{\#include\ <thread>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00028}00028\ \textcolor{preprocessor}{\#include\ <mutex>}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00029}00029\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00035}\mbox{\hyperlink{camera_8cpp_aef160b7437d94056f1dc59646cd5b87d}{00035}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{camera_8cpp_aef160b7437d94056f1dc59646cd5b87d}{score}}\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00036}00036\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00043}\mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{00043}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}\ =\ 1;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00044}00044\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00050}\mbox{\hyperlink{camera_8cpp_a8df7e6ce322b58ee0cae836f83a64a82}{00050}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{camera_8cpp_a8df7e6ce322b58ee0cae836f83a64a82}{soundnumber}}\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00057}\mbox{\hyperlink{camera_8cpp_ab5455f24c260bc03abbf23924c159ddb}{00057}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{camera_8cpp_ab5455f24c260bc03abbf23924c159ddb}{gifnumber}}\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00058}00058\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00064}\mbox{\hyperlink{camera_8cpp_a6d660874a54b09ec82479f2c6972c27a}{00064}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{camera_8cpp_a6d660874a54b09ec82479f2c6972c27a}{playingsound}}\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00071}\mbox{\hyperlink{camera_8cpp_a61291c94d341d671840d6da409dfb2d8}{00071}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{camera_8cpp_a61291c94d341d671840d6da409dfb2d8}{bouclestart}}\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00072}00072\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00078}00078\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{camera_8cpp_ac93725eebbbf836a02c62a4284eb219f}{labnumber}}\ =\ (\mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}\ -\/\ 1)\ /2\ +\ 1;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00079}00079\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00085}00085\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{struct_position}{Position}}\ \mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}};\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00086}00086\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{struct_position}{Position}}\ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}};\ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00087}00087\ \textcolor{keyword}{extern}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{camera_8cpp_abbaadd1183ab404d8b21f4e2d7d32295}{tol}};\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00088}00088\ \textcolor{keyword}{extern}\ \mbox{\hyperlink{struct_masque_couleur}{MasqueCouleur}}\ \mbox{\hyperlink{camera_8cpp_a737f5afdf22379e26dbf728dada44bd8}{Mask1}};\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00090}00090\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00097}\mbox{\hyperlink{camera_8cpp_a1ed1786965b2cff5cd92e23bb75a70aa}{00097}}\ cv::Mat\ \mbox{\hyperlink{camera_8cpp_abb74b02f147ce6384bf792114a43a049}{srcrgb}},\ \mbox{\hyperlink{camera_8cpp_a1ed1786965b2cff5cd92e23bb75a70aa}{src}};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00098}00098\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00119}\mbox{\hyperlink{camera_8cpp_a8201d4510fb919b800708ed8af14a2e1}{00119}}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{camera_8cpp_a8201d4510fb919b800708ed8af14a2e1}{table}}(\textcolor{keywordtype}{int}\ \mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}},\ \mbox{\hyperlink{struct_position}{Position}}\&\ startpos,\ \mbox{\hyperlink{struct_position}{Position}}\&\ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}})\{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00120}00120\ \ \ \ \ \textcolor{keywordflow}{switch}\ (\mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}})\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00121}00121\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 1:\ \textcolor{comment}{//\ Mode\ 1}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00122}00122\ \ \ \ \ \ \ \ \ \ \ \ \ startpos\ =\ \{35,\ 35\};\ \textcolor{comment}{//\ Position\ centrale\ par\ défaut}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00123}00123\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}\ =\ \{640-\/35,\ 480-\/35\};\ \textcolor{comment}{//\ Position\ centrale\ par\ défaut}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00124}00124\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00125}00125\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 0:\ \textcolor{comment}{//\ Mode\ 0}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00126}00126\ \ \ \ \ \ \ \ \ \ \ \ \ startpos\ =\ \{300,\ 80\};\ \textcolor{comment}{//\ Position\ de\ la\ startbox}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00127}00127\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}\ =\ \{200,\ 480-\/80\};\ \textcolor{comment}{//\ Position\ de\ la\ endbox}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00128}00128\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00129}00129\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 2:\ \textcolor{comment}{//\ Mode\ 2}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00130}00130\ \ \ \ \ \ \ \ \ \ \ \ \ startpos\ =\ \{140,\ 35\};\ \textcolor{comment}{//\ Position\ de\ la\ startbox}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00131}00131\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}\ =\ \{640-\/140,\ 480-\/35\};\ \textcolor{comment}{//\ Position\ de\ la\ endbox}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00132}00132\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00133}00133\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ 3:\ \textcolor{comment}{//\ Mode\ 3}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00134}00134\ \ \ \ \ \ \ \ \ \ \ \ \ startpos\ =\ \{640-\/30,\ 40\};\ \textcolor{comment}{//\ Position\ de\ la\ startbox}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00135}00135\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}\ =\ \{640-\/35,\ 480-\/35\};\ \textcolor{comment}{//\ Position\ de\ la\ endbox}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00136}00136\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00137}00137\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:\ \textcolor{comment}{//\ Mode\ par\ défaut}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00138}00138\ \ \ \ \ \ \ \ \ \ \ \ \ startpos\ =\ \{0,\ 0\};\ \textcolor{comment}{//\ Position\ centrale\ par\ défaut}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00139}00139\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}\ =\ \{0,\ 0\};\ \textcolor{comment}{//\ Position\ centrale\ par\ défaut}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00140}00140\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00141}00141\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00142}00142\ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00143}00143\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00181}\mbox{\hyperlink{camera_8cpp_a4b0cfcdacc75426e5ed31b9ce093a6b1}{00181}}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{camera_8cpp_a4b0cfcdacc75426e5ed31b9ce093a6b1}{display}}(\mbox{\hyperlink{class_game_session}{GameSession}}\&\ \mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}})\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00182}00182\ \ \ \ \ \textcolor{comment}{//\ Création\ de\ la\ fenêtre\ principale\ (720x1000\ pixels)}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00183}00183\ \ \ \ \ sf::RenderWindow\ window(sf::VideoMode(\{720u,\ 1000u\}),\ \textcolor{stringliteral}{"{}Color\ Tracking\ -\/\ Interface"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00184}00184\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00189}00189\ \ \ \ \ \textcolor{keywordtype}{float}\ basey\ =\ 480.0\ +\ 20.0\ +\ 20.0;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00190}00190\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00194}00194\ \ \ \ \ \textcolor{keywordtype}{float}\ offsetybutton\ =\ 30;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00195}00195\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00196}00196\ \ \ \ \ \textcolor{comment}{//\ Initialisation\ des\ ressources\ graphiques\ et\ audio}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00197}00197\ \ \ \ \ sf::Font\ font;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00198}00198\ \ \ \ \ sf::SoundBuffer\ buffer;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00199}00199\ \ \ \ \ std::unique\_ptr<sf::Sound>\ sound;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00200}00200\ \ \ \ \ font.openFromFile(\textcolor{stringliteral}{"{}./extras/DejaVuSans.ttf"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00201}00201\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00202}00202\ \ \ \ \ \textcolor{comment}{//\ ===\ CRÉATION\ DES\ ÉLÉMENTS\ D'INTERFACE\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00203}00203\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00209}00209\ \ \ \ \ sf::RectangleShape\ startButton(sf::Vector2f(100,\ 30));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00210}00210\ \ \ \ \ startButton.setPosition(\{50,\ basey\ +\ 350\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00211}00211\ \ \ \ \ startButton.setFillColor(sf::Color(100,\ 200,\ 100));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00212}00212\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00218}00218\ \ \ \ \ sf::RectangleShape\ stopButton(sf::Vector2f(100,\ 30));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00219}00219\ \ \ \ \ stopButton.setPosition(\{200,\ basey\ +\ 350\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00220}00220\ \ \ \ \ stopButton.setFillColor(sf::Color(200,\ 100,\ 100));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00221}00221\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00227}00227\ \ \ \ \ sf::RectangleShape\ quitButton(sf::Vector2f(100,\ 30));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00228}00228\ \ \ \ \ quitButton.setPosition(\{350,\ basey\ +\ 350\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00229}00229\ \ \ \ \ quitButton.setFillColor(sf::Color(100,\ 100,\ 200));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00230}00230\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00236}00236\ \ \ \ \ sf::RectangleShape\ playButton(sf::Vector2f(400,\ 30));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00237}00237\ \ \ \ \ playButton.setPosition(\{50,\ basey\ +\ 410\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00238}00238\ \ \ \ \ playButton.setFillColor(sf::Color(218,\ 165,\ 32));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00239}00239\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00245}00245\ \ \ \ \ sf::RectangleShape\ colorBox(sf::Vector2f(150,\ 30));\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00246}00246\ \ \ \ \ colorBox.setPosition(\{350\ +\ 100\ +\ 30,\ basey\ +\ offsetybutton\});\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00247}00247\ \ \ \ \ colorBox.setFillColor(sf::Color(64,\ 64,\ 64));\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00248}00248\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00254}00254\ \ \ \ \ sf::RectangleShape\ scoreBox(sf::Vector2f(150,\ 30));\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00255}00255\ \ \ \ \ scoreBox.setPosition(\{350\ +\ 100\ +\ 30,\ basey\ +\ offsetybutton+60.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00256}00256\ \ \ \ \ scoreBox.setFillColor(sf::Color(64,\ 64,\ 64));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00257}00257\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00263}00263\ \ \ \ \ sf::RectangleShape\ gamemodeBox(sf::Vector2f(400,\ 30));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00264}00264\ \ \ \ \ gamemodeBox.setPosition(\{50,\ basey\ +\ offsetybutton+120.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00265}00265\ \ \ \ \ gamemodeBox.setFillColor(sf::Color(109,\ 7,\ 26));\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00266}00266\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00272}00272\ \ \ \ \ sf::RectangleShape\ CreditsBox(sf::Vector2f(150,\ 30));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00273}00273\ \ \ \ \ CreditsBox.setPosition(\{350\ +\ 100\ +\ 30,\ basey\ +\ offsetybutton+120.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00274}00274\ \ \ \ \ CreditsBox.setFillColor(sf::Color(64,\ 64,\ 64));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00275}00275\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00276}00276\ \ \ \ \ \textcolor{comment}{//\ ===\ CRÉATION\ DES\ TEXTES\ D'INTERFACE\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00277}00277\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00282}00282\ \ \ \ \ sf::Text\ startText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00283}00283\ \ \ \ \ startText.setString(\textcolor{stringliteral}{"{}Start"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00284}00284\ \ \ \ \ startText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00285}00285\ \ \ \ \ startText.setCharacterSize(16);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00286}00286\ \ \ \ \ startText.setPosition(\{75.f,\ basey\ +\ offsetybutton+5.5f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00287}00287\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00292}00292\ \ \ \ \ sf::Text\ stopText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00293}00293\ \ \ \ \ stopText.setString(\textcolor{stringliteral}{"{}Stop"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00294}00294\ \ \ \ \ stopText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00295}00295\ \ \ \ \ stopText.setCharacterSize(16);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00296}00296\ \ \ \ \ stopText.setPosition(\{230.f,\ basey\ +\ offsetybutton+5.5f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00297}00297\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00302}00302\ \ \ \ \ sf::Text\ quitText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00303}00303\ \ \ \ \ quitText.setString(\textcolor{stringliteral}{"{}Quitter"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00304}00304\ \ \ \ \ quitText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00305}00305\ \ \ \ \ quitText.setCharacterSize(16);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00306}00306\ \ \ \ \ quitText.setPosition(\{370.f,\ basey\ +\ offsetybutton+5.5f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00307}00307\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00313}00313\ \ \ \ \ sf::Text\ playText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00314}00314\ \ \ \ \ playText.setString(\textcolor{stringliteral}{"{}Lancer"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00315}00315\ \ \ \ \ playText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00316}00316\ \ \ \ \ playText.setCharacterSize(16);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00317}00317\ \ \ \ \ playText.setPosition(\{220.f,\ basey\ +\ offsetybutton+5.5f+60.0f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00318}00318\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00323}00323\ \ \ \ \ sf::Text\ colorText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00324}00324\ \ \ \ \ colorText.setString(\textcolor{stringliteral}{"{}Color\ tracked\ :"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00325}00325\ \ \ \ \ colorText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00326}00326\ \ \ \ \ colorText.setCharacterSize(16);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00327}00327\ \ \ \ \ colorText.setPosition(\{colorBox.getPosition().x\ +\ 10.f,\ colorBox.getPosition().y\ -\/\ 20.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00328}00328\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00333}00333\ \ \ \ \ sf::Text\ scoreText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00334}00334\ \ \ \ \ scoreText.setString(\textcolor{stringliteral}{"{}Score:\ "{}}\ +\ std::to\_string(\mbox{\hyperlink{camera_8cpp_aef160b7437d94056f1dc59646cd5b87d}{score}}));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00335}00335\ \ \ \ \ scoreText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00336}00336\ \ \ \ \ scoreText.setCharacterSize(16);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00337}00337\ \ \ \ \ scoreText.setPosition(\{scoreBox.getPosition().x\ +\ 10.f,\ scoreBox.getPosition().y\ -\/\ 20.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00338}00338\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00344}00344\ \ \ \ \ sf::Text\ scoreValueText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00345}00345\ \ \ \ \ scoreValueText.setString(std::to\_string(\mbox{\hyperlink{camera_8cpp_aef160b7437d94056f1dc59646cd5b87d}{score}}));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00346}00346\ \ \ \ \ scoreValueText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00347}00347\ \ \ \ \ scoreValueText.setCharacterSize(16);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00348}00348\ \ \ \ \ scoreValueText.setPosition(\{scoreBox.getPosition().x\ +\ 10.f,\ scoreBox.getPosition().y\ +\ 5.5f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00349}00349\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00355}00355\ \ \ \ \ sf::Text\ gamemodeText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00356}00356\ \ \ \ \ gamemodeText.setString(\textcolor{stringliteral}{"{}Mode\ de\ jeu\ :\ 1"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00357}00357\ \ \ \ \ gamemodeText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00358}00358\ \ \ \ \ gamemodeText.setCharacterSize(16);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00359}00359\ \ \ \ \ gamemodeText.setPosition(\{190.f,\ gamemodeBox.getPosition().y\ +\ 5.5f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00360}00360\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00365}00365\ \ \ \ \ sf::Text\ creditsText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00366}00366\ \ \ \ \ creditsText.setString(\textcolor{stringliteral}{"{}Credits"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00367}00367\ \ \ \ \ creditsText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00368}00368\ \ \ \ \ creditsText.setCharacterSize(16);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00369}00369\ \ \ \ \ creditsText.setPosition(\{CreditsBox.getPosition().x\ +\ 45.f,\ CreditsBox.getPosition().y\ +\ 5.5f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00370}00370\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00371}00371\ \ \ \ \ \textcolor{comment}{//\ ===\ CHARGEMENT\ DES\ RESSOURCES\ GRAPHIQUES\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00372}00372\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00378}00378\ \ \ \ \ sf::Texture\ logoTexture;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00379}00379\ \ \ \ \ \textcolor{keywordflow}{if}\ (!logoTexture.loadFromFile(\textcolor{stringliteral}{"{}./extras/logo2.png"{}}))\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00380}00380\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Erreur\ chargement\ logo.png"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00381}00381\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00382}00382\ \ \ \ \ sf::Sprite\ logoSprite(logoTexture);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00383}00383\ \ \ \ \ logoSprite.setScale(\{640.f\ /\ logoTexture.getSize().x\ ,\ 480.f\ /\ logoTexture.getSize().y/2\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00384}00384\ \ \ \ \ logoSprite.setPosition(\{20.f,240+\ 20.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00385}00385\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00391}00391\ \ \ \ \ sf::Texture\ labTexture;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00392}00392\ \ \ \ \ \textcolor{keywordflow}{if}\ (!labTexture.loadFromFile(\textcolor{stringliteral}{"{}./extras/lab"{}}+std::to\_string(\mbox{\hyperlink{camera_8cpp_ac93725eebbbf836a02c62a4284eb219f}{labnumber}})\ +\textcolor{stringliteral}{"{}.png"{}}))\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00393}00393\ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Erreur\ chargement\ lab"{}}+std::to\_string(\mbox{\hyperlink{camera_8cpp_ac93725eebbbf836a02c62a4284eb219f}{labnumber}})\ +\textcolor{stringliteral}{"{}png"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00394}00394\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ -\/1;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00395}00395\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00396}00396\ \ \ \ \ sf::Sprite\ labSprite(labTexture);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00397}00397\ \ \ \ \ labSprite.setPosition(\{20.f,\ 20.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00398}00398\ \ \ \ \ \textcolor{keywordtype}{float}\ scaleX\ =\ 640.0f\ /\ labTexture.getSize().x;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00399}00399\ \ \ \ \ \textcolor{keywordtype}{float}\ scaleY\ =\ 480.0f\ /\ labTexture.getSize().y;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00400}00400\ \ \ \ \ labSprite.setScale(\{scaleX,\ scaleY\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00401}00401\ \ \ \ \ labSprite.setTexture(labTexture,\textcolor{keyword}{true});\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00402}00402\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00403}00403\ \ \ \ \ \textcolor{comment}{//\ ===\ BOUCLE\ PRINCIPALE\ D'AFFICHAGE\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00404}00404\ \ \ \ \ \textcolor{keywordflow}{while}\ (window.isOpen())\ \{\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00405}00405\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ GESTION\ DES\ ÉVÉNEMENTS\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00406}00406\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (\textcolor{keyword}{const}\ std::optional\ event\ =\ window.pollEvent())\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00407}00407\ \ \ \ \ \ \ \ \ \ \ \ \ sf::Vector2i\ pixelPos\ =\ sf::Mouse::getPosition(window);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00408}00408\ \ \ \ \ \ \ \ \ \ \ \ \ sf::Vector2f\ mouse\ =\ window.mapPixelToCoords(pixelPos);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00409}00409\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00410}00410\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Fermeture\ de\ la\ fenêtre}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00411}00411\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (event-\/>is<sf::Event::Closed>())}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00412}00412\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.close();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00413}00413\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00414}00414\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ GESTION\ DES\ CLICS\ SOURIS\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00415}00415\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (event-\/>is<sf::Event::MouseButtonPressed>())\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00416}00416\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Bouton\ Start\ :\ Active\ le\ flux\ caméra}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00417}00417\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (startButton.getGlobalBounds().contains(mouse))\ \mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.openPage();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00418}00418\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00419}00419\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Bouton\ Stop\ :\ Désactive\ le\ flux\ caméra}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00420}00420\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (stopButton.getGlobalBounds().contains(mouse))\ \mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.closePage();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00421}00421\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00422}00422\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Bouton\ Quit\ :\ Ferme\ l'application}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00423}00423\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (quitButton.getGlobalBounds().contains(mouse))\ \{\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00424}00424\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.close();\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00425}00425\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8hpp_aad20d5ca3f4debe1b619d0cd361be72b}{stop\_signal}}\ =\ \textcolor{keyword}{true};\ \textcolor{comment}{//\ Signal\ d'interruption\ du\ thread\ de\ traitement}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00426}00426\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00427}00427\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00428}00428\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Bouton\ Play/Pause\ :\ Lance\ ou\ met\ en\ pause\ le\ jeu}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00429}00429\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (playButton.getGlobalBounds().contains(mouse))\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00430}00430\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getLabyrinthStatus()==\textcolor{keyword}{false}))\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00431}00431\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.resumeGame();\ \textcolor{comment}{//\ Reprendre\ si\ en\ pause,\ démarrer\ si\ non\ joué}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00432}00432\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ playText.setString(\textcolor{stringliteral}{"{}Pause"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00433}00433\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getLabyrinthStatus()==\textcolor{keyword}{true})\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00434}00434\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.pauseGame();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00435}00435\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ playText.setString(\textcolor{stringliteral}{"{}Jouer"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00436}00436\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00437}00437\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00438}00438\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Tirer\ un\ numéro\ de\ 1\ à\ 6\ pour\ le\ GIF\ de\ game\ over}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00439}00439\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_ab5455f24c260bc03abbf23924c159ddb}{gifnumber}}\ =\ rand()\ \%\ 6\ +\ 1;\ \textcolor{comment}{//\ tirage\ aléatoire\ entre\ 1\ et\ 6}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00440}00440\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Gif\ number:\ "{}}\ <<\ \mbox{\hyperlink{camera_8cpp_ab5455f24c260bc03abbf23924c159ddb}{gifnumber}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00441}00441\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00442}00442\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00443}00443\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Clic\ sur\ la\ boîte\ de\ mode\ de\ jeu\ :\ Changer\ de\ labyrinthe}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00444}00444\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gamemodeBox.getGlobalBounds().contains(mouse))\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00445}00445\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Incrémenter\ le\ mode\ de\ jeu\ (1-\/8)}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00446}00446\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}++;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00447}00447\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}\ >\ 8)\ \mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}\ =\ 1;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00448}00448\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gamemodeText.setString(\textcolor{stringliteral}{"{}Mode\ de\ jeu\ :\ "{}}\ +\ std::to\_string(\mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00449}00449\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00450}00450\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Changer\ la\ couleur\ de\ la\ boîte\ selon\ le\ mode}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00451}00451\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gamemodeBox.setFillColor(sf::Color(109,\ 7,\ 26\ +\ (\mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}\ -\/\ 1)\ *\ 20));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00452}00452\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00453}00453\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculer\ le\ numéro\ de\ labyrinthe\ correspondant}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00454}00454\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_ac93725eebbbf836a02c62a4284eb219f}{labnumber}}\ =\ (\mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}-\/1)/2\ +\ 1;\ \textcolor{comment}{//\ 1,\ 2,\ 3,\ 4}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00455}00455\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Mode\ de\ jeu\ changé\ :\ "{}}\ <<\ \mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00456}00456\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00457}00457\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Charger\ le\ nouveau\ labyrinthe}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00458}00458\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ labTexture\ =\ sf::Texture();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00459}00459\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!labTexture.loadFromFile(\textcolor{stringliteral}{"{}./extras/lab"{}}\ +\ std::to\_string(\mbox{\hyperlink{camera_8cpp_ac93725eebbbf836a02c62a4284eb219f}{labnumber}})\ +\ \textcolor{stringliteral}{"{}.png"{}}))\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00460}00460\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Erreur\ chargement\ lab"{}}\ <<\ std::to\_string(\mbox{\hyperlink{camera_8cpp_ac93725eebbbf836a02c62a4284eb219f}{labnumber}})\ +\ \textcolor{stringliteral}{"{}.png"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00461}00461\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00462}00462\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Forcer\ l'échelle\ pour\ obtenir\ 640x480}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00463}00463\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ scaleX\ =\ 640.0f\ /\ labTexture.getSize().x;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00464}00464\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ scaleY\ =\ 480.0f\ /\ labTexture.getSize().y;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00465}00465\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00466}00466\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ labSprite.setTexture(labTexture,\ \textcolor{keyword}{true});\ \textcolor{comment}{//true\ pour\ reset\ la\ taille}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00467}00467\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ labSprite.setPosition(\{20.f,\ 20.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00468}00468\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ labSprite.setScale(\{scaleX,\ scaleY\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00469}00469\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00470}00470\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mettre\ à\ jour\ les\ positions\ des\ zones\ de\ départ/arrivée}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00471}00471\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a8201d4510fb919b800708ed8af14a2e1}{table}}((\mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}-\/1)/2,\ \mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}},\ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00472}00472\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00473}00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00474}00474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00475}00475\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ SÉLECTION\ DE\ COULEUR\ PAR\ CLIC\ SUR\ L'IMAGE\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00476}00476\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getPageStatus())\ \{\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00477}00477\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(\mbox{\hyperlink{camera_8hpp_ab6fd521360964be3fd668d8e8998c868}{processed\_data}}.mutex);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00478}00478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{camera_8hpp_ab6fd521360964be3fd668d8e8998c868}{processed\_data}}.ready\ \&\&\ !\mbox{\hyperlink{camera_8hpp_ab6fd521360964be3fd668d8e8998c868}{processed\_data}}.frame.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00479}00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_abb74b02f147ce6384bf792114a43a049}{srcrgb}}\ =\ \mbox{\hyperlink{camera_8hpp_ab6fd521360964be3fd668d8e8998c868}{processed\_data}}.frame.clone();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00480}00480\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ localX\ =\ mouse.x\ -\/\ 20;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00481}00481\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ localY\ =\ mouse.y\ -\/\ 20;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00482}00482\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00483}00483\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Vérifier\ que\ le\ clic\ est\ dans\ l'image}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00484}00484\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (localX\ >=\ 0\ \&\&\ localX\ <\ srcrgb.cols\ \&\&\ localY\ >=\ 0\ \&\&\ localY\ <\ \mbox{\hyperlink{camera_8cpp_abb74b02f147ce6384bf792114a43a049}{srcrgb}}.rows)\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00485}00485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Récupérer\ la\ couleur\ du\ pixel\ cliqué}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00486}00486\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::Vec3b\ color\ =\ \mbox{\hyperlink{camera_8cpp_abb74b02f147ce6384bf792114a43a049}{srcrgb}}.at<cv::Vec3b>(localY,\ localX);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00487}00487\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::Mat\ bgr(1,\ 1,\ CV\_8UC3,\ color);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00488}00488\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::Mat\ hsv;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00489}00489\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::cvtColor(bgr,\ hsv,\ cv::COLOR\_BGR2HSV);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00490}00490\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::Vec3b\ hsvPixel\ =\ hsv.at<cv::Vec3b>(0,\ 0);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00491}00491\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00492}00492\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Extraire\ les\ composantes\ HSV}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00493}00493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ H\ =\ hsvPixel[0];}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00494}00494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ S\ =\ hsvPixel[1];}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00495}00495\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ V\ =\ hsvPixel[2];}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00496}00496\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00497}00497\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Définir\ les\ seuils\ de\ détection\ avec\ tolérance}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00498}00498\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a737f5afdf22379e26dbf728dada44bd8}{Mask1}}.mini\ =\ cv::Scalar(std::max(0,\ H\ -\/\ \mbox{\hyperlink{camera_8cpp_abbaadd1183ab404d8b21f4e2d7d32295}{tol}}),\ std::max(0,\ S\ -\/\ \mbox{\hyperlink{camera_8cpp_abbaadd1183ab404d8b21f4e2d7d32295}{tol}}\ *\ 2),\ std::max(0,\ V\ -\/\ \mbox{\hyperlink{camera_8cpp_abbaadd1183ab404d8b21f4e2d7d32295}{tol}}\ *\ 4));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00499}00499\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a737f5afdf22379e26dbf728dada44bd8}{Mask1}}.maxi\ =\ cv::Scalar(std::min(180,\ H\ +\ \mbox{\hyperlink{camera_8cpp_abbaadd1183ab404d8b21f4e2d7d32295}{tol}}),\ std::min(255,\ S\ +\ \mbox{\hyperlink{camera_8cpp_abbaadd1183ab404d8b21f4e2d7d32295}{tol}}\ *\ 2),\ std::min(255,\ V\ +\ \mbox{\hyperlink{camera_8cpp_abbaadd1183ab404d8b21f4e2d7d32295}{tol}}\ *\ 5));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00500}00500\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00501}00501\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Nouvelle\ couleur\ HSV\ :\ "{}}\ <<\ H\ <<\ \textcolor{stringliteral}{"{},"{}}\ <<\ S\ <<\ \textcolor{stringliteral}{"{},"{}}\ <<\ V\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00502}00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00503}00503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Mettre\ à\ jour\ la\ couleur\ de\ la\ boîte\ d'affichage\ (BGR\ vers\ RGB)}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00504}00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ colorBox.setFillColor(sf::Color(color[2],\ color[1],\ color[0]));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00505}00505\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00506}00506\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00507}00507\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00508}00508\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00509}00509\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00510}00510\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (event-\/>is<sf::Event::MouseButtonPressed>()\ ||\ event-\/>is<sf::Event::MouseMoved>())\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00511}00511\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00512}00512\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00513}00513\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00514}00514\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ RENDU\ GRAPHIQUE\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00515}00515\ \ \ \ \ \ \ \ \ window.clear(sf::Color(30,\ 30,\ 30));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00516}00516\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00517}00517\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ AFFICHAGE\ QUAND\ LE\ JEU\ EST\ ACTIF\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00518}00518\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getPageStatus())\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00519}00519\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Affichage\ du\ flux\ vidéo}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00520}00520\ \ \ \ \ \ \ \ \ \ \ \ \ std::lock\_guard<std::mutex>\ lock(\mbox{\hyperlink{camera_8hpp_ab6fd521360964be3fd668d8e8998c868}{processed\_data}}.mutex);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00521}00521\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{camera_8hpp_ab6fd521360964be3fd668d8e8998c868}{processed\_data}}.ready\ \&\&\ !\mbox{\hyperlink{camera_8hpp_ab6fd521360964be3fd668d8e8998c868}{processed\_data}}.frame.empty())\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00522}00522\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::Mat\ \mbox{\hyperlink{camera_8cpp_abb74b02f147ce6384bf792114a43a049}{srcrgb}}\ =\ \mbox{\hyperlink{camera_8hpp_ab6fd521360964be3fd668d8e8998c868}{processed\_data}}.frame;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00523}00523\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::Mat\ \mbox{\hyperlink{camera_8cpp_a1ed1786965b2cff5cd92e23bb75a70aa}{src}};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00524}00524\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cv::cvtColor(\mbox{\hyperlink{camera_8cpp_abb74b02f147ce6384bf792114a43a049}{srcrgb}},\ \mbox{\hyperlink{camera_8cpp_a1ed1786965b2cff5cd92e23bb75a70aa}{src}},\ cv::COLOR\_BGR2RGBA);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00525}00525\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Image\ image(\{\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{camera_8cpp_a1ed1786965b2cff5cd92e23bb75a70aa}{src}}.cols),\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\textcolor{keyword}{>}(\mbox{\hyperlink{camera_8cpp_a1ed1786965b2cff5cd92e23bb75a70aa}{src}}.rows)\},\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }std::uint8\_t*\textcolor{keyword}{>}(\mbox{\hyperlink{camera_8cpp_a1ed1786965b2cff5cd92e23bb75a70aa}{src}}.ptr()));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00526}00526\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Texture\ texture;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00527}00527\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ texture.loadFromImage(image);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00528}00528\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Sprite\ sprite(texture);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00529}00529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sprite.setPosition(\{20.f,\ 20.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00530}00530\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(sprite);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00531}00531\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00532}00532\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Affichage\ du\ labyrinthe\ en\ superposition}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00533}00533\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getLabyrinthStatus())\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00534}00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Transparence\ selon\ l'état\ du\ jeu}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00535}00535\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ labSprite.setColor(sf::Color(255,\ 255,\ 255,\ 128));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00536}00536\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getStatus()\ ==\ \mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1a50366a49630a416ab3ccaa004196027e}{GameStatus::PLAYING}})\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00537}00537\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ labSprite.setColor(sf::Color(255,\ 255,\ 255,\ 255));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00538}00538\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00539}00539\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(labSprite);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00540}00540\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00541}00541\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00542}00542\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00543}00543\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ AFFICHAGE\ DES\ ZONES\ DE\ DÉPART\ ET\ D'ARRIVÉE\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00544}00544\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getLabyrinthStatus())\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00545}00545\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Zone\ d'arrivée\ (Magenta\ avec\ "{}E"{})}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00546}00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::RectangleShape\ endBox(sf::Vector2f(30.f,\ 30.f));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00547}00547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endBox.setFillColor(sf::Color::Magenta);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00548}00548\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endBox.setPosition(\{\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(20)\ +\ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}.x,\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(20)\ +\ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}.y\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00549}00549\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(endBox);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00550}00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Text\ endText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00551}00551\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setString(\textcolor{stringliteral}{"{}E"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00552}00552\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00553}00553\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setCharacterSize(24);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00554}00554\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setFillColor(sf::Color::White);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00555}00555\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setPosition(\{\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(20)\ +\ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}.x\ +\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(6),\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(20)\ +\ \mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}.y+6\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00556}00556\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(endText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00557}00557\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00558}00558\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Zone\ de\ départ\ (Verte\ avec\ "{}S"{})}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00559}00559\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::RectangleShape\ startBox(sf::Vector2f(30.f,\ 30.f));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00560}00560\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startBox.setFillColor(sf::Color::Green);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00561}00561\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startBox.setPosition(\{\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(20)\ +\ \mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}}.x,\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(20)\ +\ \mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}}.y\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00562}00562\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(startBox);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00563}00563\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Text\ startText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00564}00564\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startText.setString(\textcolor{stringliteral}{"{}S"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00565}00565\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00566}00566\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startText.setCharacterSize(24);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00567}00567\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startText.setFillColor(sf::Color::White);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00568}00568\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startText.setPosition(\{\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(20)\ +\ \mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}}.x\ +\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(6),\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(20)\ +\ \mbox{\hyperlink{camera_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}}.y\ +\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(6)\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00569}00569\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(startText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00570}00570\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00571}00571\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00572}00572\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Reset\ du\ compteur\ si\ le\ jeu\ n'est\ pas\ actif}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00573}00573\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getLabyrinthStatus()\ \&\&\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getStatus()\ ==\ \mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1a0dda293e78d8461bebdade726f12923d}{GameStatus::NOT\_PLAYING}}))\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00574}00574\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a61291c94d341d671840d6da409dfb2d8}{bouclestart}}\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00575}00575\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00576}00576\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00577}00577\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ GESTION\ DE\ LA\ PHASE\ D'INITIALISATION\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00578}00578\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getStatus()\ ==\ \mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1a86bf8c89d85949f8f45cde2f73fce113}{GameStatus::INITIALIZING}})\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00579}00579\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a61291c94d341d671840d6da409dfb2d8}{bouclestart}}++;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00580}00580\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(\mbox{\hyperlink{camera_8cpp_a61291c94d341d671840d6da409dfb2d8}{bouclestart}}\ >\ 100)\ \{\ \textcolor{comment}{//\ Environ\ 1.67\ seconde\ à\ 60fps}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00581}00581\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cout\ <<\ \textcolor{stringliteral}{"{}Lancement\ du\ jeu"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00582}00582\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.startGame();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00583}00583\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a61291c94d341d671840d6da409dfb2d8}{bouclestart}}\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00584}00584\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00585}00585\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00586}00586\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00587}00587\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ AFFICHAGE\ DES\ MESSAGES\ D'ÉTAT\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00588}00588\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00589}00589\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Message\ de\ victoire}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00590}00590\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getStatus()\ ==\ \mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1a2b105b39d4901b3dcfa233132ac3b505}{GameStatus::WINNING}})\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00591}00591\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Text\ winText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00592}00592\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ winText.setString(\textcolor{stringliteral}{"{}WIN\ !\ +1\ POINT"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00593}00593\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ winText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00594}00594\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ winText.setCharacterSize(24);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00595}00595\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ winText.setFillColor(sf::Color::Green);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00596}00596\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ winText.setPosition(\{100.f,\ basey\ +\ 200.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00597}00597\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(winText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00598}00598\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00599}00599\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Animation\ de\ victoire\ (5\ répétitions)}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00600}00600\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int}\ i=0;\ i<5;\ i++)\{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00601}00601\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ gifPath\ =\ \textcolor{stringliteral}{"{}./extras/win.gif"{}};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00602}00602\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Texture\ gifTexture;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00603}00603\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!gifTexture.loadFromFile(gifPath))\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00604}00604\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Erreur\ chargement\ "{}}\ <<\ gifPath\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00605}00605\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00606}00606\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Sprite\ gifSprite(gifTexture);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00607}00607\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gifSprite.setPosition(\{20.f,\ 20.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00608}00608\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ scaleX\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(640)\ /\ gifTexture.getSize().x;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00609}00609\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ scaleY\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(480)\ /\ gifTexture.getSize().y;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00610}00610\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gifSprite.setScale(\{scaleX,\ scaleY\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00611}00611\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(gifSprite);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00612}00612\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a6d660874a54b09ec82479f2c6972c27a}{playingsound}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00613}00613\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a8df7e6ce322b58ee0cae836f83a64a82}{soundnumber}}\ =\ 3;\ \textcolor{comment}{//\ Son\ de\ victoire}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00614}00614\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00615}00615\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00616}00616\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_aef160b7437d94056f1dc59646cd5b87d}{score}}++;\ \textcolor{comment}{//\ Incrémenter\ le\ score}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00617}00617\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.setLabyrinthStatus(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00618}00618\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.idleGame();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00619}00619\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ playText.setString(\textcolor{stringliteral}{"{}Jouer"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00620}00620\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00621}00621\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00622}00622\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Message\ d'initialisation}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00623}00623\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getStatus()\ ==\ \mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1a86bf8c89d85949f8f45cde2f73fce113}{GameStatus::INITIALIZING}})\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00624}00624\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Text\ startText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00625}00625\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startText.setString(\textcolor{stringliteral}{"{}Restez\ dans\ la\ startbox\ ..."{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00626}00626\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00627}00627\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startText.setCharacterSize(24);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00628}00628\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startText.setFillColor(sf::Color::White);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00629}00629\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ startText.setPosition(\{100.f,\ basey\ +\ 200.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00630}00630\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(startText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00631}00631\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00632}00632\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00633}00633\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Message\ et\ animation\ de\ défaite}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00634}00634\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getWallTouched())\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00635}00635\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Text\ endText(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00636}00636\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setString(\textcolor{stringliteral}{"{}!!GAME\ OVER!!"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00637}00637\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setStyle(sf::Text::Bold);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00638}00638\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setFont(font);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00639}00639\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setCharacterSize(24);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00640}00640\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setFillColor(sf::Color::Red);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00641}00641\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ endText.setPosition(\{100.f,\ basey\ +\ 200.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00642}00642\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(endText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00643}00643\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00644}00644\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Afficher\ le\ GIF\ de\ défaite\ correspondant\ au\ numéro\ tiré}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00645}00645\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::string\ gifPath\ =\ \textcolor{stringliteral}{"{}./extras/screamgif/00"{}}\ +\ std::to\_string(\mbox{\hyperlink{camera_8cpp_ab5455f24c260bc03abbf23924c159ddb}{gifnumber}})\ +\ \textcolor{stringliteral}{"{}.gif"{}};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00646}00646\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Texture\ gifTexture;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00647}00647\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!gifTexture.loadFromFile(gifPath))\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00648}00648\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Erreur\ chargement\ "{}}\ <<\ gifPath\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00649}00649\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00650}00650\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sf::Sprite\ gifSprite(gifTexture);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00651}00651\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gifSprite.setPosition(\{20.f,\ 20.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00652}00652\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ scaleX\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(640)\ /\ gifTexture.getSize().x;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00653}00653\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ scaleY\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}\textcolor{keyword}{>}(480)\ /\ gifTexture.getSize().y;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00654}00654\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ gifSprite.setScale(\{scaleX,\ scaleY\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00655}00655\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(gifSprite);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00656}00656\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a6d660874a54b09ec82479f2c6972c27a}{playingsound}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00657}00657\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a8df7e6ce322b58ee0cae836f83a64a82}{soundnumber}}\ =\ rand()\ \%\ 2\ +\ 1;\ \textcolor{comment}{//\ Tirage\ aléatoire\ entre\ 1\ et\ 2\ pour\ le\ son}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00658}00658\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ playText.setString(\textcolor{stringliteral}{"{}Jouer"{}});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00659}00659\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.reset();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00660}00660\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00661}00661\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00662}00662\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00663}00663\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00664}00664\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ AFFICHAGE\ DU\ LOGO\ QUAND\ LE\ JEU\ N'EST\ PAS\ ACTIF\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00665}00665\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(logoSprite);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00666}00666\ \ \ \ \ \ \ \ \ \}\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00667}00667\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00668}00668\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ CONFIGURATION\ DYNAMIQUE\ DE\ L'INTERFACE\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00669}00669\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}.getPageStatus())\ \{\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00670}00670\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Position\ des\ boutons\ quand\ le\ jeu\ est\ actif}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00671}00671\ \ \ \ \ \ \ \ \ \ \ \ \ startButton.setPosition(\{50,\ basey\ +\ offsetybutton\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00672}00672\ \ \ \ \ \ \ \ \ \ \ \ \ stopButton.setPosition(\{200,\ basey\ +\ offsetybutton\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00673}00673\ \ \ \ \ \ \ \ \ \ \ \ \ quitButton.setPosition(\{350,\ basey\ +\ offsetybutton\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00674}00674\ \ \ \ \ \ \ \ \ \ \ \ \ playButton.setPosition(\{50,\ basey\ +\ offsetybutton+60.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00675}00675\ \ \ \ \ \ \ \ \ \ \ \ \ startText.setPosition(\{75.f,\ basey\ +\ offsetybutton+5.5f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00676}00676\ \ \ \ \ \ \ \ \ \ \ \ \ stopText.setPosition(\{230.f,\ basey\ +\ offsetybutton+5.5f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00677}00677\ \ \ \ \ \ \ \ \ \ \ \ \ quitText.setPosition(\{370.f,\ basey\ +\ offsetybutton+5.5f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00678}00678\ \ \ \ \ \ \ \ \ \ \ \ \ playText.setPosition(\{230.f,\ basey\ +\ offsetybutton+5.5f\ +60.0f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00679}00679\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00680}00680\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Affichage\ des\ éléments\ de\ jeu\ actif}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00681}00681\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(playButton);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00682}00682\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(playText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00683}00683\ \ \ \ \ \ \ \ \ \ \ \ \ startButton.setFillColor(sf::Color(64,\ 64,\ 64));\ \textcolor{comment}{//\ Start\ grisé}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00684}00684\ \ \ \ \ \ \ \ \ \ \ \ \ stopButton.setFillColor(sf::Color(200,\ 100,\ 100));\ \textcolor{comment}{//\ Stop\ actif}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00685}00685\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(colorBox);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00686}00686\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(colorText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00687}00687\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(scoreBox);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00688}00688\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(scoreText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00689}00689\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(scoreValueText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00690}00690\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(gamemodeBox);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00691}00691\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(gamemodeText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00692}00692\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(CreditsBox);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00693}00693\ \ \ \ \ \ \ \ \ \ \ \ \ window.draw(creditsText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00694}00694\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00695}00695\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Position\ des\ boutons\ quand\ le\ jeu\ n'est\ pas\ actif}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00696}00696\ \ \ \ \ \ \ \ \ \ \ \ \ startButton.setPosition(\{50,\ basey\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00697}00697\ \ \ \ \ \ \ \ \ \ \ \ \ stopButton.setPosition(\{200,\ basey\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00698}00698\ \ \ \ \ \ \ \ \ \ \ \ \ quitButton.setPosition(\{350,\ basey\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00699}00699\ \ \ \ \ \ \ \ \ \ \ \ \ startText.setPosition(\{75.f,\ basey\ +\ 5.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00700}00700\ \ \ \ \ \ \ \ \ \ \ \ \ stopText.setPosition(\{230.f,\ basey\ +\ 5.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00701}00701\ \ \ \ \ \ \ \ \ \ \ \ \ quitText.setPosition(\{370.f,\ basey\ +\ 5.f\});}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00702}00702\ \ \ \ \ \ \ \ \ \ \ \ \ startButton.setFillColor(sf::Color(100,\ 200,\ 100));\ \textcolor{comment}{//\ Start\ actif}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00703}00703\ \ \ \ \ \ \ \ \ \ \ \ \ stopButton.setFillColor(sf::Color(64,\ 64,\ 64));\ \textcolor{comment}{//\ Stop\ grisé}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00704}00704\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00705}00705\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00706}00706\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ AFFICHAGE\ DES\ BOUTONS\ PRINCIPAUX\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00707}00707\ \ \ \ \ \ \ \ \ window.draw(stopButton);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00708}00708\ \ \ \ \ \ \ \ \ window.draw(quitButton);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00709}00709\ \ \ \ \ \ \ \ \ window.draw(stopText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00710}00710\ \ \ \ \ \ \ \ \ window.draw(quitText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00711}00711\ \ \ \ \ \ \ \ \ window.draw(startButton);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00712}00712\ \ \ \ \ \ \ \ \ window.draw(startText);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00713}00713\ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00714}00714\ \ \ \ \ \ \ \ \ window.display();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00715}00715\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00716}00716\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Limitation\ à\ 60\ FPS}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00717}00717\ \ \ \ \ \ \ \ \ std::this\_thread::sleep\_for(std::chrono::milliseconds(1000/60));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00718}00718\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00719}00719\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ===\ GESTION\ AUDIO\ ===}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00729}00729\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{camera_8cpp_a6d660874a54b09ec82479f2c6972c27a}{playingsound}})\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00730}00730\ \ \ \ \ \ \ \ \ \ \ \ \ sf::SoundBuffer\ buffer;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00731}00731\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!buffer.loadFromFile(\textcolor{stringliteral}{"{}./extras/sounds/"{}}+std::to\_string(\mbox{\hyperlink{camera_8cpp_a8df7e6ce322b58ee0cae836f83a64a82}{soundnumber}})+\textcolor{stringliteral}{"{}.mp3"{}}))\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00732}00732\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Erreur\ chargement\ son"{}}\ <<\ std::endl;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00733}00733\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00734}00734\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sound\ =\ std::make\_unique<sf::Sound>(buffer);}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00735}00735\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ sound-\/>play();}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00736}00736\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00737}00737\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Attendre\ la\ fin\ de\ la\ lecture}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00738}00738\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (sound-\/>getStatus()\ ==\ sf::SoundSource::Status::Playing)\ \{\ \ \ \ }
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00739}00739\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::this\_thread::sleep\_for(std::chrono::milliseconds(10));}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00740}00740\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00741}00741\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00742}00742\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{camera_8cpp_a6d660874a54b09ec82479f2c6972c27a}{playingsound}}\ =\ \textcolor{keyword}{false};\ \textcolor{comment}{//\ Réinitialiser\ le\ flag\ pour\ ne\ pas\ jouer\ le\ son\ à\ chaque\ frame}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00743}00743\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00744}00744\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00745}00745\ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\Hypertarget{camera_8cpp_source_l00746}00746\ \}}
+
+\end{DoxyCode}

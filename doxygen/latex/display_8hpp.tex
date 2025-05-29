@@ -1,0 +1,255 @@
+\doxysection{src/display.hpp File Reference}
+\hypertarget{display_8hpp}{}\label{display_8hpp}\index{src/display.hpp@{src/display.hpp}}
+
+
+Header pour la gestion de l\textquotesingle{}affichage et de la logique de jeu.  
+
+
+{\ttfamily \#include "{}camera.\+hpp"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{class_game_session}{Game\+Session}}
+\begin{DoxyCompactList}\small\item\em Classe principale gérant l\textquotesingle{}état et la logique du jeu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum class \mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1}{Game\+Status}} \{ \newline
+\mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1a0dda293e78d8461bebdade726f12923d}{NOT\+\_\+\+PLAYING}}
+, \mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1a86bf8c89d85949f8f45cde2f73fce113}{INITIALIZING}}
+, \mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1a50366a49630a416ab3ccaa004196027e}{PLAYING}}
+, \mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1a2b105b39d4901b3dcfa233132ac3b505}{WINNING}}
+, \newline
+\mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1a99b2439e63f73ad515f7ab2447a80673}{PAUSED}}
+ \}
+\begin{DoxyCompactList}\small\item\em Énumération des différents états du jeu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{display_8hpp_a4b0cfcdacc75426e5ed31b9ce093a6b1}{display}} (\mbox{\hyperlink{class_game_session}{Game\+Session}} \&\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}})
+\begin{DoxyCompactList}\small\item\em Fonction principale d\textquotesingle{}affichage et de gestion des événements. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{display_8hpp_a928ab2eda7bfb153e5bec906130f3ea1}{is\+Camera\+Shaking}}
+\begin{DoxyCompactList}\small\item\em Indicateur de tremblement de la caméra. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{display_8hpp_ac93725eebbbf836a02c62a4284eb219f}{labnumber}}
+\begin{DoxyCompactList}\small\item\em Numéro du labyrinthe actuellement chargé \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_game_session}{Game\+Session}} \mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}}
+\begin{DoxyCompactList}\small\item\em Instance globale de la session de jeu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Header pour la gestion de l\textquotesingle{}affichage et de la logique de jeu. 
+
+\begin{DoxyAuthor}{Author}
+Votre Nom 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2024 
+\end{DoxyDate}
+
+
+Definition in file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+
+
+\label{doc-enum-members}
+\Hypertarget{display_8hpp_doc-enum-members}
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{display_8hpp_a881b49e3802366255ad852f1c8624fd1}\index{display.hpp@{display.hpp}!GameStatus@{GameStatus}}
+\index{GameStatus@{GameStatus}!display.hpp@{display.hpp}}
+\doxysubsubsection{\texorpdfstring{GameStatus}{GameStatus}}
+{\footnotesize\ttfamily \label{display_8hpp_a881b49e3802366255ad852f1c8624fd1} 
+enum class \mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1}{Game\+Status}}\hspace{0.3cm}{\ttfamily [strong]}}
+
+
+
+Énumération des différents états du jeu. 
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NOT\_PLAYING@{NOT\_PLAYING}!display.hpp@{display.hpp}}\index{display.hpp@{display.hpp}!NOT\_PLAYING@{NOT\_PLAYING}}}\Hypertarget{display_8hpp_a881b49e3802366255ad852f1c8624fd1a0dda293e78d8461bebdade726f12923d}\label{display_8hpp_a881b49e3802366255ad852f1c8624fd1a0dda293e78d8461bebdade726f12923d} 
+NOT\+\_\+\+PLAYING&Le jeu n\textquotesingle{}est pas en cours. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INITIALIZING@{INITIALIZING}!display.hpp@{display.hpp}}\index{display.hpp@{display.hpp}!INITIALIZING@{INITIALIZING}}}\Hypertarget{display_8hpp_a881b49e3802366255ad852f1c8624fd1a86bf8c89d85949f8f45cde2f73fce113}\label{display_8hpp_a881b49e3802366255ad852f1c8624fd1a86bf8c89d85949f8f45cde2f73fce113} 
+INITIALIZING&Phase d\textquotesingle{}initialisation (attente dans la startbox) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PLAYING@{PLAYING}!display.hpp@{display.hpp}}\index{display.hpp@{display.hpp}!PLAYING@{PLAYING}}}\Hypertarget{display_8hpp_a881b49e3802366255ad852f1c8624fd1a50366a49630a416ab3ccaa004196027e}\label{display_8hpp_a881b49e3802366255ad852f1c8624fd1a50366a49630a416ab3ccaa004196027e} 
+PLAYING&Jeu en cours. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{WINNING@{WINNING}!display.hpp@{display.hpp}}\index{display.hpp@{display.hpp}!WINNING@{WINNING}}}\Hypertarget{display_8hpp_a881b49e3802366255ad852f1c8624fd1a2b105b39d4901b3dcfa233132ac3b505}\label{display_8hpp_a881b49e3802366255ad852f1c8624fd1a2b105b39d4901b3dcfa233132ac3b505} 
+WINNING&État de victoire. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PAUSED@{PAUSED}!display.hpp@{display.hpp}}\index{display.hpp@{display.hpp}!PAUSED@{PAUSED}}}\Hypertarget{display_8hpp_a881b49e3802366255ad852f1c8624fd1a99b2439e63f73ad515f7ab2447a80673}\label{display_8hpp_a881b49e3802366255ad852f1c8624fd1a99b2439e63f73ad515f7ab2447a80673} 
+PAUSED&Jeu en pause. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00027}{27}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{display_8hpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{display_8hpp_a4b0cfcdacc75426e5ed31b9ce093a6b1}\index{display.hpp@{display.hpp}!display@{display}}
+\index{display@{display}!display.hpp@{display.hpp}}
+\doxysubsubsection{\texorpdfstring{display()}{display()}}
+{\footnotesize\ttfamily \label{display_8hpp_a4b0cfcdacc75426e5ed31b9ce093a6b1} 
+int display (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_game_session}{Game\+Session}} \&}]{game}{}\end{DoxyParamCaption})}
+
+
+
+Fonction principale d\textquotesingle{}affichage et de gestion des événements. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em game} & Référence vers la session de jeu \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Code de retour (0 = succès)
+\end{DoxyReturn}
+Gère l\textquotesingle{}interface graphique SFML, les événements utilisateur, l\textquotesingle{}affichage de la caméra, du labyrinthe, et des éléments UI
+
+Fonction principale d\textquotesingle{}affichage et de gestion des événements.
+
+Cette fonction gère l\textquotesingle{}intégralité de l\textquotesingle{}interface graphique du jeu, incluant \+:
+\begin{DoxyItemize}
+\item La création et gestion de la fenêtre SFML
+\item L\textquotesingle{}affichage du flux vidéo de la caméra
+\item Le rendu des éléments de jeu (labyrinthes, zones de départ/arrivée)
+\item La gestion des boutons et interactions utilisateur
+\item L\textquotesingle{}affichage des messages de statut (victoire, défaite, initialisation)
+\item La lecture des sons et animations
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em game} & Référence vers l\textquotesingle{}objet \doxylink{class_game_session}{Game\+Session} qui gère l\textquotesingle{}état du jeu \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Code de retour (0 = succès, -\/1 = erreur de chargement de ressources)
+\end{DoxyReturn}
+Interface utilisateur \+:
+\begin{DoxyItemize}
+\item Bouton Start/\+Stop \+: Active/désactive le flux caméra
+\item Bouton Quit \+: Ferme l\textquotesingle{}application
+\item Bouton Play/\+Pause \+: Lance/met en pause le jeu
+\item Zone de sélection de mode \+: Change le labyrinthe (1-\/8)
+\item Affichage du score en temps réel
+\item Sélection de couleur par clic sur l\textquotesingle{}image
+\end{DoxyItemize}
+
+États du jeu gérés \+:
+\begin{DoxyItemize}
+\item NOT\+\_\+\+PLAYING \+: Jeu en attente
+\item INITIALIZING \+: Phase de préparation (3-\/4 secondes)
+\item PLAYING \+: Jeu en cours
+\item WINNING \+: Victoire (animation + son)
+\item Game Over \+: Défaite (animation + son aléatoire)
+\end{DoxyItemize}
+
+Ressources utilisées \+:
+\begin{DoxyItemize}
+\item Police \+: "{}./extras/\+Deja\+Vu\+Sans.\+ttf"{}
+\item Logo \+: "{}./extras/logo2.\+png"{}
+\item Labyrinthes \+: "{}./extras/lab\mbox{[}1-\/4\mbox{]}.\+png"{}
+\item Sons \+: "{}./extras/sounds/\mbox{[}1-\/3\mbox{]}.\+mp3"{}
+\item GIFs \+: "{}./extras/win.\+gif"{}, "{}./extras/screamgif/00\mbox{[}1-\/6\mbox{]}.\+gif"{} 
+\end{DoxyItemize}\doxylink{struct_position}{Position} Y de base pour l\textquotesingle{}interface utilisateur Calculée à partir de la hauteur de la zone vidéo (480px) + marges
+
+Décalage vertical entre les boutons
+
+Bouton de démarrage du flux caméra Couleur \+: Vert (100, 200, 100) Taille \+: 100x30 pixels
+
+Bouton d\textquotesingle{}arrêt du flux caméra Couleur \+: Rouge (200, 100, 100) Taille \+: 100x30 pixels
+
+Bouton de fermeture de l\textquotesingle{}application Couleur \+: Bleu (100, 100, 200) Taille \+: 100x30 pixels
+
+Bouton de lancement/pause du jeu Couleur \+: Or (218, 165, 32) Taille \+: 400x30 pixels
+
+Boîte d\textquotesingle{}affichage de la couleur sélectionnée Couleur par défaut \+: Gris foncé (64, 64, 64) Taille \+: 150x30 pixels
+
+Boîte d\textquotesingle{}affichage du score Couleur \+: Gris foncé (64, 64, 64) Taille \+: 150x30 pixels
+
+Boîte de sélection du mode de jeu Couleur variable selon le mode \+: Rouge bordeaux + nuance Taille \+: 400x30 pixels
+
+Boîte d\textquotesingle{}affichage des crédits Couleur \+: Gris foncé (64, 64, 64) Taille \+: 150x30 pixels
+
+Texte du bouton Start Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texte du bouton Stop Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texte du bouton Quit Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texte du bouton Play/\+Pause Texte dynamique \+: "{}\+Lancer"{} / "{}\+Pause"{} / "{}\+Jouer"{} Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Label pour la couleur trackée Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Label pour le score Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Valeur numérique du score Mise à jour en temps réel Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texte du mode de jeu actuel Format \+: "{}\+Mode de jeu \+: X"{} Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texte des crédits Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texture et sprite du logo principal Fichier \+: "{}./extras/logo2.\+png"{} Affiché quand le jeu n\textquotesingle{}est pas actif
+
+Texture et sprite du labyrinthe actuel Fichier \+: "{}./extras/lab\mbox{[}numéro\mbox{]}.\+png"{} Redimensionné à 640x480 pixels
+
+Lecture des effets sonores
+
+Système de lecture des sons basé sur le flag playingsound \+:
+\begin{DoxyItemize}
+\item soundnumber 1-\/2 \+: Sons de défaite (aléatoire)
+\item soundnumber 3 \+: Son de victoire
+\end{DoxyItemize}
+
+Fichiers audio \+: "{}./extras/sounds/\mbox{[}1-\/3\mbox{]}.\+mp3"{}
+
+Definition at line \mbox{\hyperlink{camera_8cpp_source_l00181}{181}} of file \mbox{\hyperlink{camera_8cpp_source}{camera.\+cpp}}.
+
+
+
+\label{doc-var-members}
+\Hypertarget{display_8hpp_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}\index{display.hpp@{display.hpp}!game@{game}}
+\index{game@{game}!display.hpp@{display.hpp}}
+\doxysubsubsection{\texorpdfstring{game}{game}}
+{\footnotesize\ttfamily \label{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286} 
+\mbox{\hyperlink{class_game_session}{Game\+Session}} game\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Instance globale de la session de jeu. 
+
+\Hypertarget{display_8hpp_a928ab2eda7bfb153e5bec906130f3ea1}\index{display.hpp@{display.hpp}!isCameraShaking@{isCameraShaking}}
+\index{isCameraShaking@{isCameraShaking}!display.hpp@{display.hpp}}
+\doxysubsubsection{\texorpdfstring{isCameraShaking}{isCameraShaking}}
+{\footnotesize\ttfamily \label{display_8hpp_a928ab2eda7bfb153e5bec906130f3ea1} 
+bool is\+Camera\+Shaking\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Indicateur de tremblement de la caméra. 
+
+\Hypertarget{display_8hpp_ac93725eebbbf836a02c62a4284eb219f}\index{display.hpp@{display.hpp}!labnumber@{labnumber}}
+\index{labnumber@{labnumber}!display.hpp@{display.hpp}}
+\doxysubsubsection{\texorpdfstring{labnumber}{labnumber}}
+{\footnotesize\ttfamily \label{display_8hpp_ac93725eebbbf836a02c62a4284eb219f} 
+int labnumber\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Numéro du labyrinthe actuellement chargé 
+

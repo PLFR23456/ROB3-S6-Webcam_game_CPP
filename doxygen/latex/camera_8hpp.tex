@@ -1,0 +1,277 @@
+\doxysection{src/camera.hpp File Reference}
+\hypertarget{camera_8hpp}{}\label{camera_8hpp}\index{src/camera.hpp@{src/camera.hpp}}
+
+
+Header pour la gestion de la caméra et du traitement d\textquotesingle{}image.  
+
+
+{\ttfamily \#include $<$opencv2/opencv.\+hpp$>$}\newline
+{\ttfamily \#include $<$atomic$>$}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{struct_position}{Position}}
+\begin{DoxyCompactList}\small\item\em Structure représentant une position 2D. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_processed_frame}{Processed\+Frame}}
+\begin{DoxyCompactList}\small\item\em Structure tampon partagée entre le thread de traitement et le thread principal. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_masque_couleur}{Masque\+Couleur}}
+\begin{DoxyCompactList}\small\item\em Structure définissant un masque de couleur HSV. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{struct_labyrinthe}{Labyrinthe}}
+\begin{DoxyCompactList}\small\item\em Structure représentant un labyrinthe de jeu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct Position \mbox{\hyperlink{camera_8hpp_aa78012e27ba983f9620fe4ff4bf1d616}{Position}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{camera_8hpp_abcf14c64a96c3aaff652ea4010fd9b78}{on\+Gain\+KChange}} (int value, void \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback pour la trackbar de gain K. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{camera_8hpp_a02c6a55e12813c6a6eb29bc83d41a5ad}{on\+Corrector\+Time\+Constant\+Change}} (int value, void \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback pour la trackbar de constante de temps du correcteur. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{camera_8hpp_a29633fa7d774aa10bbcd916e5e29b68c}{on\+Corrector\+Time\+Constant\+CChange}} (int value, void \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback pour la trackbar de constante de temps C du correcteur. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{camera_8hpp_a5b0c0595f7780f8b4b840dd94b9a168c}{on\+Corrector\+Time\+Constant\+DChange}} (int value, void \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback pour la trackbar de constante de temps D du correcteur. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{camera_8hpp_a5f4344d06c99d70c5c3af8364ec6d2fe}{on\+Tol\+Change}} (int value, void \texorpdfstring{$\ast$}{*})
+\begin{DoxyCompactList}\small\item\em Callback pour la trackbar de tolérance de couleur. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{camera_8hpp_a3bad4a64658208bee62d42087df8a464}{traiter\+Camera}} (cv\+::\+Video\+Capture \&cap, \mbox{\hyperlink{struct_processed_frame}{Processed\+Frame}} \&data)
+\begin{DoxyCompactList}\small\item\em Fonction principale de traitement de la caméra. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{camera_8hpp_a871951369ab5d424568880b98bf3e182}{camera}} ()
+\begin{DoxyCompactList}\small\item\em Fonction d\textquotesingle{}initialisation et de lancement de la caméra. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+std\+::atomic$<$ bool $>$ \mbox{\hyperlink{camera_8hpp_aad20d5ca3f4debe1b619d0cd361be72b}{stop\+\_\+signal}}
+\begin{DoxyCompactList}\small\item\em Variable de signal d\textquotesingle{}arrêt atomique pour l\textquotesingle{}arrêt propre des threads. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{camera_8hpp_abbaadd1183ab404d8b21f4e2d7d32295}{tol}}
+\begin{DoxyCompactList}\small\item\em Tolérance pour la détection de couleur. \end{DoxyCompactList}\item 
+cv\+::\+Mat \mbox{\hyperlink{camera_8hpp_a83a311d49c6182194453898fd44e2958}{last\+Frame}}
+\begin{DoxyCompactList}\small\item\em Dernière frame capturée par la caméra. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_processed_frame}{Processed\+Frame}} \mbox{\hyperlink{camera_8hpp_ab6fd521360964be3fd668d8e8998c868}{processed\+\_\+data}}
+\begin{DoxyCompactList}\small\item\em Instance globale de la structure de données partagées. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_masque_couleur}{Masque\+Couleur}} \mbox{\hyperlink{camera_8hpp_a737f5afdf22379e26dbf728dada44bd8}{Mask1}}
+\begin{DoxyCompactList}\small\item\em Masque de couleur principal utilisé pour la détection. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Header pour la gestion de la caméra et du traitement d\textquotesingle{}image. 
+
+\begin{DoxyAuthor}{Author}
+Votre Nom 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2024 
+\end{DoxyDate}
+
+
+Definition in file \mbox{\hyperlink{camera_8hpp_source}{camera.\+hpp}}.
+
+
+
+\label{doc-typedef-members}
+\Hypertarget{camera_8hpp_doc-typedef-members}
+\doxysubsection{Typedef Documentation}
+\Hypertarget{camera_8hpp_aa78012e27ba983f9620fe4ff4bf1d616}\index{camera.hpp@{camera.hpp}!Position@{Position}}
+\index{Position@{Position}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{Position}{Position}}
+{\footnotesize\ttfamily \label{camera_8hpp_aa78012e27ba983f9620fe4ff4bf1d616} 
+typedef struct Position Position}
+
+
+
+Definition at line \mbox{\hyperlink{camera_8hpp_source_l00038}{38}} of file \mbox{\hyperlink{camera_8hpp_source}{camera.\+hpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{camera_8hpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{camera_8hpp_a871951369ab5d424568880b98bf3e182}\index{camera.hpp@{camera.hpp}!camera@{camera}}
+\index{camera@{camera}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{camera()}{camera()}}
+{\footnotesize\ttfamily \label{camera_8hpp_a871951369ab5d424568880b98bf3e182} 
+int camera (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Fonction d\textquotesingle{}initialisation et de lancement de la caméra. 
+
+\begin{DoxyReturn}{Returns}
+Code de retour (0 = succès, -\/1 = erreur)
+\end{DoxyReturn}
+Initialise la capture vidéo, lance le thread de traitement \Hypertarget{camera_8hpp_a29633fa7d774aa10bbcd916e5e29b68c}\index{camera.hpp@{camera.hpp}!onCorrectorTimeConstantCChange@{onCorrectorTimeConstantCChange}}
+\index{onCorrectorTimeConstantCChange@{onCorrectorTimeConstantCChange}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{onCorrectorTimeConstantCChange()}{onCorrectorTimeConstantCChange()}}
+{\footnotesize\ttfamily \label{camera_8hpp_a29633fa7d774aa10bbcd916e5e29b68c} 
+void on\+Corrector\+Time\+Constant\+CChange (\begin{DoxyParamCaption}\item[{int}]{value}{, }\item[{void \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback pour la trackbar de constante de temps C du correcteur. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Nouvelle valeur de la constante \\
+\hline
+{\em Pointeur} & utilisateur (non utilisé) \\
+\hline
+\end{DoxyParams}
+\Hypertarget{camera_8hpp_a02c6a55e12813c6a6eb29bc83d41a5ad}\index{camera.hpp@{camera.hpp}!onCorrectorTimeConstantChange@{onCorrectorTimeConstantChange}}
+\index{onCorrectorTimeConstantChange@{onCorrectorTimeConstantChange}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{onCorrectorTimeConstantChange()}{onCorrectorTimeConstantChange()}}
+{\footnotesize\ttfamily \label{camera_8hpp_a02c6a55e12813c6a6eb29bc83d41a5ad} 
+void on\+Corrector\+Time\+Constant\+Change (\begin{DoxyParamCaption}\item[{int}]{value}{, }\item[{void \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback pour la trackbar de constante de temps du correcteur. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Nouvelle valeur de la constante \\
+\hline
+{\em Pointeur} & utilisateur (non utilisé) \\
+\hline
+\end{DoxyParams}
+\Hypertarget{camera_8hpp_a5b0c0595f7780f8b4b840dd94b9a168c}\index{camera.hpp@{camera.hpp}!onCorrectorTimeConstantDChange@{onCorrectorTimeConstantDChange}}
+\index{onCorrectorTimeConstantDChange@{onCorrectorTimeConstantDChange}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{onCorrectorTimeConstantDChange()}{onCorrectorTimeConstantDChange()}}
+{\footnotesize\ttfamily \label{camera_8hpp_a5b0c0595f7780f8b4b840dd94b9a168c} 
+void on\+Corrector\+Time\+Constant\+DChange (\begin{DoxyParamCaption}\item[{int}]{value}{, }\item[{void \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback pour la trackbar de constante de temps D du correcteur. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Nouvelle valeur de la constante \\
+\hline
+{\em Pointeur} & utilisateur (non utilisé) \\
+\hline
+\end{DoxyParams}
+\Hypertarget{camera_8hpp_abcf14c64a96c3aaff652ea4010fd9b78}\index{camera.hpp@{camera.hpp}!onGainKChange@{onGainKChange}}
+\index{onGainKChange@{onGainKChange}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{onGainKChange()}{onGainKChange()}}
+{\footnotesize\ttfamily \label{camera_8hpp_abcf14c64a96c3aaff652ea4010fd9b78} 
+void on\+Gain\+KChange (\begin{DoxyParamCaption}\item[{int}]{value}{, }\item[{void \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback pour la trackbar de gain K. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Nouvelle valeur du gain \\
+\hline
+{\em Pointeur} & utilisateur (non utilisé) \\
+\hline
+\end{DoxyParams}
+\Hypertarget{camera_8hpp_a5f4344d06c99d70c5c3af8364ec6d2fe}\index{camera.hpp@{camera.hpp}!onTolChange@{onTolChange}}
+\index{onTolChange@{onTolChange}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{onTolChange()}{onTolChange()}}
+{\footnotesize\ttfamily \label{camera_8hpp_a5f4344d06c99d70c5c3af8364ec6d2fe} 
+void on\+Tol\+Change (\begin{DoxyParamCaption}\item[{int}]{value}{, }\item[{void \texorpdfstring{$\ast$}{*}}]{}{}\end{DoxyParamCaption})}
+
+
+
+Callback pour la trackbar de tolérance de couleur. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Nouvelle valeur de tolérance \\
+\hline
+{\em Pointeur} & utilisateur (non utilisé) \\
+\hline
+\end{DoxyParams}
+\Hypertarget{camera_8hpp_a3bad4a64658208bee62d42087df8a464}\index{camera.hpp@{camera.hpp}!traiterCamera@{traiterCamera}}
+\index{traiterCamera@{traiterCamera}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{traiterCamera()}{traiterCamera()}}
+{\footnotesize\ttfamily \label{camera_8hpp_a3bad4a64658208bee62d42087df8a464} 
+void traiter\+Camera (\begin{DoxyParamCaption}\item[{cv\+::\+Video\+Capture \&}]{cap}{, }\item[{\mbox{\hyperlink{struct_processed_frame}{Processed\+Frame}} \&}]{data}{}\end{DoxyParamCaption})}
+
+
+
+Fonction principale de traitement de la caméra. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cap} & Référence vers la capture vidéo Open\+CV \\
+\hline
+{\em data} & Référence vers la structure de données partagées\\
+\hline
+\end{DoxyParams}
+Traite les frames de la caméra en continu, détecte la couleur, vérifie les collisions avec le labyrinthe et met à jour les données partagées 
+
+\label{doc-var-members}
+\Hypertarget{camera_8hpp_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{camera_8hpp_a83a311d49c6182194453898fd44e2958}\index{camera.hpp@{camera.hpp}!lastFrame@{lastFrame}}
+\index{lastFrame@{lastFrame}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{lastFrame}{lastFrame}}
+{\footnotesize\ttfamily \label{camera_8hpp_a83a311d49c6182194453898fd44e2958} 
+cv\+::\+Mat last\+Frame\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Dernière frame capturée par la caméra. 
+
+\Hypertarget{camera_8hpp_a737f5afdf22379e26dbf728dada44bd8}\index{camera.hpp@{camera.hpp}!Mask1@{Mask1}}
+\index{Mask1@{Mask1}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{Mask1}{Mask1}}
+{\footnotesize\ttfamily \label{camera_8hpp_a737f5afdf22379e26dbf728dada44bd8} 
+\mbox{\hyperlink{struct_masque_couleur}{Masque\+Couleur}} Mask1\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Masque de couleur principal utilisé pour la détection. 
+
+\Hypertarget{camera_8hpp_ab6fd521360964be3fd668d8e8998c868}\index{camera.hpp@{camera.hpp}!processed\_data@{processed\_data}}
+\index{processed\_data@{processed\_data}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{processed\_data}{processed\_data}}
+{\footnotesize\ttfamily \label{camera_8hpp_ab6fd521360964be3fd668d8e8998c868} 
+\mbox{\hyperlink{struct_processed_frame}{Processed\+Frame}} processed\+\_\+data\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Instance globale de la structure de données partagées. 
+
+\Hypertarget{camera_8hpp_aad20d5ca3f4debe1b619d0cd361be72b}\index{camera.hpp@{camera.hpp}!stop\_signal@{stop\_signal}}
+\index{stop\_signal@{stop\_signal}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{stop\_signal}{stop\_signal}}
+{\footnotesize\ttfamily \label{camera_8hpp_aad20d5ca3f4debe1b619d0cd361be72b} 
+std\+::atomic$<$bool$>$ stop\+\_\+signal\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Variable de signal d\textquotesingle{}arrêt atomique pour l\textquotesingle{}arrêt propre des threads. 
+
+Utilise std\+::atomic pour éviter l\textquotesingle{}utilisation de mutex
+
+Variable de signal d\textquotesingle{}arrêt atomique pour l\textquotesingle{}arrêt propre des threads.
+
+\texorpdfstring{$<$}{<} Fonctions de traitement vidéo et détection de couleur \texorpdfstring{$<$}{<} Support multi-\/threading \texorpdfstring{$<$}{<} Entrées/sorties standard
+
+Signal d\textquotesingle{}arrêt global pour coordination des threads
+
+Variable atomique partagée entre les threads pour assurer un arrêt propre de l\textquotesingle{}application. Quand elle est définie à true, tous les threads doivent se terminer de manière coordonnée.
+
+\begin{DoxyNote}{Note}
+Variable atomique pour éviter les conditions de course 
+\end{DoxyNote}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00034}{34}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+\Hypertarget{camera_8hpp_abbaadd1183ab404d8b21f4e2d7d32295}\index{camera.hpp@{camera.hpp}!tol@{tol}}
+\index{tol@{tol}!camera.hpp@{camera.hpp}}
+\doxysubsubsection{\texorpdfstring{tol}{tol}}
+{\footnotesize\ttfamily \label{camera_8hpp_abbaadd1183ab404d8b21f4e2d7d32295} 
+int tol\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+Tolérance pour la détection de couleur. 
+

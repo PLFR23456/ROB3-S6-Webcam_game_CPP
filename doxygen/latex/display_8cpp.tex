@@ -1,0 +1,356 @@
+\doxysection{src/display.cpp File Reference}
+\hypertarget{display_8cpp}{}\label{display_8cpp}\index{src/display.cpp@{src/display.cpp}}
+
+
+Gestion de l\textquotesingle{}affichage et de l\textquotesingle{}interface utilisateur du jeu de suivi de couleur.  
+
+
+{\ttfamily \#include "{}display.\+hpp"{}}\newline
+{\ttfamily \#include "{}camera.\+hpp"{}}\newline
+{\ttfamily \#include $<$SFML/\+Graphics.\+hpp$>$}\newline
+{\ttfamily \#include $<$SFML/\+Window.\+hpp$>$}\newline
+{\ttfamily \#include $<$SFML/\+Window/\+Event.\+hpp$>$}\newline
+{\ttfamily \#include $<$SFML/\+System.\+hpp$>$}\newline
+{\ttfamily \#include $<$SFML/\+Audio.\+hpp$>$}\newline
+{\ttfamily \#include $<$SFML/\+Network.\+hpp$>$}\newline
+{\ttfamily \#include $<$SFML/\+Config.\+hpp$>$}\newline
+{\ttfamily \#include $<$SFML/\+Graphics/\+Render\+Window.\+hpp$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$sstream$>$}\newline
+{\ttfamily \#include $<$opencv2/opencv.\+hpp$>$}\newline
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$thread$>$}\newline
+{\ttfamily \#include $<$mutex$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{display_8cpp_a8201d4510fb919b800708ed8af14a2e1}{table}} (int \mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}}, \mbox{\hyperlink{struct_position}{Position}} \&startpos, \mbox{\hyperlink{struct_position}{Position}} \&\mbox{\hyperlink{camera_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}})
+\item 
+int \mbox{\hyperlink{display_8cpp_a4b0cfcdacc75426e5ed31b9ce093a6b1}{display}} (\mbox{\hyperlink{class_game_session}{Game\+Session}} \&\mbox{\hyperlink{display_8hpp_a8dfeeb3c5090561ef6e9f68f3ceda286}{game}})
+\begin{DoxyCompactList}\small\item\em Fonction principale d\textquotesingle{}affichage et de gestion des événements. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{display_8cpp_aef160b7437d94056f1dc59646cd5b87d}{score}} = 0
+\item 
+int \mbox{\hyperlink{display_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}} = 1
+\item 
+int \mbox{\hyperlink{display_8cpp_a8df7e6ce322b58ee0cae836f83a64a82}{soundnumber}} = 0
+\item 
+int \mbox{\hyperlink{display_8cpp_ab5455f24c260bc03abbf23924c159ddb}{gifnumber}} = 0
+\item 
+int \mbox{\hyperlink{display_8cpp_a6d660874a54b09ec82479f2c6972c27a}{playingsound}} = 0
+\item 
+int \mbox{\hyperlink{display_8cpp_a61291c94d341d671840d6da409dfb2d8}{bouclestart}} = 0
+\item 
+int \mbox{\hyperlink{display_8cpp_ac93725eebbbf836a02c62a4284eb219f}{labnumber}} = (\mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}} -\/ 1) /2 + 1
+\item 
+\mbox{\hyperlink{struct_position}{Position}} \mbox{\hyperlink{display_8cpp_adc48713c34072ef5ffab2ec13772f522}{startbox}}
+\begin{DoxyCompactList}\small\item\em \doxylink{struct_position}{Position} de la zone de départ (startbox) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_position}{Position}} \mbox{\hyperlink{display_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}{endbox}}
+\begin{DoxyCompactList}\small\item\em \doxylink{struct_position}{Position} de la zone d\textquotesingle{}arrivée (endbox) \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{display_8cpp_abbaadd1183ab404d8b21f4e2d7d32295}{tol}}
+\item 
+\mbox{\hyperlink{struct_masque_couleur}{Masque\+Couleur}} \mbox{\hyperlink{display_8cpp_a737f5afdf22379e26dbf728dada44bd8}{Mask1}}
+\item 
+cv\+::\+Mat \mbox{\hyperlink{display_8cpp_abb74b02f147ce6384bf792114a43a049}{srcrgb}}
+\item 
+cv\+::\+Mat \mbox{\hyperlink{display_8cpp_a1ed1786965b2cff5cd92e23bb75a70aa}{src}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Gestion de l\textquotesingle{}affichage et de l\textquotesingle{}interface utilisateur du jeu de suivi de couleur. 
+
+Ce fichier contient toutes les fonctions liées à l\textquotesingle{}affichage graphique du jeu, incluant l\textquotesingle{}interface utilisateur, le rendu des éléments de jeu et la gestion des événements.
+
+\begin{DoxyAuthor}{Author}
+Votre nom 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2025 
+\end{DoxyDate}
+
+
+Definition in file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{display_8cpp_doc-func-members}
+\doxysubsection{Function Documentation}
+\Hypertarget{display_8cpp_a4b0cfcdacc75426e5ed31b9ce093a6b1}\index{display.cpp@{display.cpp}!display@{display}}
+\index{display@{display}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{display()}{display()}}
+{\footnotesize\ttfamily \label{display_8cpp_a4b0cfcdacc75426e5ed31b9ce093a6b1} 
+int display (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_game_session}{Game\+Session}} \&}]{game}{}\end{DoxyParamCaption})}
+
+
+
+Fonction principale d\textquotesingle{}affichage et de gestion des événements. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em game} & Référence vers la session de jeu \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Code de retour (0 = succès)
+\end{DoxyReturn}
+Gère l\textquotesingle{}interface graphique SFML, les événements utilisateur, l\textquotesingle{}affichage de la caméra, du labyrinthe, et des éléments UI
+
+Fonction principale d\textquotesingle{}affichage et de gestion des événements.
+
+Cette fonction gère l\textquotesingle{}intégralité de l\textquotesingle{}interface graphique du jeu, incluant \+:
+\begin{DoxyItemize}
+\item La création et gestion de la fenêtre SFML
+\item L\textquotesingle{}affichage du flux vidéo de la caméra
+\item Le rendu des éléments de jeu (labyrinthes, zones de départ/arrivée)
+\item La gestion des boutons et interactions utilisateur
+\item L\textquotesingle{}affichage des messages de statut (victoire, défaite, initialisation)
+\item La lecture des sons et animations
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}{Parameters}
+{\em game} & Référence vers l\textquotesingle{}objet \doxylink{class_game_session}{Game\+Session} qui gère l\textquotesingle{}état du jeu \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Code de retour (0 = succès, -\/1 = erreur de chargement de ressources)
+\end{DoxyReturn}
+Interface utilisateur \+:
+\begin{DoxyItemize}
+\item Bouton Start/\+Stop \+: Active/désactive le flux caméra
+\item Bouton Quit \+: Ferme l\textquotesingle{}application
+\item Bouton Play/\+Pause \+: Lance/met en pause le jeu
+\item Zone de sélection de mode \+: Change le labyrinthe (1-\/8)
+\item Affichage du score en temps réel
+\item Sélection de couleur par clic sur l\textquotesingle{}image
+\end{DoxyItemize}
+
+États du jeu gérés \+:
+\begin{DoxyItemize}
+\item NOT\+\_\+\+PLAYING \+: Jeu en attente
+\item INITIALIZING \+: Phase de préparation (3-\/4 secondes)
+\item PLAYING \+: Jeu en cours
+\item WINNING \+: Victoire (animation + son)
+\item Game Over \+: Défaite (animation + son aléatoire)
+\end{DoxyItemize}
+
+Ressources utilisées \+:
+\begin{DoxyItemize}
+\item Police \+: "{}./extras/\+Deja\+Vu\+Sans.\+ttf"{}
+\item Logo \+: "{}./extras/logo2.\+png"{}
+\item Labyrinthes \+: "{}./extras/lab\mbox{[}1-\/4\mbox{]}.\+png"{}
+\item Sons \+: "{}./extras/sounds/\mbox{[}1-\/3\mbox{]}.\+mp3"{}
+\item GIFs \+: "{}./extras/win.\+gif"{}, "{}./extras/screamgif/00\mbox{[}1-\/6\mbox{]}.\+gif"{} 
+\end{DoxyItemize}\doxylink{struct_position}{Position} Y de base pour l\textquotesingle{}interface utilisateur Calculée à partir de la hauteur de la zone vidéo (480px) + marges
+
+Décalage vertical entre les boutons
+
+Bouton de démarrage du flux caméra Couleur \+: Vert (100, 200, 100) Taille \+: 100x30 pixels
+
+Bouton d\textquotesingle{}arrêt du flux caméra Couleur \+: Rouge (200, 100, 100) Taille \+: 100x30 pixels
+
+Bouton de fermeture de l\textquotesingle{}application Couleur \+: Bleu (100, 100, 200) Taille \+: 100x30 pixels
+
+Bouton de lancement/pause du jeu Couleur \+: Or (218, 165, 32) Taille \+: 400x30 pixels
+
+Boîte d\textquotesingle{}affichage de la couleur sélectionnée Couleur par défaut \+: Gris foncé (64, 64, 64) Taille \+: 150x30 pixels
+
+Boîte d\textquotesingle{}affichage du score Couleur \+: Gris foncé (64, 64, 64) Taille \+: 150x30 pixels
+
+Boîte de sélection du mode de jeu Couleur variable selon le mode \+: Rouge bordeaux + nuance Taille \+: 400x30 pixels
+
+Boîte d\textquotesingle{}affichage des crédits Couleur \+: Gris foncé (64, 64, 64) Taille \+: 150x30 pixels
+
+Texte du bouton Start Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texte du bouton Stop Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texte du bouton Quit Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texte du bouton Play/\+Pause Texte dynamique \+: "{}\+Lancer"{} / "{}\+Pause"{} / "{}\+Jouer"{} Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Label pour la couleur trackée Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Label pour le score Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Valeur numérique du score Mise à jour en temps réel Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texte du mode de jeu actuel Format \+: "{}\+Mode de jeu \+: X"{} Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texte des crédits Police \+: Deja\+Vu\+Sans, Taille \+: 16px
+
+Texture et sprite du logo principal Fichier \+: "{}./extras/logo2.\+png"{} Affiché quand le jeu n\textquotesingle{}est pas actif
+
+Texture et sprite du labyrinthe actuel Fichier \+: "{}./extras/lab\mbox{[}numéro\mbox{]}.\+png"{} Redimensionné à 640x480 pixels
+
+Lecture des effets sonores
+
+Système de lecture des sons basé sur le flag playingsound \+:
+\begin{DoxyItemize}
+\item soundnumber 1-\/2 \+: Sons de défaite (aléatoire)
+\item soundnumber 3 \+: Son de victoire
+\end{DoxyItemize}
+
+Fichiers audio \+: "{}./extras/sounds/\mbox{[}1-\/3\mbox{]}.\+mp3"{}
+
+Definition at line \mbox{\hyperlink{display_8cpp_source_l00063}{63}} of file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+\Hypertarget{display_8cpp_a8201d4510fb919b800708ed8af14a2e1}\index{display.cpp@{display.cpp}!table@{table}}
+\index{table@{table}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{table()}{table()}}
+{\footnotesize\ttfamily \label{display_8cpp_a8201d4510fb919b800708ed8af14a2e1} 
+void table (\begin{DoxyParamCaption}\item[{int}]{gamemode}{, }\item[{\mbox{\hyperlink{struct_position}{Position}} \&}]{startpos}{, }\item[{\mbox{\hyperlink{struct_position}{Position}} \&}]{endbox}{}\end{DoxyParamCaption})}
+
+
+
+Definition at line \mbox{\hyperlink{display_8cpp_source_l00037}{37}} of file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+
+
+\label{doc-var-members}
+\Hypertarget{display_8cpp_doc-var-members}
+\doxysubsection{Variable Documentation}
+\Hypertarget{display_8cpp_a61291c94d341d671840d6da409dfb2d8}\index{display.cpp@{display.cpp}!bouclestart@{bouclestart}}
+\index{bouclestart@{bouclestart}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{bouclestart}{bouclestart}}
+{\footnotesize\ttfamily \label{display_8cpp_a61291c94d341d671840d6da409dfb2d8} 
+int bouclestart = 0}
+
+
+
+Definition at line \mbox{\hyperlink{display_8cpp_source_l00024}{24}} of file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+\Hypertarget{display_8cpp_a50a11b1f65c7f13657769a1077d7d2b1}\index{display.cpp@{display.cpp}!endbox@{endbox}}
+\index{endbox@{endbox}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{endbox}{endbox}}
+{\footnotesize\ttfamily \label{display_8cpp_a50a11b1f65c7f13657769a1077d7d2b1} 
+\mbox{\hyperlink{struct_position}{Position}} endbox\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+\doxylink{struct_position}{Position} de la zone d\textquotesingle{}arrivée (endbox) 
+
+\doxylink{struct_position}{Position} de la zone d\textquotesingle{}arrivée (déclarée dans \doxylink{main_8cpp}{main.\+cpp})
+
+Coordonnées de la zone magenta que le joueur doit atteindre pour gagner. \doxylink{struct_position}{Position} par défaut \+: (200, 400) pour le mode de jeu initial.
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{camera_8cpp_a8201d4510fb919b800708ed8af14a2e1}{table()} pour la configuration des positions selon les modes de jeu 
+\end{DoxySeeAlso}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00054}{54}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+\Hypertarget{display_8cpp_aa87036abc007f09ec63e84009d40ec9a}\index{display.cpp@{display.cpp}!gamemode@{gamemode}}
+\index{gamemode@{gamemode}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{gamemode}{gamemode}}
+{\footnotesize\ttfamily \label{display_8cpp_aa87036abc007f09ec63e84009d40ec9a} 
+int gamemode = 1}
+
+
+
+Definition at line \mbox{\hyperlink{display_8cpp_source_l00020}{20}} of file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+\Hypertarget{display_8cpp_ab5455f24c260bc03abbf23924c159ddb}\index{display.cpp@{display.cpp}!gifnumber@{gifnumber}}
+\index{gifnumber@{gifnumber}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{gifnumber}{gifnumber}}
+{\footnotesize\ttfamily \label{display_8cpp_ab5455f24c260bc03abbf23924c159ddb} 
+int gifnumber = 0}
+
+
+
+Definition at line \mbox{\hyperlink{display_8cpp_source_l00022}{22}} of file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+\Hypertarget{display_8cpp_ac93725eebbbf836a02c62a4284eb219f}\index{display.cpp@{display.cpp}!labnumber@{labnumber}}
+\index{labnumber@{labnumber}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{labnumber}{labnumber}}
+{\footnotesize\ttfamily \label{display_8cpp_ac93725eebbbf836a02c62a4284eb219f} 
+int labnumber = (\mbox{\hyperlink{camera_8cpp_aa87036abc007f09ec63e84009d40ec9a}{gamemode}} -\/ 1) /2 + 1\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{display_8cpp_a737f5afdf22379e26dbf728dada44bd8}\index{display.cpp@{display.cpp}!Mask1@{Mask1}}
+\index{Mask1@{Mask1}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{Mask1}{Mask1}}
+{\footnotesize\ttfamily \label{display_8cpp_a737f5afdf22379e26dbf728dada44bd8} 
+\mbox{\hyperlink{struct_masque_couleur}{Masque\+Couleur}} Mask1\hspace{0.3cm}{\ttfamily [extern]}}
+
+\Hypertarget{display_8cpp_a6d660874a54b09ec82479f2c6972c27a}\index{display.cpp@{display.cpp}!playingsound@{playingsound}}
+\index{playingsound@{playingsound}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{playingsound}{playingsound}}
+{\footnotesize\ttfamily \label{display_8cpp_a6d660874a54b09ec82479f2c6972c27a} 
+int playingsound = 0}
+
+
+
+Definition at line \mbox{\hyperlink{display_8cpp_source_l00023}{23}} of file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+\Hypertarget{display_8cpp_aef160b7437d94056f1dc59646cd5b87d}\index{display.cpp@{display.cpp}!score@{score}}
+\index{score@{score}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{score}{score}}
+{\footnotesize\ttfamily \label{display_8cpp_aef160b7437d94056f1dc59646cd5b87d} 
+int score = 0}
+
+
+
+Definition at line \mbox{\hyperlink{display_8cpp_source_l00019}{19}} of file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+\Hypertarget{display_8cpp_a8df7e6ce322b58ee0cae836f83a64a82}\index{display.cpp@{display.cpp}!soundnumber@{soundnumber}}
+\index{soundnumber@{soundnumber}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{soundnumber}{soundnumber}}
+{\footnotesize\ttfamily \label{display_8cpp_a8df7e6ce322b58ee0cae836f83a64a82} 
+int soundnumber = 0}
+
+
+
+Definition at line \mbox{\hyperlink{display_8cpp_source_l00021}{21}} of file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+\Hypertarget{display_8cpp_a1ed1786965b2cff5cd92e23bb75a70aa}\index{display.cpp@{display.cpp}!src@{src}}
+\index{src@{src}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{src}{src}}
+{\footnotesize\ttfamily \label{display_8cpp_a1ed1786965b2cff5cd92e23bb75a70aa} 
+cv\+::\+Mat src}
+
+
+
+Definition at line \mbox{\hyperlink{display_8cpp_source_l00035}{35}} of file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+\Hypertarget{display_8cpp_abb74b02f147ce6384bf792114a43a049}\index{display.cpp@{display.cpp}!srcrgb@{srcrgb}}
+\index{srcrgb@{srcrgb}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{srcrgb}{srcrgb}}
+{\footnotesize\ttfamily \label{display_8cpp_abb74b02f147ce6384bf792114a43a049} 
+cv\+::\+Mat srcrgb}
+
+
+
+Definition at line \mbox{\hyperlink{display_8cpp_source_l00035}{35}} of file \mbox{\hyperlink{display_8cpp_source}{display.\+cpp}}.
+
+\Hypertarget{display_8cpp_adc48713c34072ef5ffab2ec13772f522}\index{display.cpp@{display.cpp}!startbox@{startbox}}
+\index{startbox@{startbox}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{startbox}{startbox}}
+{\footnotesize\ttfamily \label{display_8cpp_adc48713c34072ef5ffab2ec13772f522} 
+\mbox{\hyperlink{struct_position}{Position}} startbox\hspace{0.3cm}{\ttfamily [extern]}}
+
+
+
+\doxylink{struct_position}{Position} de la zone de départ (startbox) 
+
+\doxylink{struct_position}{Position} de la zone de départ (déclarée dans \doxylink{main_8cpp}{main.\+cpp})
+
+Coordonnées de la zone verte où le joueur doit commencer chaque niveau. \doxylink{struct_position}{Position} par défaut \+: (300, 80) pour le mode de jeu initial.
+
+\begin{DoxySeeAlso}{See also}
+\doxylink{camera_8cpp_a8201d4510fb919b800708ed8af14a2e1}{table()} pour la configuration des positions selon les modes de jeu 
+\end{DoxySeeAlso}
+
+
+Definition at line \mbox{\hyperlink{main_8cpp_source_l00044}{44}} of file \mbox{\hyperlink{main_8cpp_source}{main.\+cpp}}.
+
+\Hypertarget{display_8cpp_abbaadd1183ab404d8b21f4e2d7d32295}\index{display.cpp@{display.cpp}!tol@{tol}}
+\index{tol@{tol}!display.cpp@{display.cpp}}
+\doxysubsubsection{\texorpdfstring{tol}{tol}}
+{\footnotesize\ttfamily \label{display_8cpp_abbaadd1183ab404d8b21f4e2d7d32295} 
+int tol\hspace{0.3cm}{\ttfamily [extern]}}
+

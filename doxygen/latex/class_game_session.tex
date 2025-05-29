@@ -1,0 +1,323 @@
+\doxysection{Game\+Session Class Reference}
+\hypertarget{class_game_session}{}\label{class_game_session}\index{GameSession@{GameSession}}
+
+
+Classe principale gérant l\textquotesingle{}état et la logique du jeu.  
+
+
+
+
+{\ttfamily \#include $<$display.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_game_session_ac75d47cfa65850eee030c43661496c41}{Game\+Session}} (\mbox{\hyperlink{struct_position}{Position}} start, \mbox{\hyperlink{struct_position}{Position}} end)
+\begin{DoxyCompactList}\small\item\em Constructeur de la session de jeu. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_game_session_a3b7e33fedd569721ceae31ab10b0c4ab}{get\+Page\+Status}} () const
+\begin{DoxyCompactList}\small\item\em Obtient l\textquotesingle{}état d\textquotesingle{}ouverture de la page. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_game_session_ab1044fe20da75290e6ccc93acc21277f}{get\+Labyrinth\+Status}} () const
+\begin{DoxyCompactList}\small\item\em Obtient l\textquotesingle{}état d\textquotesingle{}affichage du labyrinthe. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1}{Game\+Status}} \mbox{\hyperlink{class_game_session_aa0123eb942b9a17f16803016ad378334}{get\+Status}} () const
+\begin{DoxyCompactList}\small\item\em Obtient l\textquotesingle{}état actuel du jeu. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_game_session_aafe67a551a59fee7046727e20a9fc4f5}{get\+Wall\+Touched}} ()
+\begin{DoxyCompactList}\small\item\em Vérifie si un mur a été touché \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_a4f9a7ab23a5d116a7cda52e91bbbf850}{set\+Labyrinth\+Status}} (bool stat)
+\begin{DoxyCompactList}\small\item\em Définit l\textquotesingle{}état d\textquotesingle{}affichage du labyrinthe. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_ad42a8d1863076c323c9317e59a953906}{open\+Page}} ()
+\begin{DoxyCompactList}\small\item\em Ouvre la page de jeu. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_a0d45eb2506a4e984e673085bf29c6bc8}{close\+Page}} ()
+\begin{DoxyCompactList}\small\item\em Ferme la page de jeu. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_a0ac5b6be36f2f1b3d652957ee782bb54}{start\+Game}} ()
+\begin{DoxyCompactList}\small\item\em Démarre le jeu (passage en état PLAYING) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_abeda1607396401c2dbab551250e7cbe9}{idle\+Game}} ()
+\begin{DoxyCompactList}\small\item\em Met le jeu en état inactif. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_ab928b6658eb744ba42879a8cda10af7f}{pause\+Game}} ()
+\begin{DoxyCompactList}\small\item\em Met le jeu en pause. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_a6dd6d8747973523bb11ee873d9d445ea}{resume\+Game}} ()
+\begin{DoxyCompactList}\small\item\em Reprend le jeu depuis une pause. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_a7505d2f0723bc48d58e7a3c6a34f7a53}{enter\+Start\+Box}} ()
+\begin{DoxyCompactList}\small\item\em Action déclenchée lors de l\textquotesingle{}entrée dans la boîte de départ. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_a8e07731d3426b47e2632387ece243f71}{enter\+End\+Box}} ()
+\begin{DoxyCompactList}\small\item\em Action déclenchée lors de l\textquotesingle{}entrée dans la boîte d\textquotesingle{}arrivée. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_acd690081cb373409f3a759043bffa2ba}{touch\+Wall}} ()
+\begin{DoxyCompactList}\small\item\em Action déclenchée lors du contact avec un mur. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_session_af0306984d9f17f2b974cbe5c8b628e3d}{reset}} ()
+\begin{DoxyCompactList}\small\item\em Remet à zéro l\textquotesingle{}état du jeu. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Classe principale gérant l\textquotesingle{}état et la logique du jeu. 
+
+Cette classe encapsule toute la logique de jeu, incluant \+:
+\begin{DoxyItemize}
+\item La gestion des états (démarrage, pause, victoire, défaite)
+\item Le contrôle de l\textquotesingle{}affichage (page ouverte/fermée, labyrinthe visible)
+\item La détection des événements de jeu (collision, zones spéciales) 
+\end{DoxyItemize}
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00043}{43}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+
+
+\label{doc-constructors}
+\Hypertarget{class_game_session_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_game_session_ac75d47cfa65850eee030c43661496c41}\index{GameSession@{GameSession}!GameSession@{GameSession}}
+\index{GameSession@{GameSession}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{GameSession()}{GameSession()}}
+{\footnotesize\ttfamily \label{class_game_session_ac75d47cfa65850eee030c43661496c41} 
+Game\+Session\+::\+Game\+Session (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_position}{Position}}}]{start}{, }\item[{\mbox{\hyperlink{struct_position}{Position}}}]{end}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Constructeur de la session de jeu. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em start} & \doxylink{struct_position}{Position} de la boîte de départ \\
+\hline
+{\em end} & \doxylink{struct_position}{Position} de la boîte d\textquotesingle{}arrivée \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00059}{59}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+
+
+\label{doc-func-members}
+\Hypertarget{class_game_session_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_game_session_a0d45eb2506a4e984e673085bf29c6bc8}\index{GameSession@{GameSession}!closePage@{closePage}}
+\index{closePage@{closePage}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{closePage()}{closePage()}}
+{\footnotesize\ttfamily \label{class_game_session_a0d45eb2506a4e984e673085bf29c6bc8} 
+void Game\+Session\+::close\+Page (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Ferme la page de jeu. 
+
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00104}{104}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_a8e07731d3426b47e2632387ece243f71}\index{GameSession@{GameSession}!enterEndBox@{enterEndBox}}
+\index{enterEndBox@{enterEndBox}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{enterEndBox()}{enterEndBox()}}
+{\footnotesize\ttfamily \label{class_game_session_a8e07731d3426b47e2632387ece243f71} 
+void Game\+Session\+::enter\+End\+Box (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Action déclenchée lors de l\textquotesingle{}entrée dans la boîte d\textquotesingle{}arrivée. 
+
+Passe le jeu en état de victoire si en cours de jeu 
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00157}{157}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_a7505d2f0723bc48d58e7a3c6a34f7a53}\index{GameSession@{GameSession}!enterStartBox@{enterStartBox}}
+\index{enterStartBox@{enterStartBox}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{enterStartBox()}{enterStartBox()}}
+{\footnotesize\ttfamily \label{class_game_session_a7505d2f0723bc48d58e7a3c6a34f7a53} 
+void Game\+Session\+::enter\+Start\+Box (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Action déclenchée lors de l\textquotesingle{}entrée dans la boîte de départ. 
+
+Passe le jeu en état d\textquotesingle{}initialisation si pas encore en cours 
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00147}{147}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_ab1044fe20da75290e6ccc93acc21277f}\index{GameSession@{GameSession}!getLabyrinthStatus@{getLabyrinthStatus}}
+\index{getLabyrinthStatus@{getLabyrinthStatus}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{getLabyrinthStatus()}{getLabyrinthStatus()}}
+{\footnotesize\ttfamily \label{class_game_session_ab1044fe20da75290e6ccc93acc21277f} 
+bool Game\+Session\+::get\+Labyrinth\+Status (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Obtient l\textquotesingle{}état d\textquotesingle{}affichage du labyrinthe. 
+
+\begin{DoxyReturn}{Returns}
+true si le labyrinthe est affiché, false sinon 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00074}{74}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_a3b7e33fedd569721ceae31ab10b0c4ab}\index{GameSession@{GameSession}!getPageStatus@{getPageStatus}}
+\index{getPageStatus@{getPageStatus}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{getPageStatus()}{getPageStatus()}}
+{\footnotesize\ttfamily \label{class_game_session_a3b7e33fedd569721ceae31ab10b0c4ab} 
+bool Game\+Session\+::get\+Page\+Status (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Obtient l\textquotesingle{}état d\textquotesingle{}ouverture de la page. 
+
+\begin{DoxyReturn}{Returns}
+true si la page est ouverte, false sinon 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00068}{68}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_aa0123eb942b9a17f16803016ad378334}\index{GameSession@{GameSession}!getStatus@{getStatus}}
+\index{getStatus@{getStatus}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{getStatus()}{getStatus()}}
+{\footnotesize\ttfamily \label{class_game_session_aa0123eb942b9a17f16803016ad378334} 
+\mbox{\hyperlink{display_8hpp_a881b49e3802366255ad852f1c8624fd1}{Game\+Status}} Game\+Session\+::get\+Status (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Obtient l\textquotesingle{}état actuel du jeu. 
+
+\begin{DoxyReturn}{Returns}
+L\textquotesingle{}état du jeu (\doxylink{display_8hpp_a881b49e3802366255ad852f1c8624fd1}{Game\+Status}) 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00080}{80}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_aafe67a551a59fee7046727e20a9fc4f5}\index{GameSession@{GameSession}!getWallTouched@{getWallTouched}}
+\index{getWallTouched@{getWallTouched}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{getWallTouched()}{getWallTouched()}}
+{\footnotesize\ttfamily \label{class_game_session_aafe67a551a59fee7046727e20a9fc4f5} 
+bool Game\+Session\+::get\+Wall\+Touched (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Vérifie si un mur a été touché 
+
+\begin{DoxyReturn}{Returns}
+true si un mur a été touché, false sinon 
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00086}{86}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_abeda1607396401c2dbab551250e7cbe9}\index{GameSession@{GameSession}!idleGame@{idleGame}}
+\index{idleGame@{idleGame}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{idleGame()}{idleGame()}}
+{\footnotesize\ttfamily \label{class_game_session_abeda1607396401c2dbab551250e7cbe9} 
+void Game\+Session\+::idle\+Game (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Met le jeu en état inactif. 
+
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00114}{114}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_ad42a8d1863076c323c9317e59a953906}\index{GameSession@{GameSession}!openPage@{openPage}}
+\index{openPage@{openPage}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{openPage()}{openPage()}}
+{\footnotesize\ttfamily \label{class_game_session_ad42a8d1863076c323c9317e59a953906} 
+void Game\+Session\+::open\+Page (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Ouvre la page de jeu. 
+
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00099}{99}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_ab928b6658eb744ba42879a8cda10af7f}\index{GameSession@{GameSession}!pauseGame@{pauseGame}}
+\index{pauseGame@{pauseGame}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{pauseGame()}{pauseGame()}}
+{\footnotesize\ttfamily \label{class_game_session_ab928b6658eb744ba42879a8cda10af7f} 
+void Game\+Session\+::pause\+Game (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Met le jeu en pause. 
+
+Fonctionne seulement si le jeu est en cours ou en initialisation 
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00122}{122}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_af0306984d9f17f2b974cbe5c8b628e3d}\index{GameSession@{GameSession}!reset@{reset}}
+\index{reset@{reset}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily \label{class_game_session_af0306984d9f17f2b974cbe5c8b628e3d} 
+void Game\+Session\+::reset (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Remet à zéro l\textquotesingle{}état du jeu. 
+
+Réinitialise tous les états aux valeurs par défaut 
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00177}{177}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_a6dd6d8747973523bb11ee873d9d445ea}\index{GameSession@{GameSession}!resumeGame@{resumeGame}}
+\index{resumeGame@{resumeGame}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{resumeGame()}{resumeGame()}}
+{\footnotesize\ttfamily \label{class_game_session_a6dd6d8747973523bb11ee873d9d445ea} 
+void Game\+Session\+::resume\+Game (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Reprend le jeu depuis une pause. 
+
+Active l\textquotesingle{}affichage du labyrinthe et restaure l\textquotesingle{}état de jeu 
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00133}{133}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_a4f9a7ab23a5d116a7cda52e91bbbf850}\index{GameSession@{GameSession}!setLabyrinthStatus@{setLabyrinthStatus}}
+\index{setLabyrinthStatus@{setLabyrinthStatus}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{setLabyrinthStatus()}{setLabyrinthStatus()}}
+{\footnotesize\ttfamily \label{class_game_session_a4f9a7ab23a5d116a7cda52e91bbbf850} 
+void Game\+Session\+::set\+Labyrinth\+Status (\begin{DoxyParamCaption}\item[{bool}]{stat}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Définit l\textquotesingle{}état d\textquotesingle{}affichage du labyrinthe. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em stat} & Nouvel état d\textquotesingle{}affichage \\
+\hline
+\end{DoxyParams}
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00094}{94}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_a0ac5b6be36f2f1b3d652957ee782bb54}\index{GameSession@{GameSession}!startGame@{startGame}}
+\index{startGame@{startGame}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{startGame()}{startGame()}}
+{\footnotesize\ttfamily \label{class_game_session_a0ac5b6be36f2f1b3d652957ee782bb54} 
+void Game\+Session\+::start\+Game (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Démarre le jeu (passage en état PLAYING) 
+
+
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00109}{109}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+\Hypertarget{class_game_session_acd690081cb373409f3a759043bffa2ba}\index{GameSession@{GameSession}!touchWall@{touchWall}}
+\index{touchWall@{touchWall}!GameSession@{GameSession}}
+\doxysubsubsection{\texorpdfstring{touchWall()}{touchWall()}}
+{\footnotesize\ttfamily \label{class_game_session_acd690081cb373409f3a759043bffa2ba} 
+void Game\+Session\+::touch\+Wall (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Action déclenchée lors du contact avec un mur. 
+
+Marque qu\textquotesingle{}un mur a été touché si le jeu est en cours 
+
+Definition at line \mbox{\hyperlink{display_8hpp_source_l00167}{167}} of file \mbox{\hyperlink{display_8hpp_source}{display.\+hpp}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{display_8hpp}{display.\+hpp}}\end{DoxyCompactItemize}
