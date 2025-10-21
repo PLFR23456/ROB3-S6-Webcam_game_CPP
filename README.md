@@ -1,26 +1,31 @@
-# gr2_06 - Projet Imposé
+# Projet d’Analyse d’Image — Labyrinthe Interactif
 
-## Récupérer le dépôt distant
-Clonez le dépôt avec le lien HTTPS. Lorsque vous y êtes invité, entrez votre n° étudiant puis le token d'accès.
-```
-git clone https://gitlabsu.sorbonne-universite.fr/polytech_rob27/gr2_06.git
-````
-## Initialisations
-vérifier le port USB (caméra)
-vérifier le port Arduino
-vérifier que le programme Arduino est injecté dans la carte
+## Présentation
+Ce projet est un projet imposé dans le cadre du cours Projet en langage C à Polytech Sorbonne.  
+L’objectif était de créer un programme parmi plusieurs figures libres proposées, en y ajoutant les modifications et améliorations de notre choix.
 
-## Compilation
-Utilisez 'make setup' puis 'make' pour compiler
+Ce travail a permis de mettre en pratique les notions vues en cours, notamment la reconnaissance d’objets et de couleurs à partir d’un flux vidéo.
 
-## Execution
-Lancez le programme avec './bin/program' depuis le repertoire du projet
+---
 
-## Fonctionnement
-Avant de lancer la partie, cliquez sur le flux vidéo pour selectionner l'objet avec lequel vous souhaitez controler le point. 
+## Objectif du programme
+Le projet consiste en un jeu interactif où l’utilisateur doit naviguer dans un labyrinthe en manipulant un objet coloré devant sa webcam.  
+Le système utilise la reconnaissance de couleur en temps réel pour :
+- détecter et suivre l’objet choisi ;
+- interpréter ses mouvements comme des déplacements dans le jeu ;
+- permettre à l’utilisateur d’atteindre la sortie du labyrinthe.
 
-Ensuite, appuyez sur le bouton "Jouer", laissant apparaître un labyrinthe. Vous pouvez vous déplacez librement. 
+---
 
-Pour lancer la partie, restez dans la start box verte ("S") pendant quelques instants. Le jeu se lance, et vous devez atteindre la end box rose ("E") sans toucher les murs du labyrinthe !
+## Compétences mobilisées
+- Traitement et analyse d’images (segmentation par couleur, suivi d’objet)  
+- Programmation en C  
+- Gestion d’un projet en duo sous Git  
+- Création d’une interface interactive  
 
-Vous pouvez aussi mettre pause, quitter le logiciel proprement, et changer le mode de difficulté.
+---
+
+## Organisation
+Le projet a été réalisé en duo avec **[@esteban_peregrina](https://github.com/esteban-peregrina)**.  
+
+---
